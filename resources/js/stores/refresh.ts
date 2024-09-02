@@ -8,9 +8,7 @@ export const useRefreshStore = defineStore('refresh', {
     async refresh() {
       this.loading = true
       try {
-        const resp = await axios.get(
-          'https://jsonplaceholder.typicode.com/todos/1',
-        )
+        const resp = await axios.post(route('rebuild'))
         console.log(resp)
       } finally {
         this.loading = false
