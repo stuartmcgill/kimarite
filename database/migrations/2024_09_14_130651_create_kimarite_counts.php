@@ -16,7 +16,8 @@ return new class extends Migration
         Schema::create('kimarite_counts', function (Blueprint $table) {
             $table->id();
             $table->string('type');
-            $table->string('bashoId');
+            $table->string('basho_id');
+            $table->string('division');
             $table->unsignedInteger('count');
             $table->timestamps();
 
