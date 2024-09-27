@@ -15,10 +15,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
     // Remove for security - we only need one user
-//    Route::get('register', [RegisteredUserController::class, 'create'])
-//        ->name('register');
-//
-//    Route::post('register', [RegisteredUserController::class, 'store']);
+    //    Route::get('register', [RegisteredUserController::class, 'create'])
+    //        ->name('register');
+    //
+    //    Route::post('register', [RegisteredUserController::class, 'store']);
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
