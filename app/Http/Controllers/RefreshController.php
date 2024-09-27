@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\KimariteCount;
 use App\Models\KimariteType;
 use App\Services\KimariteAggregator;
 use Illuminate\Http\JsonResponse;
@@ -31,11 +30,14 @@ class RefreshController extends Controller
 
     public function rebuild(Request $request): JsonResponse
     {
+        logger()->error('Rebuilding Kimarite data');
+
         /** @var Collection<RikishiMatch> */
         $allMatches = collect();
 
         $types = KimariteType::all();
         foreach ($types as $type) {
+            logger()->error('Processing data for '.$type->name);
             $skip = 0;
 
             while (true) {
