@@ -30,14 +30,14 @@ class RefreshController extends Controller
 
     public function rebuild(Request $request): JsonResponse
     {
-        logger()->error('Rebuilding Kimarite data');
+        logger()->info('Rebuilding Kimarite data');
 
         /** @var Collection<RikishiMatch> */
         $allMatches = collect();
 
         $types = KimariteType::all();
         foreach ($types as $type) {
-            logger()->error('Processing data for '.$type->name);
+            logger()->info('Processing data for '.$type->name);
             $skip = 0;
 
             while (true) {
@@ -58,31 +58,17 @@ class RefreshController extends Controller
                     }
 
                     $allMatches->push($match);
-                    //                    // Set up the basho counts for this kimarite if they haven't already been done
-                    //                    $kimariteCounts = $counts->get($name, collect());
-                    //                    $kimariteBashoCount = $kimariteCounts->get($bashoId, 0);
-                    //                    $kimariteBashoCount++;
-                    //
-                    //                    $kimariteCounts->put($bashoId, $kimariteBashoCount);
-                    //                    $counts->put($name, $kimariteCounts);
                 }
 
+                // Move on to the next batch
                 $skip += 1000;
+
+                // Wait one second before calling API again
                 usleep(1 * 1000 * 1000);
             }
         }
 
         $this->aggregator->aggregateAndStoreCounts($allMatches);
-
-        //        foreach ($counts as $type => $bashoCounts) {
-        //            $bashoCounts->each(function ($count, $bashoId) use ($type) {
-        //                KimariteCount::updateOrCreate([
-        //                    'type' => $type,
-        //                    'bashoId' => $bashoId,
-        //                    'count' => $count,
-        //                ]);
-        //            });
-        //        }
 
         return new JsonResponse([
             'message' => 'Success',
