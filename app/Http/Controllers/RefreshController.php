@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\KimariteType;
+use App\Models\Run;
 use App\Services\KimariteAggregator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
@@ -30,24 +32,28 @@ class RefreshController extends Controller
 
     public function rebuild(Request $request): JsonResponse
     {
-        logger()->info('Rebuilding Kimarite data');
+        // Allow 45 mins
+        set_time_limit(60 * 45);
 
-        /** @var Collection<RikishiMatch> */
-        $allMatches = collect();
+        logger()->info('Rebuilding Kimarite data');
+        $run = Run::create();
 
         $types = KimariteType::all();
         foreach ($types as $type) {
+            /** @var Collection<RikishiMatch> */
+            $typeMatches = collect();
+
             logger()->info('Processing data for '.$type->name);
             $skip = 0;
 
             while (true) {
                 $name = $type->name;
-                $kimariteMatches = collect($this->api->fetchByType(type: $name, limit: 1000, skip: $skip));
-                if ($kimariteMatches->count() === 0) {
+                $matches = collect($this->api->fetchByType(type: $name, limit: 1000, skip: $skip));
+                if ($matches->count() === 0) {
                     break;
                 }
 
-                foreach ($kimariteMatches as $match) {
+                foreach ($matches as $match) {
                     $bashoId = $match->bashoId;
                     if (! $bashoId) {
                         continue;
@@ -57,18 +63,21 @@ class RefreshController extends Controller
                         continue;
                     }
 
-                    $allMatches->push($match);
+                    $typeMatches->push($match);
                 }
 
                 // Move on to the next batch
                 $skip += 1000;
 
-                // Wait one second before calling API again
-                usleep(1 * 1000 * 1000);
+                // Wait 0.5 second before calling API again
+                usleep(1 * 1000 * 500);
             }
+
+            $this->aggregator->aggregateAndStoreCounts($typeMatches);
         }
 
-        $this->aggregator->aggregateAndStoreCounts($allMatches);
+        $run->completed_at = Carbon::now();
+        $run->save();
 
         return new JsonResponse([
             'message' => 'Success',
