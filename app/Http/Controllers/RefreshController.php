@@ -15,6 +15,8 @@ use Inertia\Response as InertiaResponse;
 use StuartMcGill\SumoApiPhp\Model\RikishiMatch;
 use StuartMcGill\SumoApiPhp\Service\KimariteService;
 
+ini_set('memory_limit', '512M');
+
 class RefreshController extends Controller
 {
     public function __construct(
