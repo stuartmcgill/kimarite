@@ -5,3 +5,25 @@
 body {
     @apply text-gray-900
 }
+
+.header-link {
+    float: right;
+    text-decoration: none;
+    color: lightgrey;
+}
+
+.winning-percentage {
+    float: right;
+    font-size: medium;
+    color: dimgrey;
+}
+
+.shikona-jp {
+    padding-bottom: 10px;
+}
+
+.selected-wrestler-image {
+    max-height: 300px;
+    height: auto;
+    width: auto;
+}

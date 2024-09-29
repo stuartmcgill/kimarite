@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Head2HeadController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RefreshController;
 use Illuminate\Foundation\Application;
@@ -16,6 +17,9 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
+Route::get('/head2head', [Head2HeadController::class, 'view'])->name('head2head.view');
+Route::get('/head2head/{id}', [Head2HeadController::class, 'head2headsForWrestler'])->name('head2head.wrestler');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
