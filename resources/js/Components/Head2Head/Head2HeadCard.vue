@@ -16,7 +16,9 @@ const enablePopovers = () => {
     document.querySelectorAll('[data-bs-toggle="popover"]'),
   )
   const popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-    return new Popover(popoverTriggerEl)
+    return new Popover(popoverTriggerEl, {
+      delay: { show: 0, hide: 200 },
+    })
   })
 }
 const forceRender = async () => {
@@ -145,7 +147,6 @@ watch(
         role="button"
         data-bs-toggle="popover"
         data-bs-trigger="focus"
-        data-bs-delay='{ "show\": 0, \"hide\": 200 }'
         data-bs-placement="right"
         data-bs-html="true"
         :title="head2headRecord.shikonaEn"

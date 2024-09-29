@@ -12,13 +12,13 @@ const recordLink = computed(() => {
     return 'https://sumodb.sumogames.de/Rikishi.aspx?r=' + props.selected.sumoDbId
 })
 
-const imageLink = () => {
+const imageLink = computed(() => {
     if (!props.selected) {
         return ''
     }
 
     return 'https://sumodb.sumogames.de/pics/' + props.selected.sumoDbId + '.jpg'
-}
+})
 </script>
 
 <template>
@@ -47,7 +47,7 @@ const imageLink = () => {
             </div>
             <img
                 :src="imageLink"
-                class="selected-wrestler-image col-sm-5 img-responsive"
+                class="selected-wrestler-image col-sm-5 img-responsive object-contain"
                 :alt="'Photograph of ' + selected.shikonaEn"
             >
         </div>

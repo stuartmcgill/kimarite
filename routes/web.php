@@ -19,7 +19,7 @@ Route::get('/', function () {
 });
 
 Route::get('/head2head', [Head2HeadController::class, 'view'])->name('head2head.view');
-Route::get('/head2head-wrestler/{id}', [Head2HeadController::class, 'head2headsForWrestler'])->name('head2head.wrestler');
+Route::get('/head2head/{id}', [Head2HeadController::class, 'head2headsForWrestler'])->name('head2head.wrestler');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
