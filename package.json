@@ -21,9 +21,11 @@
         "vue-tsc": "^2.0.24"
     },
     "dependencies": {
+        "@primevue/themes": "^4.1.0",
         "@types/bootstrap": "^5.2.10",
         "bootstrap": "^5.3.3",
         "pinia": "^2.2.2",
+        "primeicons": "^7.0.0",
         "primevue": "^4.1.0"
     }
 }
