@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class KimariteGetStats extends Request
 {
@@ -18,6 +18,8 @@ class KimariteGetStats extends Request
         return [
             'types' => ['required', 'array'],
             'types.*.name' => ['required', 'string'],
+            'divisions' => ['required', 'array'],
+            'divisions.*.name' => ['required', 'string'],
             'from' => ['required', 'string'],
             'to' => ['required', 'string'],
         ];

@@ -16,8 +16,6 @@ const props = defineProps<{
   availableBashos: string[]
 }>()
 
-console.log(props.availableBashos)
-
 const typeOptions = props.types.map(type => capitalize(type))
 
 const bashoOptions = props.availableBashos.map(
@@ -34,42 +32,61 @@ const divisionOptions = computed(() => [
 ])
 
 const store = useKimariteStore()
-store.fetchStats(['yorikiri', 'oshidashi'], '202401', '202409')
 
 const selectedTypes = ref([])
 const selectedDivisions = ref([])
-const selectedFrom = ref(null)
-const selectedTo = ref(null)
+const from = ref(null)
+const to = ref(null)
 
 const clearSelectedTypes = () => (selectedTypes.value = [])
+
+const enableShow = computed(
+  () => selectedTypes.value.length > 0 && selectedDivisions.value.length > 0,
+)
+
+const refreshGraph = () => {
+  store.fetchCounts(
+    selectedTypes.value,
+    selectedDivisions.value,
+    from.value,
+    to.value,
+  )
+}
 </script>
 
 <template>
   <body class="bg-tan-200 flex min-h-screen">
     <Head title="Kimarite visualisation" />
 
-    <div class="mx-auto w-full max-w-7xl">
+    <div class="mx-auto w-full sm:max-w-7xl">
       <div class="p-4 w-full flex flex-col justify-center text-center">
         <h1 class="mb-8 font-semibold">Kimarite visualisation</h1>
         <div
-          class="p-6 w-full grid md:grid-cols-2 gap-x-12 gap-y-4 bg-tan-50 rounded shadow"
+          class="p-6 w-full grid lg:grid-cols-[auto,200px] gap-x-12 gap-y-4 bg-tan-50 rounded shadow"
         >
           <div class="flex flex-col gap-4 w-full">
-            <div class="flex flex-col md:flex-row gap-4 w-full">
+            <div class="flex flex-col lg:flex-row gap-3 w-full">
               <MultiSelect
                 v-model="selectedTypes"
                 :options="typeOptions"
                 filter
                 placeholder="Select kimarite"
                 display="chip"
-                class="w-full"
+                class="flex w-full sm:max-w-[800px]"
               />
-              <Button class="" label="Clear" @click="clearSelectedTypes" />
+              <Button
+                icon="pi pi-times"
+                outlined
+                severity="danger"
+                label="Clear"
+                :disabled="selectedTypes.length === 0"
+                @click="clearSelectedTypes"
+              />
             </div>
             <div class="flex gap-2">
               <IftaLabel>
                 <Select
-                  v-model="selectedFrom"
+                  v-model="from"
                   inputId="from-basho"
                   :options="bashoOptions"
                   filter
@@ -79,7 +96,7 @@ const clearSelectedTypes = () => (selectedTypes.value = [])
               </IftaLabel>
               <IftaLabel>
                 <Select
-                  v-model="selectedTo"
+                  v-model="to"
                   inputId="to-basho"
                   :options="bashoOptions"
                   filter
@@ -88,6 +105,22 @@ const clearSelectedTypes = () => (selectedTypes.value = [])
                 />
                 <label for="to-basho">To</label>
               </IftaLabel>
+            </div>
+            <div class="mt-auto flex items-center gap-4 justify-start">
+              <Button
+                :disabled="!enableShow"
+                raised
+                label="Show graph"
+                @click="refreshGraph"
+              />
+              <div v-if="enableShow">
+                {{ selectedTypes.length }} kimarite,
+                {{ selectedDivisions.length }} divisions
+              </div>
+              <div v-else class="text-red-700">
+                Select one or more kimarite and divisions
+              </div>
+              <LoadingIndicator v-if="store.loading" />
             </div>
           </div>
           <Listbox
