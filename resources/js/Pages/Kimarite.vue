@@ -55,10 +55,10 @@ const refreshGraph = () => {
 </script>
 
 <template>
-  <body class="bg-tan-200 flex min-h-screen">
+  <body class="bg-tan-200">
     <Head title="Kimarite visualisation" />
 
-    <div class="mx-auto w-full sm:max-w-7xl">
+    <div class="mx-auto flex flex-col w-full min-h-screen sm:max-w-7xl">
       <div class="p-4 w-full flex flex-col justify-center text-center">
         <h1 class="mb-8 font-semibold">Kimarite visualisation</h1>
         <div
@@ -130,6 +130,15 @@ const refreshGraph = () => {
             class=""
           />
         </div>
+      </div>
+      <div class="mt-auto p-4 flex text-sm">
+        <a
+          class="flex items-center hover:opacity-80"
+          href="https://www.flaticon.com/authors/vitaly-gorbachev"
+          title="Vitaly Gorbachev"
+          ><img src="favicon.ico" class="mx-1 h-4 w-4" />Dohyo icon by Vitaly
+          Gorbachev - Flaticon</a
+        >
       </div>
     </div>
   </body>
