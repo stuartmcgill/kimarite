@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Head2HeadController;
+use App\Http\Controllers\KimariteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RefreshController;
 use Illuminate\Foundation\Application;
@@ -21,9 +22,8 @@ Route::get('/', function () {
 Route::get('/head2head', [Head2HeadController::class, 'view'])->name('head2head.view');
 Route::get('/head2head/{id}', [Head2HeadController::class, 'head2headsForWrestler'])->name('head2head.wrestler');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/', [KimariteController::class, 'show'])->name('kimarite.show');
+Route::get('/kimarite-stats', [KimariteController::class, 'getStats'])->name('kimarite.stats');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
