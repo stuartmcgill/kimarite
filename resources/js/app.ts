@@ -8,9 +8,6 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
 import Aura from '@primevue/themes/aura'
-import Material from '@primevue/themes/material'
-import Lara from '@primevue/themes/lara'
-import Nora from '@primevue/themes/nora'
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel'
 
@@ -26,12 +23,7 @@ createInertiaApp({
 
     const primeOptions = {
       theme: {
-        preset: Lara,
-        primitive: {
-          borderRadius: {
-            md: '16px',
-          },
-        },
+        preset: Aura,
       },
     }
 

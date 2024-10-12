@@ -10,6 +10,7 @@ import Button from 'primevue/button'
 import IftaLabel from 'primevue/iftalabel'
 import Listbox from 'primevue/listbox'
 import { computed } from '@vue/reactivity'
+import Graph from '@/Components/Kimarite/Graph.vue'
 
 const props = defineProps<{
   types: string[]
@@ -48,8 +49,8 @@ const refreshGraph = () => {
   store.fetchCounts(
     selectedTypes.value,
     selectedDivisions.value,
-    from.value,
-    to.value,
+    from.value!,
+    to.value!,
   )
 }
 </script>
@@ -59,8 +60,8 @@ const refreshGraph = () => {
     <Head title="Kimarite visualisation" />
 
     <div class="mx-auto flex flex-col w-full min-h-screen sm:max-w-7xl">
-      <div class="p-4 w-full flex flex-col justify-center text-center">
-        <h1 class="mb-8 font-semibold">Kimarite visualisation</h1>
+      <div class="p-4 w-full flex flex-col gap-4 justify-center text-center">
+        <h1 class="mb-4 font-semibold">Kimarite visualisation</h1>
         <div
           class="p-6 w-full grid lg:grid-cols-[auto,200px] gap-x-12 gap-y-4 bg-tan-50 rounded shadow"
         >
@@ -129,6 +130,11 @@ const refreshGraph = () => {
             multiple
             class=""
           />
+        </div>
+        <div
+          class="p-6 w-full grid lg:grid-cols-[auto,200px] gap-x-12 gap-y-4 bg-tan-50 rounded shadow"
+        >
+          <Graph />
         </div>
       </div>
       <div class="mt-auto p-4 flex text-sm">
