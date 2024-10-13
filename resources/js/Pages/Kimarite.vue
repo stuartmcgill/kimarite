@@ -69,6 +69,7 @@ const refreshGraph = () => {
             <div class="flex flex-col lg:flex-row gap-3 w-full">
               <MultiSelect
                 v-model="selectedTypes"
+                inputId="kimarite"
                 :options="typeOptions"
                 filter
                 placeholder="Select kimarite"
@@ -78,7 +79,7 @@ const refreshGraph = () => {
               <Button
                 icon="pi pi-times"
                 outlined
-                severity="danger"
+                severity="contrast"
                 label="Clear"
                 :disabled="selectedTypes.length === 0"
                 @click="clearSelectedTypes"
