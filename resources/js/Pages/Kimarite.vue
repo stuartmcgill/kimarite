@@ -38,15 +38,47 @@ const store = useKimariteStore()
 const selectedTypes = ref([])
 const from = ref(null)
 const to = ref(null)
-const selectedDivisions = ref(divisionOptions.value)
+const selectedDivisions = ref([])
+
+// Initial values
+const resetCriteria = () => {
+  selectedTypes.value = ['Yorikiri', 'Oshidashi']
+  selectedDivisions.value = divisionOptions.value
+  from.value = '1991-07' // All-division data becomes available
+}
+resetCriteria()
 
 const clearSelectedTypes = () => (selectedTypes.value = [])
 
-const enableShow = computed(
-  () => selectedTypes.value.length > 0 && selectedDivisions.value.length > 0,
-)
+const validationMessage = computed(() => {
+  const errorFields = []
+
+  if (selectedTypes.value.length === 0) {
+    errorFields.push('Kimarite')
+  }
+
+  if (selectedDivisions.value.length === 0) {
+    errorFields.push('Divisions')
+  }
+
+  if (!from.value) {
+    errorFields.push('From date')
+  }
+
+  if (errorFields.length === 0) {
+    return ''
+  }
+
+  return `Please select: ${errorFields.join(', ')}`
+})
+
+const validated = computed(() => validationMessage.value.length === 0)
 
 const refreshGraph = () => {
+  if (!validated.value) {
+
+  }
+
   store.fetchCounts(
     selectedTypes.value,
     selectedDivisions.value,
@@ -54,15 +86,17 @@ const refreshGraph = () => {
     to.value!,
   )
 }
+
+refreshGraph()
 </script>
 
 <template>
   <body class="bg-tan-200">
-    <Head title="Kimarite visualisation" />
+    <Head title="Kimarite trends" />
 
     <div class="mx-auto flex flex-col w-full min-h-screen sm:max-w-7xl">
       <div class="p-4 w-full flex flex-col gap-4 justify-center text-center">
-        <h1 class="mb-4 font-semibold">Kimarite visualisation</h1>
+        <h1 class="mb-4 font-semibold">Kimarite trends</h1>
         <div
           class="p-6 w-full grid lg:grid-cols-[auto,200px] gap-x-12 gap-y-4 bg-tan-50 rounded shadow"
         >
@@ -111,19 +145,27 @@ const refreshGraph = () => {
             </div>
             <div class="mt-auto flex items-center gap-4 justify-start">
               <Button
-                :disabled="!enableShow"
+                :disabled="!validated"
                 raised
-                label="Show graph"
+                label="Refresh graph"
                 @click="refreshGraph"
               />
-              <div v-if="enableShow">
+              <div v-if="validated">
                 {{ selectedTypes.length }} kimarite,
                 {{ selectedDivisions.length }} divisions
               </div>
-              <div v-else class="text-red-700">
-                Select one or more kimarite and divisions
+              <div v-else class="text-orange-800">
+                {{ validationMessage }}
               </div>
               <LoadingIndicator v-if="store.loading" />
+              <Button
+                class="ml-auto"
+                icon="pi pi-undo"
+                outlined
+                severity="contrast"
+                label="Reset criteria"
+                @click="resetCriteria"
+              />
             </div>
           </div>
           <Listbox

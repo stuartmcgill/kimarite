@@ -42,6 +42,11 @@ const options = computed(() => ({
       },
     },
   },
+  elements: {
+    line: {
+      tension: 0.4,
+    },
+  },
 }))
 
 ChartJS.register(
@@ -56,5 +61,5 @@ ChartJS.register(
 )
 </script>
 <template>
-  <Line :data="data" :options="options" />
+  <Line v-show="data.datasets.length > 0" :data="data" :options="options" />
 </template>
