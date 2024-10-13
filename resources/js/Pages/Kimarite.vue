@@ -5,6 +5,7 @@ import LoadingIndicator from '@/Components/App/LoadingIndicator.vue'
 import Select from 'primevue/select'
 import MultiSelect from 'primevue/multiselect'
 import { capitalize, ref } from 'vue'
+import type { Ref } from 'vue'
 import 'primeicons/primeicons.css'
 import Button from 'primevue/button'
 import IftaLabel from 'primevue/iftalabel'
@@ -35,10 +36,10 @@ const divisionOptions = computed(() => [
 
 const store = useKimariteStore()
 
-const selectedTypes = ref([])
-const from = ref(null)
-const to = ref(null)
-const selectedDivisions = ref([])
+const selectedTypes: Ref<string[]> = ref([])
+const from: Ref<string | null> = ref(null)
+const to: Ref<string | null> = ref(null)
+const selectedDivisions: Ref<string[]> = ref([])
 
 // Initial values
 const resetCriteria = () => {
@@ -76,7 +77,6 @@ const validated = computed(() => validationMessage.value.length === 0)
 
 const refreshGraph = () => {
   if (!validated.value) {
-
   }
 
   store.fetchCounts(
@@ -163,7 +163,7 @@ refreshGraph()
                 icon="pi pi-undo"
                 outlined
                 severity="contrast"
-                label="Reset criteria"
+                label="Reset"
                 @click="resetCriteria"
               />
             </div>
