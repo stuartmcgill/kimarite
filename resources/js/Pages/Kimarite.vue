@@ -11,6 +11,7 @@ import IftaLabel from 'primevue/iftalabel'
 import Listbox from 'primevue/listbox'
 import { computed } from '@vue/reactivity'
 import Graph from '@/Components/Kimarite/Graph.vue'
+import { formatBashoId } from '@/Composables/utils'
 
 const props = defineProps<{
   types: string[]
@@ -19,8 +20,8 @@ const props = defineProps<{
 
 const typeOptions = props.types.map(type => capitalize(type))
 
-const bashoOptions = props.availableBashos.map(
-  basho => `${basho.substring(0, 4)}-${basho.substring(4, 6)}`,
+const bashoOptions = props.availableBashos.map(bashoId =>
+  formatBashoId(bashoId),
 )
 
 const divisionOptions = computed(() => [
@@ -71,7 +72,7 @@ const refreshGraph = () => {
                 v-model="selectedTypes"
                 inputId="kimarite"
                 :options="typeOptions"
-                filter
+                editable
                 placeholder="Select kimarite"
                 display="chip"
                 class="flex w-full sm:max-w-[800px]"
@@ -91,8 +92,8 @@ const refreshGraph = () => {
                   v-model="from"
                   inputId="from-basho"
                   :options="bashoOptions"
-                  filter
-                  placeholder="Select start basho"
+                  editable
+                  class="w-40"
                 />
                 <label for="from-basho">From</label>
               </IftaLabel>
@@ -101,9 +102,9 @@ const refreshGraph = () => {
                   v-model="to"
                   inputId="to-basho"
                   :options="bashoOptions"
-                  filter
-                  placeholder="Select end basho"
-                  class=""
+                  editable
+                  showClear
+                  class="w-40"
                 />
                 <label for="to-basho">To</label>
               </IftaLabel>

@@ -1,5 +1,6 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import axios from 'axios'
+import { formatBashoId } from '@/Composables/utils'
 
 interface KimariteCount {
   type: string
@@ -33,7 +34,6 @@ export const useKimariteStore = defineStore('kimarite', {
 
           return {
             label: groupedTotal.type,
-            backgroundColor: '#f87979',
             data: data,
           }
         },
@@ -60,7 +60,9 @@ export const useKimariteStore = defineStore('kimarite', {
           }),
         )
         this.counts = resp.data.counts
-        this.bashoIds = resp.data.bashoIds
+        this.bashoIds = resp.data.bashoIds.map((bashoId: string) =>
+          formatBashoId(bashoId),
+        )
       } finally {
         this.loading = false
       }

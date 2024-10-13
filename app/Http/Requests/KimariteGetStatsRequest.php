@@ -21,7 +21,7 @@ class KimariteGetStats extends Request
             'divisions' => ['required', 'array'],
             'divisions.*.name' => ['required', 'string'],
             'from' => ['required', 'string'],
-            'to' => ['required', 'string'],
+            'to' => ['nullable', 'string'],
         ];
     }
 }

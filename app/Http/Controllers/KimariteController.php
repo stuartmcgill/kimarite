@@ -39,17 +39,23 @@ class KimariteController extends Controller
         $to = Str::replace('-', '', $request->input('to'));
 
         // Consolidate across the divisions (i.e. group by type and basho ID)
-        $flatTotals = KimariteCount::select(
+        $query = KimariteCount::select(
                 'type',
                 'basho_id',
                 DB::raw('SUM(count) AS total'),
-            )
-            ->whereBetween('basho_id', [$from, $to])
-            ->whereIn('type', $types)
-            ->whereIn('division', $divisions)
-            ->groupBy('type', 'basho_id')
-            ->orderBy('basho_id')
-            ->get();
+        );
+
+        if (empty($to)) {
+            $query->where('basho_id', '>=', $from);
+        } else {
+            $query->whereBetween('basho_id', [$from, $to]);
+        }
+
+        $flatTotals = $query->whereIn('type', $types)
+        ->whereIn('division', $divisions)
+        ->groupBy('type', 'basho_id')
+        ->orderBy('basho_id')
+        ->get();
 
         $allBashoIds = $flatTotals->pluck('basho_id')->unique()->values();
 
