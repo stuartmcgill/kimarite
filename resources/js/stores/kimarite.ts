@@ -8,24 +8,19 @@ interface KimariteCount {
   count: number
 }
 
-interface KimariteCountGroup {
-  type: string
-  groupedCounts: KimariteCount[]
-}
-
 export const useKimariteStore = defineStore('kimarite', {
   state: () => ({
-    counts: [] as KimariteCountGroup[],
+    counts: [] as KimariteCount[],
     bashoIds: [] as string[],
     loading: false as boolean,
   }),
   getters: {
-    something: state => {
-      const bashoIds = state.counts.map(
-        (group: KimariteCountGroup) => group.groupedCounts,
-      )
+    datasets: state => {
+      if (!state.counts) {
+        return []
+      }
 
-      return bashoIds
+      return state.counts
     },
   },
   actions: {
