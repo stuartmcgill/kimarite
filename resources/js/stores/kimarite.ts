@@ -5,12 +5,17 @@ interface KimariteCount {
   type: string
   basho_id: string
   division: string
-  count: number
+  total: number
+}
+
+interface GroupedKimariteTotal {
+  type: string
+  groupedCounts: KimariteCount[]
 }
 
 export const useKimariteStore = defineStore('kimarite', {
   state: () => ({
-    counts: [] as KimariteCount[],
+    counts: [] as GroupedKimariteTotal[],
     bashoIds: [] as string[],
     loading: false as boolean,
   }),
@@ -20,7 +25,21 @@ export const useKimariteStore = defineStore('kimarite', {
         return []
       }
 
-      return state.counts
+      const datasets = state.counts.map(
+        (groupedTotal: GroupedKimariteTotal) => {
+          const data = groupedTotal.groupedCounts.map(
+            (count: KimariteCount) => count.total,
+          )
+
+          return {
+            label: groupedTotal.type,
+            backgroundColor: '#f87979',
+            data: data,
+          }
+        },
+      )
+
+      return datasets
     },
   },
   actions: {

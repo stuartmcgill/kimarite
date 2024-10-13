@@ -19,16 +19,8 @@ const store = useKimariteStore()
 
 const data = computed(() => {
   const labels = store.bashoIds
-  const datasets = store.counts.map((count: KimariteCount) => {
-    const dataset = {
-        label
-    }
-
-    return dataset
-  })
-
-  console.log(datasets)
-
+  const datasets = store.datasets
+ 
   return {
     labels: labels,
     datasets: datasets,

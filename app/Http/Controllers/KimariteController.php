@@ -8,7 +8,6 @@ use App\Models\KimariteCount;
 use App\Models\KimariteType;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -32,7 +31,7 @@ class KimariteController extends Controller
         );
     }
 
-    public function getStats(Request $request): JsonResponse
+    public function getCounts(Request $request): JsonResponse
     {
         $types = $request->input('types');
         $divisions = $request->input('divisions');
@@ -40,7 +39,7 @@ class KimariteController extends Controller
         $to = Str::replace('-', '', $request->input('to'));
 
         // Consolidate across the divisions (i.e. group by type and basho ID)
-        $rawCounts = KimariteCount::select(
+        $flatTotals = KimariteCount::select(
                 'type',
                 'basho_id',
                 DB::raw('SUM(count) AS total'),
@@ -52,21 +51,29 @@ class KimariteController extends Controller
             ->orderBy('basho_id')
             ->get();
 
-        // Note there could be gaps for rarer kimarite
-        $allBashoIds = $rawCounts->pluck('basho_id')->unique()->values();
+        $allBashoIds = $flatTotals->pluck('basho_id')->unique()->values();
 
-        // Group by Kimarite type
-        $groupedCounts = $rawCounts->reduce(function (Collection $groupedCounts, $row) {
-            $runningCountsForType = $groupedCounts->get($row->type, collect());
-            $runningCountsForType->add($row);
+        // Structure the data by Kimarite type - send back an array with one entry per
+        // type, containing all the counts for that kimarite
+        $counts = collect($types)->map(fn (string $type) => [
+            'type' => $type,
+            'groupedCounts' => [],
+        ]);
+
+        foreach ($flatTotals as $flatTotal) {
+            $key = $counts->search(fn (array $count) => Str::lower($count['type']) === $flatTotal->type);
             
-            $groupedCounts->put($row->type, $runningCountsForType);
+            $counts->transform(function (array $count, int $index) use ($key, $flatTotal) {
+                if ($index === $key) {
+                    $count['groupedCounts'][] = $flatTotal;
+                }
 
-            return $groupedCounts;
-        }, collect());
+                return $count;
+            });
+        }
 
         return new JsonResponse([
-            'counts' => $groupedCounts,
+            'counts' => $counts,
             'bashoIds' => $allBashoIds,
         ]);
     }

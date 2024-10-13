@@ -35,9 +35,9 @@ const divisionOptions = computed(() => [
 const store = useKimariteStore()
 
 const selectedTypes = ref([])
-const selectedDivisions = ref([])
 const from = ref(null)
 const to = ref(null)
+const selectedDivisions = ref(divisionOptions.value)
 
 const clearSelectedTypes = () => (selectedTypes.value = [])
 
