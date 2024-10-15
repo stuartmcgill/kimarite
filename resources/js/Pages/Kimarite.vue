@@ -134,7 +134,7 @@ refreshGraph()
                 @click="clearSelectedTypes"
               />
             </div>
-            <div class="flex gap-2">
+            <div class="flex items-center gap-2">
               <IftaLabel>
                 <Select
                   v-model="from"
@@ -156,6 +156,13 @@ refreshGraph()
                 />
                 <label for="to-basho">To</label>
               </IftaLabel>
+              <i
+                class="pi pi-info-circle"
+                style="font-size: 1rem"
+                v-tooltip="
+                  'Before 1991-07 data is only available for the top 2 divisions'
+                "
+              />
             </div>
             <div class="mt-auto flex items-center gap-4 justify-start">
               <Button
@@ -198,14 +205,36 @@ refreshGraph()
           <Graph />
         </div>
       </div>
-      <div class="mt-auto p-4 flex text-sm">
-        <a
-          class="flex items-center hover:opacity-80"
-          href="https://www.flaticon.com/authors/vitaly-gorbachev"
-          title="Vitaly Gorbachev"
-          ><img src="favicon.ico" class="mx-1 h-4 w-4" />Dohyo icon by Vitaly
-          Gorbachev - Flaticon</a
-        >
+      <div class="mt-auto p-4 flex flex-col gap-2 text-sm">
+        <div class="flex">
+          Data from
+          <a
+            class="ml-1 flex items-center hover:opacity-70"
+            href="https://www.sumo-api.com/"
+            title="Sumo API"
+            target="_blank"
+            >Sumo API</a
+          >
+        </div>
+        <div class="flex items-center">
+          <img src="favicon.ico" class="mx-1 h-4 w-4" />
+          Dohyo icon by
+          <a
+            class="ml-1 flex items-center hover:opacity-70"
+            href="https://www.flaticon.com/authors/vitaly-gorbachev"
+            title="Vitaly Gorbachev"
+            target="_blank"
+            >Vitaly Gorbachev - Flaticon</a
+          >
+          <a
+            class="ml-auto hover:opacity-70"
+            href="https://github.com/stuartmcgill/kimarite"
+            title="Github repository"
+            target="_blank"
+          >
+            <i class="pi pi-github" style="font-size: 1.5rem" />
+          </a>
+        </div>
       </div>
     </div>
   </body>
