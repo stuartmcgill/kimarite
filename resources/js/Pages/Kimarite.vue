@@ -74,17 +74,31 @@ const validationMessage = computed(() => {
 })
 
 const validated = computed(() => validationMessage.value.length === 0)
+const errorMessage = ref('')
 
-const refreshGraph = () => {
+const refreshGraph = async () => {
+  errorMessage.value = ''
+
   if (!validated.value) {
   }
 
-  store.fetchCounts(
-    selectedTypes.value,
-    selectedDivisions.value,
-    from.value!,
-    to.value!,
-  )
+  try {
+    await store.fetchCounts(
+      selectedTypes.value,
+      selectedDivisions.value,
+      from.value!,
+      to.value!,
+    )
+  } catch (e: any) {
+    if (e.isAxiosError && e.response && e.response.status === 422) {
+      const messages = Object.entries(e.response.data.messages).map(
+        ([key, value]) => value,
+      )
+      errorMessage.value = messages.join(', ')
+    } else {
+      console.error(e)
+    }
+  }
 }
 
 refreshGraph()
@@ -166,6 +180,9 @@ refreshGraph()
                 label="Reset"
                 @click="resetCriteria"
               />
+            </div>
+            <div v-if="errorMessage" class="flex justify-start text-orange-800">
+              {{ errorMessage }}
             </div>
           </div>
           <Listbox

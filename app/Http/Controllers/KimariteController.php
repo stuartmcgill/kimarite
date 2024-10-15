@@ -9,6 +9,7 @@ use App\Models\KimariteType;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
@@ -19,20 +20,34 @@ class KimariteController extends Controller
     {
         $bashos = KimariteCount::select('basho_id')->distinct()->orderBy('basho_id')->get();
 
-        //$counts = KimariteCount::all();
-
         return Inertia::render(
             'Kimarite',
             [
                 'types' => KimariteType::all()->pluck('name'),
                 'availableBashos' => $bashos->map(fn ($basho) => $basho['basho_id']),
-                //'counts' => $counts,
             ],
         );
     }
 
     public function getCounts(Request $request): JsonResponse
     {
+        $validator = Validator::make($request->all(), [
+            'types' => 'required|array',
+            'types.*' => 'string',
+            'divisions' => 'required|array',
+            'divisions.*' => 'string',
+            'from' => 'required|date_format:Y-m',
+            'to' => 'nullable|date_format:Y-m|after_or_equal:from',
+        ]);
+    
+        // Check for validation failure
+        if ($validator->fails()) {
+            return new JsonResponse([
+                'error' => 'Invalid input data',
+                'messages' => $validator->errors()
+            ], 422);
+        }
+
         $types = $request->input('types');
         $divisions = $request->input('divisions');
         $from = Str::replace('-', '', $request->input('from'));
@@ -52,10 +67,10 @@ class KimariteController extends Controller
         }
 
         $flatTotals = $query->whereIn('type', $types)
-        ->whereIn('division', $divisions)
-        ->groupBy('type', 'basho_id')
-        ->orderBy('basho_id')
-        ->get();
+            ->whereIn('division', $divisions)
+            ->groupBy('type', 'basho_id')
+            ->orderBy('basho_id')
+            ->get();
 
         $allBashoIds = $flatTotals->pluck('basho_id')->unique()->values();
 
