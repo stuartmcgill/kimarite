@@ -3,9 +3,10 @@
 @tailwind utilities;
 
 body {
-    @apply text-gray-900
+    @apply text-gray-800
 }
 
+/* Head2Head */
 .header-link {
     float: right;
     text-decoration: none;
