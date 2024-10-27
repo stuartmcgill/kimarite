@@ -18,7 +18,7 @@ class KimariteController extends Controller
 {
     public function show(Request $request): InertiaResponse
     {
-        $bashos = KimariteCount::select('basho_id')->distinct()->orderBy('basho_id')->get();
+        $bashos = KimariteCount::select('basho_id')->distinct()->orderBy('basho_id', 'desc')->get();
 
         return Inertia::render(
             'Kimarite',

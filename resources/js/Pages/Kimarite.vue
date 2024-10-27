@@ -203,7 +203,7 @@ refreshGraph()
             v-model="selectedDivisions"
             :options="divisionOptions"
             multiple
-            class=""
+            listStyle="max-height:none"
           />
         </div>
         <div
