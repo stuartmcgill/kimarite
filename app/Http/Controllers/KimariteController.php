@@ -55,21 +55,20 @@ class KimariteController extends Controller
         $to = Str::replace('-', '', $request->input('to'));
         $annual = (bool)$request->input('annual', false);
 
-        // Consolidate across the divisions (i.e. group by type and basho ID)
-        $cols = [
-            'kc.type',
-            'kc.basho_id',
-            DB::raw('SUM(kc.count) AS total'),
-            DB::raw('SUM(kc.count) / bt.basho_total * 100 AS percentage')
-        ];
-
+        // Use a subquery to get the percentages
         $subQuery = DB::table('basho_totals')
             ->select('basho_id', DB::raw('SUM(total) as basho_total'))
             ->whereIn('division', $divisions)
             ->groupBy('basho_id');
 
+        // Consolidate across the divisions (i.e. group by type and basho ID)
         $flatTotals = KimariteCount::from('kimarite_counts AS kc')
-            ->select($cols)
+            ->select(
+                'kc.type',
+                'kc.basho_id',
+                DB::raw('SUM(kc.count) AS total'),
+                DB::raw('SUM(kc.count) / bt.basho_total * 100 AS percentage')
+            )
             ->leftJoinSub($subQuery, 'bt', fn ($join) =>
                 $join->on('kc.basho_id', '=', 'bt.basho_id')
             )
