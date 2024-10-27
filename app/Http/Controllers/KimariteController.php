@@ -65,32 +65,26 @@ class KimariteController extends Controller
         ];
 
         if ($withPercentages) {
-            $placeholders = implode(',', array_fill(0, count($divisions), '?'));
-
-            $cols[] = DB::raw(
-                'SUM(kc.count) / (
-                    SELECT SUM(kc2.count) 
-                    FROM kimarite_counts AS kc2 
-                    WHERE kc2.division IN (' . $placeholders . ') 
-                    AND kc2.basho_id = kc.basho_id 
-                ) * 100 AS percentage'
-            );
+            // Use MAX because we're aggregating, but there should only be one row per joined item
+            $cols[] = DB::raw('SUM(kc.count) / bt.basho_total * 100 AS percentage');
         }
+        
+        $subquery = DB::table('basho_totals')
+            ->select('basho_id', DB::raw('SUM(total) as basho_total'))
+            ->whereIn('division', $divisions)
+            ->groupBy('basho_id');
 
-        $query = KimariteCount::from('kimarite_counts AS kc')->select($cols);
-                
-        if ($withPercentages) {
-            // Ensure you're binding the divisions array and any other parameters
-            $query->addBinding($divisions);
-        }
-
-        $query->whereIn('kc.type', $types)
+        $query = KimariteCount::from('kimarite_counts AS kc')
+            ->select($cols)
+            ->leftJoinSub($subquery, 'bt', function($join) {
+                $join->on('kc.basho_id', '=', 'bt.basho_id');
+            })
+            ->whereIn('kc.type', $types)
             ->whereIn('kc.division', $divisions)
             ->where('kc.basho_id', '>=', $from);
 
         if (!empty($to)) {
             $query->where('kc.basho_id', '<=', $to);
-            $query->addBinding($to); // bind the 'to' date if present
         }
 
         $flatTotals = $query
