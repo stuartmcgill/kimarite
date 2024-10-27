@@ -5,8 +5,8 @@ import { formatBashoId } from '@/Composables/utils'
 interface KimariteCount {
   type: string
   basho_id: string
-  division: string
   total: number
+  percentage: number
 }
 
 interface GroupedKimariteTotal {
@@ -18,6 +18,7 @@ export const useKimariteStore = defineStore('kimarite', {
   state: () => ({
     counts: [] as GroupedKimariteTotal[],
     bashoIds: [] as string[],
+    displayAsPercent: false as boolean,
     loading: false as boolean,
   }),
   getters: {
@@ -28,8 +29,8 @@ export const useKimariteStore = defineStore('kimarite', {
 
       const datasets = state.counts.map(
         (groupedTotal: GroupedKimariteTotal) => {
-          const data = groupedTotal.groupedCounts.map(
-            (count: KimariteCount) => count.total,
+          const data = groupedTotal.groupedCounts.map((count: KimariteCount) =>
+            state.displayAsPercent ? count.percentage : count.total,
           )
 
           return {

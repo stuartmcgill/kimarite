@@ -10,6 +10,7 @@ import 'primeicons/primeicons.css'
 import Button from 'primevue/button'
 import IftaLabel from 'primevue/iftalabel'
 import Listbox from 'primevue/listbox'
+import Checkbox from 'primevue/checkbox'
 import { computed } from '@vue/reactivity'
 import Graph from '@/Components/Kimarite/Graph.vue'
 import { formatBashoId } from '@/Composables/utils'
@@ -46,6 +47,7 @@ const resetCriteria = () => {
   selectedTypes.value = ['Yorikiri', 'Oshidashi']
   selectedDivisions.value = divisionOptions.value
   from.value = '1991-07' // All-division data becomes available
+  store.displayAsPercent = false
 }
 resetCriteria()
 
@@ -134,7 +136,7 @@ refreshGraph()
                 @click="clearSelectedTypes"
               />
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
               <IftaLabel>
                 <Select
                   v-model="from"
@@ -163,6 +165,14 @@ refreshGraph()
                   'Before 1991-07 data is only available for the top 2 divisions'
                 "
               />
+              <div class="ml-4 flex items-center gap-2">
+                <label for="displayAsPercent">Display as percentage</label>
+                <Checkbox
+                  v-model="store.displayAsPercent"
+                  name="displayAsPercent"
+                  :binary="true"
+                />
+              </div>
             </div>
             <div class="mt-auto flex items-center gap-4 justify-start">
               <Button
