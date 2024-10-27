@@ -39,7 +39,6 @@ class KimariteController extends Controller
             'from' => 'required|date_format:Y-m',
             'to' => 'nullable|date_format:Y-m|after_or_equal:from',
             //'annual' => 'required|boolean',
-            //'withPercentages' => 'required|boolean',
         ]);
     
         // Check for validation failure
@@ -55,39 +54,29 @@ class KimariteController extends Controller
         $from = Str::replace('-', '', $request->input('from'));
         $to = Str::replace('-', '', $request->input('to'));
         $annual = (bool)$request->input('annual', false);
-        $withPercentages = (bool)$request->input('withPercentages', true);
 
         // Consolidate across the divisions (i.e. group by type and basho ID)
         $cols = [
             'kc.type',
             'kc.basho_id',
             DB::raw('SUM(kc.count) AS total'),
+            DB::raw('SUM(kc.count) / bt.basho_total * 100 AS percentage')
         ];
 
-        if ($withPercentages) {
-            // Use MAX because we're aggregating, but there should only be one row per joined item
-            $cols[] = DB::raw('SUM(kc.count) / bt.basho_total * 100 AS percentage');
-        }
-        
-        $subquery = DB::table('basho_totals')
+        $subQuery = DB::table('basho_totals')
             ->select('basho_id', DB::raw('SUM(total) as basho_total'))
             ->whereIn('division', $divisions)
             ->groupBy('basho_id');
 
-        $query = KimariteCount::from('kimarite_counts AS kc')
+        $flatTotals = KimariteCount::from('kimarite_counts AS kc')
             ->select($cols)
-            ->leftJoinSub($subquery, 'bt', function($join) {
-                $join->on('kc.basho_id', '=', 'bt.basho_id');
-            })
+            ->leftJoinSub($subQuery, 'bt', fn ($join) =>
+                $join->on('kc.basho_id', '=', 'bt.basho_id')
+            )
             ->whereIn('kc.type', $types)
             ->whereIn('kc.division', $divisions)
-            ->where('kc.basho_id', '>=', $from);
-
-        if (!empty($to)) {
-            $query->where('kc.basho_id', '<=', $to);
-        }
-
-        $flatTotals = $query
+            ->where('kc.basho_id', '>=', $from)
+            ->when(!empty($to), fn($q) => $q->where('kc.basho_id', '<=', $to))
             ->groupBy('type', 'basho_id')
             ->orderBy('basho_id')
             ->get();

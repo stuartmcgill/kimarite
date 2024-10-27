@@ -48,7 +48,7 @@ const resetCriteria = () => {
   selectedTypes.value = ['Yorikiri', 'Oshidashi']
   selectedDivisions.value = divisionOptions.value
   from.value = '1991-07' // All-division data becomes available
-  store.displayAsPercent = false
+  store.displayAsPercent = true
 }
 resetCriteria()
 
@@ -108,14 +108,14 @@ refreshGraph()
 </script>
 
 <template>
-  <body class="bg-tan-200">
+  <body class="bg-coral-100">
     <Head title="Kimarite trends" />
 
     <div class="mx-auto flex flex-col w-full min-h-screen sm:max-w-7xl">
       <div class="p-4 w-full flex flex-col gap-4 justify-center text-center">
-        <h1 class="mb-4 font-semibold">Kimarite trends</h1>
+        <h1 class="mb-4 font-semibold text-primary-900">Kimarite trends</h1>
         <div
-          class="p-6 w-full grid lg:grid-cols-[auto,200px] gap-x-12 gap-y-4 bg-tan-50 rounded shadow"
+          class="p-6 w-full grid lg:grid-cols-[auto,200px] gap-x-12 gap-y-4 bg-white rounded shadow"
         >
           <div class="flex flex-col gap-4 w-full">
             <div class="flex flex-col lg:flex-row gap-3 w-full">
@@ -207,7 +207,7 @@ refreshGraph()
           />
         </div>
         <div
-          class="p-6 w-full grid lg:grid-cols-[auto,200px] gap-x-12 gap-y-4 bg-tan-50 rounded shadow"
+          class="p-6 w-full grid lg:grid-cols-[auto,200px] gap-x-12 gap-y-4 bg-white rounded shadow"
         >
           <Graph />
         </div>
