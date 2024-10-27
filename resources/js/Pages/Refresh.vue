@@ -10,6 +10,14 @@ const rebuild = () => {
     store.refresh()
   }
 }
+
+const refreshBashoPercentages = () => {
+  if (
+    window.confirm('Are you SURE you want to refresh the basho percentage data')
+  ) {
+    store.refreshBashoPercentages()
+  }
+}
 </script>
 
 <template>
@@ -20,15 +28,22 @@ const rebuild = () => {
         This will rebuild the DB from the Sumo API site,
         <strong>destroying any existing data</strong>.
       </div>
-      <div class="flex gap-2">
+      <div class="flex gap-4">
         <LoadingIndicator v-if="store.loading" />
-        <button
-          v-else
-          class="p-2 flex text-white justify-center bg-red-500 rounded hover:opacity-80"
-          @click="rebuild"
-        >
-          Rebuild
-        </button>
+        <template v-else>
+          <button
+            class="p-2 flex text-white justify-center bg-red-500 rounded hover:opacity-80"
+            @click="rebuild"
+          >
+            Rebuild
+          </button>
+          <button
+            class="p-2 flex text-white justify-center bg-orange-500 rounded hover:opacity-80"
+            @click="refreshBashoPercentages"
+          >
+            Refresh percentages
+          </button>
+        </template>
       </div>
     </div>
   </div>

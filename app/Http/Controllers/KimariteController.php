@@ -18,7 +18,7 @@ class KimariteController extends Controller
 {
     public function show(Request $request): InertiaResponse
     {
-        $bashos = KimariteCount::select('basho_id')->distinct()->orderBy('basho_id')->get();
+        $bashos = KimariteCount::select('basho_id')->distinct()->orderBy('basho_id', 'desc')->get();
 
         return Inertia::render(
             'Kimarite',
@@ -38,6 +38,7 @@ class KimariteController extends Controller
             'divisions.*' => 'string',
             'from' => 'required|date_format:Y-m',
             'to' => 'nullable|date_format:Y-m|after_or_equal:from',
+            //'annual' => 'required|boolean',
         ]);
     
         // Check for validation failure
@@ -52,22 +53,30 @@ class KimariteController extends Controller
         $divisions = $request->input('divisions');
         $from = Str::replace('-', '', $request->input('from'));
         $to = Str::replace('-', '', $request->input('to'));
+        $annual = (bool)$request->input('annual', false);
 
         // Consolidate across the divisions (i.e. group by type and basho ID)
-        $query = KimariteCount::select(
-                'type',
-                'basho_id',
-                DB::raw('SUM(count) AS total'),
-        );
+        $cols = [
+            'kc.type',
+            'kc.basho_id',
+            DB::raw('SUM(kc.count) AS total'),
+            DB::raw('SUM(kc.count) / bt.basho_total * 100 AS percentage')
+        ];
 
-        if (empty($to)) {
-            $query->where('basho_id', '>=', $from);
-        } else {
-            $query->whereBetween('basho_id', [$from, $to]);
-        }
-
-        $flatTotals = $query->whereIn('type', $types)
+        $subQuery = DB::table('basho_totals')
+            ->select('basho_id', DB::raw('SUM(total) as basho_total'))
             ->whereIn('division', $divisions)
+            ->groupBy('basho_id');
+
+        $flatTotals = KimariteCount::from('kimarite_counts AS kc')
+            ->select($cols)
+            ->leftJoinSub($subQuery, 'bt', fn ($join) =>
+                $join->on('kc.basho_id', '=', 'bt.basho_id')
+            )
+            ->whereIn('kc.type', $types)
+            ->whereIn('kc.division', $divisions)
+            ->where('kc.basho_id', '>=', $from)
+            ->when(!empty($to), fn($q) => $q->where('kc.basho_id', '<=', $to))
             ->groupBy('type', 'basho_id')
             ->orderBy('basho_id')
             ->get();
@@ -75,7 +84,7 @@ class KimariteController extends Controller
         $allBashoIds = $flatTotals->pluck('basho_id')->unique()->values();
 
         // Structure the data by Kimarite type - send back an array with one entry per
-        // type, containing all the counts for that kimarite
+        // type, containing all the counts/percentages for that kimarite
         $counts = collect($types)->map(fn (string $type) => [
             'type' => $type,
             'groupedCounts' => [],

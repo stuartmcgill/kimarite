@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Models\BashoTotal;
 use App\Models\KimariteCount;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use StuartMcGill\SumoApiPhp\Model\RikishiMatch;
 
 class KimariteAggregator
@@ -32,5 +34,41 @@ class KimariteAggregator
                 'count' => $count,
             ]);
         });
+    }
+
+    public function refreshBashoPercentages(): void
+    {
+        $this->refreshBashoTotals();
+    
+        DB::table('kimarite_counts as kc')
+            ->join('basho_totals as bt', fn ($join) =>
+                $join->on('bt.basho_id', '=', 'kc.basho_id')
+                    ->on('bt.division', '=', 'kc.division')
+            )
+            ->update([
+                'kc.percentage' => DB::raw('kc.count / bt.total')
+            ]);
+    }
+
+    public function refreshAnnualPercentages(): void
+    {
+        $this->refreshBashoTotals();
+
+        $annualCounts = DB::table('kimarite_counts')
+            ->select(DB::raw('SUBSTRING(basho_id, 1, 4) as year'), DB::raw('SUM(count) as annual_total'))
+            ->groupBy(DB::raw('SUBSTRING(basho_id, 1, 4)'))
+            ->get();
+    }
+
+    private function refreshBashoTotals(): void
+    {
+        BashoTotal::truncate();
+
+        DB::table('basho_totals')->insertUsing(
+            ['basho_id', 'division', 'total'],
+            DB::table('kimarite_counts')
+                ->select('basho_id', 'division', DB::raw('SUM(count) as total'))
+                ->groupBy(['basho_id', 'division'])
+        );
     }
 }

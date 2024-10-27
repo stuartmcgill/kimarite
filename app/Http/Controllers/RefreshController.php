@@ -76,9 +76,21 @@ class RefreshController extends Controller
             $this->aggregator->aggregateAndStoreCounts($typeMatches);
         }
 
+        // Now we also want to refresh the basho totals, and the kimarite count percentages
+        $this->aggregator->refreshBashoPercentages();
+
         $run->completed_at = Carbon::now();
         $run->save();
 
+        return new JsonResponse([
+            'message' => 'Success',
+        ]);
+    }
+
+    public function refreshBashoPercentages(Request $request): JsonResponse
+    {
+        $this->aggregator->refreshBashoPercentages();
+        
         return new JsonResponse([
             'message' => 'Success',
         ]);

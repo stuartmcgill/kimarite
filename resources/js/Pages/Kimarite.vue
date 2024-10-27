@@ -10,6 +10,7 @@ import 'primeicons/primeicons.css'
 import Button from 'primevue/button'
 import IftaLabel from 'primevue/iftalabel'
 import Listbox from 'primevue/listbox'
+import Checkbox from 'primevue/checkbox'
 import { computed } from '@vue/reactivity'
 import Graph from '@/Components/Kimarite/Graph.vue'
 import { formatBashoId } from '@/Composables/utils'
@@ -32,6 +33,7 @@ const divisionOptions = computed(() => [
   'Sandanme',
   'Jonidan',
   'Jonokuchi',
+  'Mae-zumo',
 ])
 
 const store = useKimariteStore()
@@ -46,8 +48,10 @@ const resetCriteria = () => {
   selectedTypes.value = ['Yorikiri', 'Oshidashi']
   selectedDivisions.value = divisionOptions.value
   from.value = '1991-07' // All-division data becomes available
+  store.displayAsPercent = true
+
+  refreshGraph()
 }
-resetCriteria()
 
 const clearSelectedTypes = () => (selectedTypes.value = [])
 
@@ -66,11 +70,20 @@ const validationMessage = computed(() => {
     errorFields.push('From date')
   }
 
-  if (errorFields.length === 0) {
-    return ''
+  if (errorFields.length > 0) {
+    return `Please select: ${errorFields.join(', ')}`
   }
 
-  return `Please select: ${errorFields.join(', ')}`
+  // Now do some more sophisticated validation
+  if (!bashoOptions.includes(from.value!)) {
+    return 'Select a valid From date'
+  }
+
+  if (to.value && !bashoOptions.includes(to.value)) {
+    return 'Select a valid To date'
+  }
+
+  return ''
 })
 
 const validated = computed(() => validationMessage.value.length === 0)
@@ -80,6 +93,7 @@ const refreshGraph = async () => {
   errorMessage.value = ''
 
   if (!validated.value) {
+    return
   }
 
   try {
@@ -101,18 +115,18 @@ const refreshGraph = async () => {
   }
 }
 
-refreshGraph()
+resetCriteria()
 </script>
 
 <template>
-  <body class="bg-tan-200">
+  <body class="bg-coral-100">
     <Head title="Kimarite trends" />
 
     <div class="mx-auto flex flex-col w-full min-h-screen sm:max-w-7xl">
       <div class="p-4 w-full flex flex-col gap-4 justify-center text-center">
-        <h1 class="mb-4 font-semibold">Kimarite trends</h1>
+        <h1 class="mb-4 font-semibold text-primary-900">Kimarite trends</h1>
         <div
-          class="p-6 w-full grid lg:grid-cols-[auto,200px] gap-x-12 gap-y-4 bg-tan-50 rounded shadow"
+          class="p-6 w-full grid lg:grid-cols-[auto,200px] gap-x-12 gap-y-4 bg-white rounded shadow"
         >
           <div class="flex flex-col gap-4 w-full">
             <div class="flex flex-col lg:flex-row gap-3 w-full">
@@ -124,6 +138,7 @@ refreshGraph()
                 placeholder="Select kimarite"
                 display="chip"
                 class="flex w-full sm:max-w-[800px]"
+                @change="refreshGraph"
               />
               <Button
                 icon="pi pi-times"
@@ -134,7 +149,7 @@ refreshGraph()
                 @click="clearSelectedTypes"
               />
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
               <IftaLabel>
                 <Select
                   v-model="from"
@@ -142,6 +157,7 @@ refreshGraph()
                   :options="bashoOptions"
                   editable
                   class="w-40"
+                  @change="refreshGraph"
                 />
                 <label for="from-basho">From</label>
               </IftaLabel>
@@ -153,6 +169,7 @@ refreshGraph()
                   editable
                   showClear
                   class="w-40"
+                  @change="refreshGraph"
                 />
                 <label for="to-basho">To</label>
               </IftaLabel>
@@ -166,17 +183,22 @@ refreshGraph()
             </div>
             <div class="mt-auto flex items-center gap-4 justify-start">
               <Button
+                v-if="false"
                 :disabled="!validated"
                 raised
                 label="Refresh graph"
                 @click="refreshGraph"
               />
-              <div v-if="validated">
-                {{ selectedTypes.length }} kimarite,
-                {{ selectedDivisions.length }} divisions
-              </div>
-              <div v-else class="text-orange-800">
+              <div v-if="!validated" class="text-orange-800">
                 {{ validationMessage }}
+              </div>
+              <div class="ml-4 flex items-center gap-2">
+                <label for="displayAsPercent">Display as percentage</label>
+                <Checkbox
+                  v-model="store.displayAsPercent"
+                  name="displayAsPercent"
+                  binary
+                />
               </div>
               <LoadingIndicator v-if="store.loading" />
               <Button
@@ -196,11 +218,12 @@ refreshGraph()
             v-model="selectedDivisions"
             :options="divisionOptions"
             multiple
-            class=""
+            listStyle="max-height:none"
+            @change="refreshGraph"
           />
         </div>
         <div
-          class="p-6 w-full grid lg:grid-cols-[auto,200px] gap-x-12 gap-y-4 bg-tan-50 rounded shadow"
+          class="p-6 w-full grid lg:grid-cols-[auto,200px] gap-x-12 gap-y-4 bg-white rounded shadow"
         >
           <Graph />
         </div>
