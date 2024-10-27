@@ -49,8 +49,9 @@ const resetCriteria = () => {
   selectedDivisions.value = divisionOptions.value
   from.value = '1991-07' // All-division data becomes available
   store.displayAsPercent = true
+
+  refreshGraph()
 }
-resetCriteria()
 
 const clearSelectedTypes = () => (selectedTypes.value = [])
 
@@ -69,11 +70,20 @@ const validationMessage = computed(() => {
     errorFields.push('From date')
   }
 
-  if (errorFields.length === 0) {
-    return ''
+  if (errorFields.length > 0) {
+    return `Please select: ${errorFields.join(', ')}`
   }
 
-  return `Please select: ${errorFields.join(', ')}`
+  // Now do some more sophisticated validation
+  if (!bashoOptions.includes(from.value!)) {
+    return 'Select a valid From date'
+  }
+
+  if (to.value && !bashoOptions.includes(to.value)) {
+    return 'Select a valid To date'
+  }
+
+  return ''
 })
 
 const validated = computed(() => validationMessage.value.length === 0)
@@ -83,6 +93,7 @@ const refreshGraph = async () => {
   errorMessage.value = ''
 
   if (!validated.value) {
+    return
   }
 
   try {
@@ -104,7 +115,7 @@ const refreshGraph = async () => {
   }
 }
 
-refreshGraph()
+resetCriteria()
 </script>
 
 <template>
@@ -127,6 +138,7 @@ refreshGraph()
                 placeholder="Select kimarite"
                 display="chip"
                 class="flex w-full sm:max-w-[800px]"
+                @change="refreshGraph"
               />
               <Button
                 icon="pi pi-times"
@@ -145,6 +157,7 @@ refreshGraph()
                   :options="bashoOptions"
                   editable
                   class="w-40"
+                  @change="refreshGraph"
                 />
                 <label for="from-basho">From</label>
               </IftaLabel>
@@ -156,6 +169,7 @@ refreshGraph()
                   editable
                   showClear
                   class="w-40"
+                  @change="refreshGraph"
                 />
                 <label for="to-basho">To</label>
               </IftaLabel>
@@ -169,6 +183,7 @@ refreshGraph()
             </div>
             <div class="mt-auto flex items-center gap-4 justify-start">
               <Button
+                v-if="false"
                 :disabled="!validated"
                 raised
                 label="Refresh graph"
@@ -177,15 +192,15 @@ refreshGraph()
               <div v-if="!validated" class="text-orange-800">
                 {{ validationMessage }}
               </div>
-              <LoadingIndicator v-if="store.loading" />
-              <div v-else class="ml-4 flex items-center gap-2">
+              <div class="ml-4 flex items-center gap-2">
                 <label for="displayAsPercent">Display as percentage</label>
                 <Checkbox
                   v-model="store.displayAsPercent"
                   name="displayAsPercent"
-                  :binary="true"
+                  binary
                 />
               </div>
+              <LoadingIndicator v-if="store.loading" />
               <Button
                 class="ml-auto"
                 icon="pi pi-undo"
@@ -204,6 +219,7 @@ refreshGraph()
             :options="divisionOptions"
             multiple
             listStyle="max-height:none"
+            @change="refreshGraph"
           />
         </div>
         <div
