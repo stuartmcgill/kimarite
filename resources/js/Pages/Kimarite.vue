@@ -33,6 +33,7 @@ const divisionOptions = computed(() => [
   'Sandanme',
   'Jonidan',
   'Jonokuchi',
+  'Mae-zumo',
 ])
 
 const store = useKimariteStore()
@@ -165,14 +166,6 @@ refreshGraph()
                   'Before 1991-07 data is only available for the top 2 divisions'
                 "
               />
-              <div class="ml-4 flex items-center gap-2">
-                <label for="displayAsPercent">Display as percentage</label>
-                <Checkbox
-                  v-model="store.displayAsPercent"
-                  name="displayAsPercent"
-                  :binary="true"
-                />
-              </div>
             </div>
             <div class="mt-auto flex items-center gap-4 justify-start">
               <Button
@@ -181,14 +174,18 @@ refreshGraph()
                 label="Refresh graph"
                 @click="refreshGraph"
               />
-              <div v-if="validated">
-                {{ selectedTypes.length }} kimarite,
-                {{ selectedDivisions.length }} divisions
-              </div>
-              <div v-else class="text-orange-800">
+              <div v-if="!validated" class="text-orange-800">
                 {{ validationMessage }}
               </div>
               <LoadingIndicator v-if="store.loading" />
+              <div v-else class="ml-4 flex items-center gap-2">
+                <label for="displayAsPercent">Display as percentage</label>
+                <Checkbox
+                  v-model="store.displayAsPercent"
+                  name="displayAsPercent"
+                  :binary="true"
+                />
+              </div>
               <Button
                 class="ml-auto"
                 icon="pi pi-undo"
