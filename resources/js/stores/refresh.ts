@@ -8,8 +8,15 @@ export const useRefreshStore = defineStore('refresh', {
     async refresh() {
       this.loading = true
       try {
-        const resp = await axios.post(route('rebuild'))
-        console.log(resp)
+        await axios.post(route('rebuild'))
+      } finally {
+        this.loading = false
+      }
+    },
+    async refreshBashoPercentages() {
+      this.loading = true
+      try {
+        await axios.post(route('refresh-basho-percentages'))
       } finally {
         this.loading = false
       }

@@ -38,6 +38,7 @@ class KimariteController extends Controller
             'divisions.*' => 'string',
             'from' => 'required|date_format:Y-m',
             'to' => 'nullable|date_format:Y-m|after_or_equal:from',
+            'annual' => 'required|boolean',
         ]);
     
         // Check for validation failure
@@ -52,6 +53,7 @@ class KimariteController extends Controller
         $divisions = $request->input('divisions');
         $from = Str::replace('-', '', $request->input('from'));
         $to = Str::replace('-', '', $request->input('to'));
+        $annual = (bool)$request->input('annual');
 
         // Consolidate across the divisions (i.e. group by type and basho ID)
         $query = KimariteCount::select(

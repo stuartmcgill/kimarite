@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/refresh', [RefreshController::class, 'refresh'])->name('refresh');
     Route::post('/rebuild', [RefreshController::class, 'rebuild'])->name('rebuild');
+    Route::post('/refresh-basho-percentages', [RefreshController::class, 'refreshBashoPercentages'])->name('refresh-basho-percentages');
 });
 
 require __DIR__.'/auth.php';
