@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Models\BashoTotal;
 use App\Models\KimariteCount;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use StuartMcGill\SumoApiPhp\Model\RikishiMatch;
@@ -64,10 +65,12 @@ class KimariteAggregator
     {
         BashoTotal::truncate();
 
+        $now = Carbon::now();
+
         DB::table('basho_totals')->insertUsing(
             ['basho_id', 'division', 'total'],
             DB::table('kimarite_counts')
-                ->select('basho_id', 'division', DB::raw('SUM(count) as total'))
+                ->select('basho_id', 'division', DB::raw('SUM(count) as total'), DB::raw("'$now' as created_at"), DB::raw("'$now' as updated_at"))
                 ->groupBy(['basho_id', 'division'])
         );
     }

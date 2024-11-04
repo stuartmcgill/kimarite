@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\KimariteCount;
 use App\Models\KimariteType;
 use App\Models\Run;
 use App\Services\KimariteAggregator;
@@ -37,6 +38,8 @@ class RefreshController extends Controller
 
         logger()->info('Rebuilding Kimarite data');
         $run = Run::create();
+
+        KimariteCount::truncate();
 
         $types = KimariteType::all();
         foreach ($types as $type) {
