@@ -80,7 +80,7 @@ class RefreshController extends Controller
         }
 
         // Now we also want to refresh the basho totals, and the kimarite count percentages
-        $this->aggregator->refreshBashoPercentages();
+        $this->aggregator->refreshBashoTotals();
 
         $run->completed_at = Carbon::now();
         $run->save();

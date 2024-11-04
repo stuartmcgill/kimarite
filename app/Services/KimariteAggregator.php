@@ -37,38 +37,36 @@ class KimariteAggregator
         });
     }
 
-    public function refreshBashoPercentages(): void
-    {
-        $this->refreshBashoTotals();
-    
-        DB::table('kimarite_counts as kc')
-            ->join('basho_totals as bt', fn ($join) =>
-                $join->on('bt.basho_id', '=', 'kc.basho_id')
-                    ->on('bt.division', '=', 'kc.division')
-            )
-            ->update([
-                'kc.percentage' => DB::raw('kc.count / bt.total')
-            ]);
-    }
+    // public function refreshBashoPercentages(): void
+    // {
+    //     DB::table('kimarite_counts as kc')
+    //         ->join('basho_totals as bt', fn ($join) =>
+    //             $join->on('bt.basho_id', '=', 'kc.basho_id')
+    //                 ->on('bt.division', '=', 'kc.division')
+    //         )
+    //         ->update([
+    //             'kc.percentage' => DB::raw('kc.count / bt.total')
+    //         ]);
+    // }
 
-    public function refreshAnnualPercentages(): void
-    {
-        $this->refreshBashoTotals();
+    // public function refreshAnnualPercentages(): void
+    // {
+    //     $this->refreshBashoTotals();
 
-        $annualCounts = DB::table('kimarite_counts')
-            ->select(DB::raw('SUBSTRING(basho_id, 1, 4) as year'), DB::raw('SUM(count) as annual_total'))
-            ->groupBy(DB::raw('SUBSTRING(basho_id, 1, 4)'))
-            ->get();
-    }
+    //     $annualCounts = DB::table('kimarite_counts')
+    //         ->select(DB::raw('SUBSTRING(basho_id, 1, 4) as year'), DB::raw('SUM(count) as annual_total'))
+    //         ->groupBy(DB::raw('SUBSTRING(basho_id, 1, 4)'))
+    //         ->get();
+    // }
 
-    private function refreshBashoTotals(): void
+    public function refreshBashoTotals(): void
     {
         BashoTotal::truncate();
 
         $now = Carbon::now();
 
         DB::table('basho_totals')->insertUsing(
-            ['basho_id', 'division', 'total'],
+            ['basho_id', 'division', 'total', 'created_at', 'updated_at'],
             DB::table('kimarite_counts')
                 ->select('basho_id', 'division', DB::raw('SUM(count) as total'), DB::raw("'$now' as created_at"), DB::raw("'$now' as updated_at"))
                 ->groupBy(['basho_id', 'division'])
