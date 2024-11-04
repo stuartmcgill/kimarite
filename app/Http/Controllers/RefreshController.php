@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\KimariteCount;
 use App\Models\KimariteType;
 use App\Models\Run;
 use App\Services\KimariteAggregator;
@@ -37,6 +38,8 @@ class RefreshController extends Controller
 
         logger()->info('Rebuilding Kimarite data');
         $run = Run::create();
+
+        KimariteCount::truncate();
 
         $types = KimariteType::all();
         foreach ($types as $type) {
@@ -77,7 +80,7 @@ class RefreshController extends Controller
         }
 
         // Now we also want to refresh the basho totals, and the kimarite count percentages
-        $this->aggregator->refreshBashoPercentages();
+        $this->aggregator->refreshBashoTotals();
 
         $run->completed_at = Carbon::now();
         $run->save();
