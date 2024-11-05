@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\BashoTotal;
 use App\Models\KimariteCount;
 use App\Models\KimariteType;
 use Illuminate\Http\JsonResponse;
@@ -80,8 +81,6 @@ class KimariteController extends Controller
             ->orderBy('basho_id')
             ->get();
 
-        $allBashoIds = $flatTotals->pluck('basho_id')->unique()->values();
-
         // Structure the data by Kimarite type - send back an array with one entry per
         // type, containing all the counts/percentages for that kimarite
         $counts = collect($types)->map(fn (string $type) => [
@@ -101,9 +100,19 @@ class KimariteController extends Controller
             });
         }
 
+        // Also provide a list of all basho IDs between the 'from' and 'to', even if
+        // there's no data for them given the requested types and divisions
+        $bashoIds = BashoTotal::select('basho_id')
+            ->where('basho_id', '>=', $from)
+            ->when(!empty($to), fn($q) => $q->where('basho_id', '<=', $to))
+            ->distinct()
+            ->orderBy('basho_id')
+            ->get()
+            ->pluck('basho_id');
+
         return new JsonResponse([
             'counts' => $counts,
-            'bashoIds' => $allBashoIds,
+            'bashoIds' => $bashoIds,
         ]);
     }
 }
