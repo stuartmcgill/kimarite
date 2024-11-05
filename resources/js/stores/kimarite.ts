@@ -27,11 +27,26 @@ export const useKimariteStore = defineStore('kimarite', {
         return []
       }
 
+      // There is one dataset per kimarite type
       const datasets = state.counts.map(
         (groupedTotal: GroupedKimariteTotal) => {
-          const data = groupedTotal.groupedCounts.map((count: KimariteCount) =>
-            state.displayAsPercent ? count.percentage : count.total,
-          )
+          // For each type we want one data point for each basho (whether there's data or not)
+          const data = state.bashoIds.map((bashoId: string) => {
+            // The counts are grouped by type and basho ID
+            const groupCount = groupedTotal.groupedCounts.find(
+              (count: KimariteCount) =>
+                count.type === groupedTotal.type.toLowerCase() &&
+                formatBashoId(count.basho_id) === bashoId,
+            )
+
+            if (!groupCount) {
+              return 0
+            }
+
+            return state.displayAsPercent
+              ? groupCount.percentage
+              : groupCount.total
+          })
 
           return {
             label: groupedTotal.type,
