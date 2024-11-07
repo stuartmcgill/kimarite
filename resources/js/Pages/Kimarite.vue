@@ -11,6 +11,7 @@ import Button from 'primevue/button'
 import IftaLabel from 'primevue/iftalabel'
 import Listbox from 'primevue/listbox'
 import Checkbox from 'primevue/checkbox'
+import Menubar from 'primevue/menubar'
 import { computed } from '@vue/reactivity'
 import Graph from '@/Components/Kimarite/Graph.vue'
 import { formatBashoId } from '@/Composables/utils'
@@ -19,6 +20,26 @@ const props = defineProps<{
   types: string[]
   availableBashos: string[]
 }>()
+
+const goToHead2Head = () => {
+  window.location.href = '/head2head'
+}
+
+const menuItems: object[] = [
+  {
+    label: 'Kimarite trends',
+    icon: 'pi pi-fw pi-chart-bar',
+    url: '#',
+    class: 'bg-gray-50 border rounded',
+    // command: () => {},
+  },
+  {
+    label: 'Head-to-head',
+    icon: 'pi pi-fw pi-users',
+    url: '/head2head',
+    // command: goToHead2Head,
+  },
+]
 
 const typeOptions = props.types.map(type => capitalize(type))
 
@@ -123,8 +144,23 @@ resetCriteria()
     <Head title="Kimarite trends" />
 
     <div class="mx-auto flex flex-col w-full min-h-screen sm:max-w-7xl">
-      <div class="p-4 w-full flex flex-col gap-4 justify-center text-center">
-        <h1 class="mb-4 font-semibold text-primary-900">Kimarite trends</h1>
+      <div
+        class="px-4 md:p-4 w-full flex flex-col gap-4 justify-center text-center"
+      >
+        <div
+          class="w-full flex flex-col md:flex-row items-center justify-between gap-4"
+        >
+          <h1
+            class="mx-auto order-2 md:order-1 mb-4 font-semibold text-primary-900"
+          >
+            Kimarite trends
+          </h1>
+          <Menubar
+            class="my-4 order-1 md:order-2 w-full md:w-96"
+            :model="menuItems"
+          />
+        </div>
+
         <div
           class="p-6 w-full grid lg:grid-cols-[auto,200px] gap-x-12 gap-y-4 bg-white rounded shadow"
         >
@@ -228,8 +264,8 @@ resetCriteria()
           <Graph />
         </div>
       </div>
-      <div class="mt-auto p-4 flex flex-col gap-2 text-sm">
-        <div class="flex">
+      <div class="mt-auto p-4 flex items-center justify-between gap-2">
+        <div class="flex text-lg">
           Data from
           <a
             class="ml-1 flex items-center hover:opacity-70"
@@ -249,15 +285,15 @@ resetCriteria()
             target="_blank"
             >Vitaly Gorbachev - Flaticon</a
           >
-          <a
-            class="ml-auto hover:opacity-70"
-            href="https://github.com/stuartmcgill/kimarite"
-            title="Github repository"
-            target="_blank"
-          >
-            <i class="pi pi-github" style="font-size: 1.5rem" />
-          </a>
         </div>
+        <a
+          class="hover:opacity-70"
+          href="https://github.com/stuartmcgill/kimarite"
+          title="Github repository"
+          target="_blank"
+        >
+          <i class="pi pi-github" style="font-size: 1.5rem" />
+        </a>
       </div>
     </div>
   </body>
