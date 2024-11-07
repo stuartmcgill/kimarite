@@ -177,10 +177,12 @@ resetCriteria()
               />
             </div>
             <!-- From, to, and divisions -->
-            <div class="flex flex-col lg:flex-row flex-wrap items-center gap-2">
-              <!-- From and to controls -->
+            <div
+              class="flex flex-col sm:flex-row flex-wrap sm:items-center gap-2"
+            >
+              <!-- From and to -->
               <div
-                class="flex flex-col sm:flex-row flex-wrap items-center gap-2"
+                class="flex flex-col sm:flex-row flex-wrap sm:items-center gap-2"
               >
                 <IftaLabel>
                   <Select
@@ -213,38 +215,43 @@ resetCriteria()
                   "
                 />
               </div>
-              <IftaLabel class="sm:ml-4 lg:ml-auto">
+              <!-- Divisions -->
+              <IftaLabel class="sm:ml-4 md:ml-auto">
                 <MultiSelect
                   inputId="divisions"
                   v-model="selectedDivisions"
                   :options="divisionOptions"
-                  class="min-w-40"
+                  class="min-w-40 max-w-40 md:max-w-72 lg:max-w-none"
                   @change="refreshGraph"
                 />
                 <label for="divisions">Divisions</label>
               </IftaLabel>
             </div>
-            <div class="mt-auto flex items-center gap-4 justify-start">
-              <div v-if="!validated" class="text-orange-800">
+
+            <!-- Percentage and reset -->
+            <div class="mt-auto flex flex-col sm:flex-row items-center gap-x-4">
+              <div v-if="!validated" class="text-orange-800 flex w-full">
                 {{ validationMessage }}
               </div>
-              <div class="ml-4 flex items-center gap-2">
-                <label for="displayAsPercent">Display as percentage</label>
-                <Checkbox
-                  v-model="store.displayAsPercent"
-                  name="displayAsPercent"
-                  binary
+              <div class="flex items-center gap-2 w-full">
+                <div class="flex items-center gap-2 w-full">
+                  <label for="displayAsPercent">Display as percentage</label>
+                  <Checkbox
+                    v-model="store.displayAsPercent"
+                    name="displayAsPercent"
+                    binary
+                  />
+                </div>
+                <LoadingIndicator v-if="store.loading" />
+                <Button
+                  class="ml-auto"
+                  icon="pi pi-undo"
+                  outlined
+                  severity="contrast"
+                  label="Reset"
+                  @click="resetCriteria"
                 />
               </div>
-              <LoadingIndicator v-if="store.loading" />
-              <Button
-                class="ml-auto"
-                icon="pi pi-undo"
-                outlined
-                severity="contrast"
-                label="Reset"
-                @click="resetCriteria"
-              />
             </div>
             <div v-if="errorMessage" class="flex justify-start text-orange-800">
               {{ errorMessage }}
