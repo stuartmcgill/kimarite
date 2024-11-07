@@ -9,7 +9,6 @@ import type { Ref } from 'vue'
 import 'primeicons/primeicons.css'
 import Button from 'primevue/button'
 import IftaLabel from 'primevue/iftalabel'
-import Listbox from 'primevue/listbox'
 import Checkbox from 'primevue/checkbox'
 import Menubar from 'primevue/menubar'
 import { computed } from '@vue/reactivity'
@@ -21,23 +20,17 @@ const props = defineProps<{
   availableBashos: string[]
 }>()
 
-const goToHead2Head = () => {
-  window.location.href = '/head2head'
-}
-
 const menuItems: object[] = [
   {
     label: 'Kimarite trends',
     icon: 'pi pi-fw pi-chart-bar',
     url: '#',
     class: 'bg-gray-50 border rounded',
-    // command: () => {},
   },
   {
     label: 'Head-to-head',
     icon: 'pi pi-fw pi-users',
     url: '/head2head',
-    // command: goToHead2Head,
   },
 ]
 
@@ -54,7 +47,6 @@ const divisionOptions = computed(() => [
   'Sandanme',
   'Jonidan',
   'Jonokuchi',
-  'Mae-zumo',
 ])
 
 const store = useKimariteStore()
@@ -161,9 +153,7 @@ resetCriteria()
           />
         </div>
 
-        <div
-          class="p-6 w-full grid lg:grid-cols-[auto,200px] gap-x-12 gap-y-4 bg-white rounded shadow"
-        >
+        <div class="p-6 w-full bg-white rounded shadow">
           <div class="flex flex-col gap-4 w-full">
             <div class="flex flex-col lg:flex-row gap-3 w-full">
               <MultiSelect
@@ -173,7 +163,7 @@ resetCriteria()
                 editable
                 placeholder="Select kimarite"
                 display="chip"
-                class="flex w-full sm:max-w-[800px]"
+                class="flex w-full"
                 @change="refreshGraph"
               />
               <Button
@@ -181,50 +171,60 @@ resetCriteria()
                 outlined
                 severity="contrast"
                 label="Clear"
+                class="max-w-40 ml-auto"
                 :disabled="selectedTypes.length === 0"
                 @click="clearSelectedTypes"
               />
             </div>
-            <div class="flex flex-wrap items-center gap-2">
-              <IftaLabel>
-                <Select
-                  v-model="from"
-                  inputId="from-basho"
-                  :options="bashoOptions"
-                  editable
-                  class="w-40"
+            <!-- From, to, and divisions -->
+            <div class="flex flex-col lg:flex-row flex-wrap items-center gap-2">
+              <!-- From and to controls -->
+              <div
+                class="flex flex-col sm:flex-row flex-wrap items-center gap-2"
+              >
+                <IftaLabel>
+                  <Select
+                    v-model="from"
+                    inputId="from-basho"
+                    :options="bashoOptions"
+                    editable
+                    class="w-40"
+                    @change="refreshGraph"
+                  />
+                  <label for="from-basho">From</label>
+                </IftaLabel>
+                <IftaLabel>
+                  <Select
+                    v-model="to"
+                    inputId="to-basho"
+                    :options="bashoOptions"
+                    editable
+                    showClear
+                    class="w-40"
+                    @change="refreshGraph"
+                  />
+                  <label for="to-basho">To</label>
+                </IftaLabel>
+                <i
+                  class="pi pi-info-circle"
+                  style="font-size: 1rem"
+                  v-tooltip="
+                    'Before 1991-07 data is only available for the top 2 divisions'
+                  "
+                />
+              </div>
+              <IftaLabel class="sm:ml-4 lg:ml-auto">
+                <MultiSelect
+                  inputId="divisions"
+                  v-model="selectedDivisions"
+                  :options="divisionOptions"
+                  class="min-w-40"
                   @change="refreshGraph"
                 />
-                <label for="from-basho">From</label>
+                <label for="divisions">Divisions</label>
               </IftaLabel>
-              <IftaLabel>
-                <Select
-                  v-model="to"
-                  inputId="to-basho"
-                  :options="bashoOptions"
-                  editable
-                  showClear
-                  class="w-40"
-                  @change="refreshGraph"
-                />
-                <label for="to-basho">To</label>
-              </IftaLabel>
-              <i
-                class="pi pi-info-circle"
-                style="font-size: 1rem"
-                v-tooltip="
-                  'Before 1991-07 data is only available for the top 2 divisions'
-                "
-              />
             </div>
             <div class="mt-auto flex items-center gap-4 justify-start">
-              <Button
-                v-if="false"
-                :disabled="!validated"
-                raised
-                label="Refresh graph"
-                @click="refreshGraph"
-              />
               <div v-if="!validated" class="text-orange-800">
                 {{ validationMessage }}
               </div>
@@ -250,13 +250,6 @@ resetCriteria()
               {{ errorMessage }}
             </div>
           </div>
-          <Listbox
-            v-model="selectedDivisions"
-            :options="divisionOptions"
-            multiple
-            listStyle="max-height:none"
-            @change="refreshGraph"
-          />
         </div>
         <div
           class="p-6 w-full grid lg:grid-cols-[auto,200px] gap-x-12 gap-y-4 bg-white rounded shadow"
