@@ -264,7 +264,9 @@ resetCriteria()
           <Graph />
         </div>
       </div>
-      <div class="mt-auto p-4 flex items-center justify-between gap-2">
+      <footer
+        class="mt-auto p-4 flex flex-col sm:flex-row items-center justify-between gap-2"
+      >
         <div class="flex text-lg">
           Data from
           <a
@@ -294,7 +296,7 @@ resetCriteria()
         >
           <i class="pi pi-github" style="font-size: 1.5rem" />
         </a>
-      </div>
+      </footer>
     </div>
   </body>
 </template>

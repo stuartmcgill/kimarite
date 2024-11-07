@@ -37,11 +37,21 @@ wrestlers.value = new Head2HeadCollection(props.wrestlers)
   <Head title="Sumo Makuuchi head-to-heads" />
   <div class="container" id="wrestlers" data-wrestlers="{{ wrestlers }}">
     <div class="h-100 p-5 m-3 text-bg-dark rounded-3">
-      <h2>Makuuchi head-to-heads</h2>
+      <div class="row">
+        <div class="col">
+          <h2>Makuuchi head-to-heads</h2>
+        </div>
+        <a class="col text-end header-link hover-effect" href=".."
+          >Kimarite trends</a
+        >
+      </div>
       <p class="lead">
         Select a rikishi to see his records against the others currently in
         Makuuchi
-        <a class="header-link" href="https://sumo-api.com" target="_blank"
+        <a
+          class="header-link hover-effect"
+          href="https://sumo-api.com"
+          target="_blank"
           >Data from Sumo API</a
         >
       </p>
@@ -75,3 +85,8 @@ wrestlers.value = new Head2HeadCollection(props.wrestlers)
     </div>
   </div>
 </template>
+<style scoped>
+.hover-effect:hover {
+  color: #b0a8a6; /* Change to your desired color on hover */
+}
+</style>
