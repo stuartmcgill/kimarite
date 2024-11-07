@@ -6,7 +6,7 @@ for the UI.
 
 The data comes from https://www.sumo-api.com/.
 
-![Kimarite graph screenshot](https://github.com/stuartmcgill/kimarite/public/screenshot.jpg)
+![Kimarite graph screenshot](https://github.com/stuartmcgill/kimarite/blob/main/public/screenshot.jpg)
 
 # Local development
 
