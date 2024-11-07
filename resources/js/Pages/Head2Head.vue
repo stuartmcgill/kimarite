@@ -87,6 +87,6 @@ wrestlers.value = new Head2HeadCollection(props.wrestlers)
 </template>
 <style scoped>
 .hover-effect:hover {
-  color: #b0a8a6; /* Change to your desired color on hover */
+  color: #b0a8a6;
 }
 </style>
