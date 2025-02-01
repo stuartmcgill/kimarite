@@ -1,30 +1,71 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@plugin '@tailwindcss/forms';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@theme {
+    --font-sans: Figtree, ui-sans-serif, system-ui, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-coral-50: #fff4ed;
+    --color-coral-100: #ffe5d4;
+    --color-coral-200: #ffc7a8;
+    --color-coral-300: #ffa071;
+    --color-coral-400: #ff7f50;
+    --color-coral-500: #fe4711;
+    --color-coral-600: #ef2d07;
+    --color-coral-700: #c61c08;
+    --color-coral-800: #9d190f;
+    --color-coral-900: #7e1810;
+    --color-coral-950: #440806;
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }
+}
 
 body {
-  @apply text-teal-800;
+    @apply text-teal-800;
 }
 
 /* Head2Head */
 .header-link {
-  float: right;
-  text-decoration: none;
-  color: lightgrey;
+    float: right;
+    text-decoration: none;
+    color: lightgrey;
 }
 
 .winning-percentage {
-  float: right;
-  font-size: medium;
-  color: dimgrey;
+    float: right;
+    font-size: medium;
+    color: dimgrey;
 }
 
 .shikona-jp {
-  padding-bottom: 10px;
+    padding-bottom: 10px;
 }
 
 .selected-wrestler-image {
-  max-height: 300px;
-  height: auto;
-  width: auto;
+    max-height: 300px;
+    height: auto;
+    width: auto;
+}
+
+h1.kimarite-header {
+    @apply text-4xl font-semibold
 }
