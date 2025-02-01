@@ -12,7 +12,10 @@ The data comes from https://www.sumo-api.com/.
 
 In one terminal:
 
-`sail up -d` `php artisan serve`
+```
+sail up -d
+php artisan serve
+```
 
 In another: `npm run dev`
 
