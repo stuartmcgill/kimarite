@@ -25,7 +25,7 @@ const menuItems: object[] = [
     label: 'Kimarite trends',
     icon: 'pi pi-fw pi-chart-bar',
     url: '#',
-    class: 'bg-gray-50 border rounded',
+    class: 'bg-gray-50 border rounded-sm',
   },
   {
     label: 'Head-to-head',
@@ -143,7 +143,7 @@ resetCriteria()
           class="w-full flex flex-col md:flex-row items-center justify-between gap-4"
         >
           <h1
-            class="mx-auto order-2 md:order-1 mb-4 font-semibold text-primary-900"
+            class="kimarite-header mx-auto order-2 md:order-1 mb-4 font-semibold text-primary-900"
           >
             Kimarite trends
           </h1>
@@ -153,7 +153,7 @@ resetCriteria()
           />
         </div>
 
-        <div class="p-6 w-full bg-white rounded shadow">
+        <div class="p-6 w-full bg-white rounded-sm shadow-sm">
           <div class="flex flex-col gap-4 w-full">
             <div class="flex flex-col lg:flex-row gap-3 w-full">
               <MultiSelect
@@ -259,7 +259,7 @@ resetCriteria()
           </div>
         </div>
         <div
-          class="p-6 w-full grid lg:grid-cols-[auto,200px] gap-x-12 gap-y-4 bg-white rounded shadow"
+          class="p-6 w-full grid lg:grid-cols-[auto_200px] gap-x-12 gap-y-4 bg-white rounded-sm shadow-sm"
         >
           <Graph />
         </div>
@@ -300,6 +300,3 @@ resetCriteria()
     </div>
   </body>
 </template>
-<style>
-@import '@/../css/kimarite.css';
-</style>

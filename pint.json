@@ -6,6 +6,9 @@
         "simplified_null_return": true,
         "concat_space": true,
         "blank_line_after_opening_tag": true,
-        "blank_line_after_namespace": true
+        "blank_line_after_namespace": true,
+        "php_unit_method_casing": {
+            "case": "camel_case"
+        }
     }
 }

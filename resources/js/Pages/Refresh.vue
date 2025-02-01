@@ -32,13 +32,13 @@ const refreshBashoPercentages = () => {
         <LoadingIndicator v-if="store.loading" />
         <template v-else>
           <button
-            class="p-2 flex text-white justify-center bg-red-500 rounded hover:opacity-80"
+            class="p-2 flex text-white justify-center bg-red-500 rounded-sm hover:opacity-80"
             @click="rebuild"
           >
             Rebuild
           </button>
           <button
-            class="p-2 flex text-white justify-center bg-orange-500 rounded hover:opacity-80"
+            class="p-2 flex text-white justify-center bg-orange-500 rounded-sm hover:opacity-80"
             @click="refreshBashoPercentages"
           >
             Refresh percentages

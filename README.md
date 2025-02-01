@@ -12,8 +12,25 @@ The data comes from https://www.sumo-api.com/.
 
 In one terminal:
 
-`sail up -d` `php artisan serve`
+```
+sail up -d
+php artisan serve
+```
 
 In another: `npm run dev`
 
 Browse to http://127.0.0.1:8000/
+
+# Production install
+
+```
+ssh ... @stuartmcgill.org
+cd domains/sumo.stuartmcgill.org/kimarite
+git fetch
+# Replace tag with release number
+git checkout 1.0.0
+composer install --no-dev
+npm ci
+npm run build
+npm install --omit=dev
+```
