@@ -29,7 +29,7 @@ cd domains/sumo.stuartmcgill.org/kimarite
 git fetch
 # Replace tag with release number
 git checkout 1.0.0
-composer install --no-dev
+composer install --no-dev --optimize-autoloader
 npm ci
 npm run build
 npm install --omit=dev
