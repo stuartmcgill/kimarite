@@ -8,6 +8,7 @@ use App\Services\RikishiServiceFacade;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use StuartMcGill\SumoApiPhp\Model\Matchup;
 use StuartMcGill\SumoApiPhp\Model\MatchupSummary;
@@ -18,7 +19,7 @@ class RikishiServiceFacadeTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /** @test */
+    #[Test]
     public function getMakuuchiWrestlers(): void
     {
         $service = $this->mockServiceForGetMakuuchiWrestlers([
@@ -31,7 +32,7 @@ class RikishiServiceFacadeTest extends TestCase
         $this->assertCount(2, $wrestlers);
     }
 
-    /** @test */
+    #[Test]
     public function getHead2headsForWrestler(): void
     {
         $matchups = [
