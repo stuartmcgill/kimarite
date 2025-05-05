@@ -15,9 +15,19 @@ import { computed } from '@vue/reactivity'
 import Graph from '@/Components/Kimarite/Graph.vue'
 import { formatBashoId } from '@/Composables/utils'
 
+interface Criteria {
+  selectedTypes: string[]
+  selectedDivisions: string[]
+  from: string | null
+  to: string | null
+  displayAsPercent: boolean
+}
+
 const props = defineProps<{
   types: string[]
   availableBashos: string[]
+  defaultCriteria: Criteria
+  initialCriteria: Criteria
 }>()
 
 const menuItems: object[] = [
@@ -56,12 +66,46 @@ const from: Ref<string | null> = ref(null)
 const to: Ref<string | null> = ref(null)
 const selectedDivisions: Ref<string[]> = ref([])
 
-// Initial values
+const initialise = () => {
+  selectedTypes.value = props.initialCriteria.selectedTypes
+  selectedDivisions.value =
+    props.initialCriteria.selectedDivisions || divisionOptions.value
+  from.value = props.initialCriteria.from
+  to.value = props.initialCriteria.to
+  store.displayAsPercent = props.initialCriteria.displayAsPercent
+
+  refreshGraph()
+}
+
+const showSharedMessage = ref(false)
+
+const share = () => {
+  const params = new URLSearchParams()
+
+  params.append('display_as_percent', store.displayAsPercent ? '1' : '0')
+  if (from.value) params.append('from', from.value)
+  if (to.value) params.append('to', to.value)
+
+  selectedDivisions.value.forEach((division, i) =>
+    params.append(`selected_divisions[${i}]`, division),
+  )
+
+  selectedTypes.value.forEach((type, i) =>
+    params.append(`selected_types[${i}]`, type),
+  )
+
+  const url = `${window.location.origin}/?${params.toString()}`
+  navigator.clipboard.writeText(url)
+
+  showSharedMessage.value = true
+}
+
 const resetCriteria = () => {
-  selectedTypes.value = ['Yorikiri', 'Oshidashi']
+  selectedTypes.value = props.defaultCriteria.selectedTypes
   selectedDivisions.value = divisionOptions.value
-  from.value = '1991-07' // All-division data becomes available
-  store.displayAsPercent = true
+  from.value = props.defaultCriteria.from
+  to.value = props.defaultCriteria.to
+  store.displayAsPercent = props.defaultCriteria.displayAsPercent
 
   refreshGraph()
 }
@@ -128,7 +172,7 @@ const refreshGraph = async () => {
   }
 }
 
-resetCriteria()
+initialise()
 </script>
 
 <template>
@@ -243,14 +287,32 @@ resetCriteria()
                   />
                 </div>
                 <LoadingIndicator v-if="store.loading" />
-                <Button
-                  class="ml-auto"
-                  icon="pi pi-undo"
-                  outlined
-                  severity="contrast"
-                  label="Reset"
-                  @click="resetCriteria"
-                />
+                <div class="flex">
+                  <div class="relative inline-block">
+                    <Button
+                      class="ml-auto"
+                      icon="pi pi-share-alt"
+                      outlined
+                      severity="contrast"
+                      label="Share"
+                      @click="share"
+                      @mouseleave="showSharedMessage = false"
+                    />
+
+                    <!-- Tooltip element -->
+                    <div v-if="showSharedMessage" class="kimarite-tooltip">
+                      Link copied
+                    </div>
+                  </div>
+                  <Button
+                    class="ml-2"
+                    icon="pi pi-undo"
+                    outlined
+                    severity="contrast"
+                    label="Reset"
+                    @click="resetCriteria"
+                  />
+                </div>
               </div>
             </div>
             <div v-if="errorMessage" class="flex justify-start text-orange-800">

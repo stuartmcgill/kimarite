@@ -69,3 +69,7 @@ body {
 h1.kimarite-header {
     @apply text-4xl font-semibold
 }
+
+.kimarite-tooltip {
+    @apply z-100 absolute left-1/2 -translate-x-1/2 -top-8 bg-teal-900 text-white text-xs whitespace-nowrap rounded px-2 py-1 shadow
+}
