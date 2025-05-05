@@ -31,7 +31,7 @@ jobs:
       - name: Start Mariadb
         run: |
           sudo systemctl start mysql.service
-          mysql -u root -p root -e 'CREATE DATABASE IF NOT EXISTS sumotest;'
+          mysql -u root -proot -e 'CREATE DATABASE IF NOT EXISTS sumotest;'
 
 
       - name: Validate composer.json and composer.lock
