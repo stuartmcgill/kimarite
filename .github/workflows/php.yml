@@ -25,11 +25,8 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
-          tools: cs2pr, phpcs
-
-      - name: Run phpcs
-        run: phpcs --standard=PSR12 ./ --ignore=vendor
+          php-version: '8.4'
+          tools: cs2pr
 
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
@@ -49,8 +46,12 @@ jobs:
       - name: Syntax
         run: vendor/bin/parallel-lint --exclude vendor .
 
+      - name: Laravel Pint
+        run: vendor/bin/pint
+
       - name: Tests
         run: XDEBUG_MODE=coverage composer run-script tests
+
       - name: Make code coverage badge
         uses: timkrase/phpunit-coverage-badge@v1.2.1
         with:
@@ -65,4 +66,4 @@ jobs:
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
       - name: Static analysis
-        run: composer run-script phpstan
+        run: vendor/bin/phpstan analyse
