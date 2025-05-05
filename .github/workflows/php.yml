@@ -50,7 +50,9 @@ jobs:
         run: composer install --prefer-dist --no-progress
 
       - name: Install NPM dependencies
-        run: npm ci
+        run: |
+          npm ci
+          npm run build
 
       - name: Syntax
         run: vendor/bin/parallel-lint --exclude vendor .
