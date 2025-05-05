@@ -6,6 +6,4 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class KimariteType extends Model
-{
-}
+class KimariteType extends Model {}

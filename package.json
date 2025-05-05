@@ -25,7 +25,7 @@
         "@types/bootstrap": "^5.2.10",
         "bootstrap": "^5.3.3",
         "chart.js": "^4.4.4",
-        "pinia": "^2.2.2",
+        "pinia": "^3.0",
         "primeicons": "^7.0.0",
         "primevue": "^4.1.0",
         "vue-chartjs": "^5.3.1"

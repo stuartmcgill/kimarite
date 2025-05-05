@@ -93,7 +93,7 @@ class RefreshController extends Controller
     public function refreshBashoPercentages(Request $request): JsonResponse
     {
         $this->aggregator->refreshBashoPercentages();
-        
+
         return new JsonResponse([
             'message' => 'Success',
         ]);

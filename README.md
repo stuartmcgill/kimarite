@@ -21,6 +21,10 @@ In another: `npm run dev`
 
 Browse to http://127.0.0.1:8000/
 
+# Automated tests
+
+Create a test DB called `sumotest` and run `php artisan migrate` on it.
+
 # Production install
 
 ```
