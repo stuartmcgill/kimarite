@@ -50,7 +50,7 @@ jobs:
         run: vendor/bin/pint
 
       - name: Tests
-        run: XDEBUG_MODE=coverage composer run-script tests
+        run: XDEBUG_MODE=coverage vendor/bin/phpunit
 
       - name: Make code coverage badge
         uses: timkrase/phpunit-coverage-badge@v1.2.1
