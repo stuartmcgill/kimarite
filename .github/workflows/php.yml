@@ -57,7 +57,7 @@ jobs:
 
       - name: Tests
         run: |
-          php artisan migrate
+          php artisan migrate --env=testing
           php artisan test
 
       - name: Make code coverage badge
