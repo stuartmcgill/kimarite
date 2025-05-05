@@ -63,7 +63,7 @@ jobs:
       - name: Tests
         run: |
           php artisan migrate --env=testing
-          php artisan test
+          XDEBUG_MODE=coverage php artisan test
 
       - name: Make code coverage badge
         uses: timkrase/phpunit-coverage-badge@v1.2.1
