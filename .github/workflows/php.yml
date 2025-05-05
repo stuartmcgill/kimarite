@@ -1,0 +1,68 @@
+name: PHP Composer
+
+on:
+  workflow_dispatch:
+  push:
+    # Ignore code coverage badge branch
+    branches-ignore: [ "image-data" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: kimarite-build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: PHP Security Checker
+        uses: symfonycorp/security-checker-action@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: cs2pr, phpcs
+
+      - name: Run phpcs
+        run: phpcs --standard=PSR12 ./ --ignore=vendor
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Syntax
+        run: vendor/bin/parallel-lint --exclude vendor .
+
+      - name: Tests
+        run: XDEBUG_MODE=coverage composer run-script tests
+      - name: Make code coverage badge
+        uses: timkrase/phpunit-coverage-badge@v1.2.1
+        with:
+          coverage_badge_path: output/coverage.svg
+          push_badge: false
+      - name: Git push to image-data branch
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          publish_dir: ./output
+          publish_branch: image-data
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+      - name: Static analysis
+        run: composer run-script phpstan
