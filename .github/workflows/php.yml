@@ -28,6 +28,12 @@ jobs:
           php-version: '8.4'
           tools: cs2pr
 
+      - name: Start Mariadb
+        run: |
+          sudo systemctl start mysql.service
+          mysql -u root -p root -e 'CREATE DATABASE IF NOT EXISTS sumotest;'
+
+
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
 
@@ -50,7 +56,9 @@ jobs:
         run: vendor/bin/pint
 
       - name: Tests
-        run: XDEBUG_MODE=coverage vendor/bin/phpunit
+        run: |
+          php artisan migrate
+          php artisan test
 
       - name: Make code coverage badge
         uses: timkrase/phpunit-coverage-badge@v1.2.1
