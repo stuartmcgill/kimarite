@@ -39,14 +39,14 @@ class KimariteController extends Controller
             'divisions.*' => 'string',
             'from' => 'required|date_format:Y-m',
             'to' => 'nullable|date_format:Y-m|after_or_equal:from',
-            //'annual' => 'required|boolean',
+            // 'annual' => 'required|boolean',
         ]);
-    
+
         // Check for validation failure
         if ($validator->fails()) {
             return new JsonResponse([
                 'error' => 'Invalid input data',
-                'messages' => $validator->errors()
+                'messages' => $validator->errors(),
             ], 422);
         }
 
@@ -54,7 +54,7 @@ class KimariteController extends Controller
         $divisions = $request->input('divisions');
         $from = Str::replace('-', '', $request->input('from'));
         $to = Str::replace('-', '', $request->input('to'));
-        $annual = (bool)$request->input('annual', false);
+        $annual = (bool) $request->input('annual', false);
 
         // Use a subquery to get the percentages
         $subQuery = DB::table('basho_totals')
@@ -70,13 +70,12 @@ class KimariteController extends Controller
                 DB::raw('SUM(kc.count) AS total'),
                 DB::raw('SUM(kc.count) / bt.basho_total * 100 AS percentage')
             )
-            ->leftJoinSub($subQuery, 'bt', fn ($join) =>
-                $join->on('kc.basho_id', '=', 'bt.basho_id')
+            ->leftJoinSub($subQuery, 'bt', fn ($join) => $join->on('kc.basho_id', '=', 'bt.basho_id')
             )
             ->whereIn('kc.type', $types)
             ->whereIn('kc.division', $divisions)
             ->where('kc.basho_id', '>=', $from)
-            ->when(!empty($to), fn($q) => $q->where('kc.basho_id', '<=', $to))
+            ->when(! empty($to), fn ($q) => $q->where('kc.basho_id', '<=', $to))
             ->groupBy('type', 'basho_id')
             ->orderBy('basho_id')
             ->get();
@@ -90,7 +89,7 @@ class KimariteController extends Controller
 
         foreach ($flatTotals as $flatTotal) {
             $key = $counts->search(fn (array $count) => Str::lower($count['type']) === $flatTotal->type);
-            
+
             $counts->transform(function (array $count, int $index) use ($key, $flatTotal) {
                 if ($index === $key) {
                     $count['groupedCounts'][] = $flatTotal;
@@ -104,7 +103,7 @@ class KimariteController extends Controller
         // there's no data for them given the requested types and divisions
         $bashoIds = BashoTotal::select('basho_id')
             ->where('basho_id', '>=', $from)
-            ->when(!empty($to), fn($q) => $q->where('basho_id', '<=', $to))
+            ->when(! empty($to), fn ($q) => $q->where('basho_id', '<=', $to))
             ->distinct()
             ->orderBy('basho_id')
             ->get()
