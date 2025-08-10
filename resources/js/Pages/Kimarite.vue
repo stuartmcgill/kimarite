@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3'
 import { useKimariteStore } from '@/stores/kimarite'
-import LoadingIndicator from '@/Components/App/LoadingIndicator.vue'
+import AppLoadingIndicator from '@/Components/App/AppLoadingIndicator.vue'
 import Select from 'primevue/select'
 import MultiSelect from 'primevue/multiselect'
 import { capitalize, ref } from 'vue'
@@ -308,7 +308,7 @@ initialise()
                     binary
                   />
                 </div>
-                <LoadingIndicator v-if="store.loading" />
+                <AppLoadingIndicator v-if="store.loading" />
                 <div class="flex ml-auto">
                   <div class="relative inline-block">
                     <Button
