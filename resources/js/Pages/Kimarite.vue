@@ -277,8 +277,10 @@ initialise()
               <div v-if="!validated" class="text-orange-800 flex w-full">
                 {{ validationMessage }}
               </div>
-              <div class="flex items-center gap-2 w-full">
-                <div class="flex items-center gap-2 w-full">
+              <div
+                class="flex flex-col md:flex-row md:items-center gap-2 md:gap-6 w-full"
+              >
+                <div class="flex items-center gap-2">
                   <label for="displayAsPercent">Display as percentage</label>
                   <Checkbox
                     v-model="store.displayAsPercent"
@@ -286,7 +288,7 @@ initialise()
                     binary
                   />
                 </div>
-                <div class="flex items-center gap-2 w-full">
+                <div class="flex items-center gap-2">
                   <label for="displayAsPercent">Regression plots</label>
                   <Checkbox
                     v-model="store.regressionPlots"
@@ -295,7 +297,7 @@ initialise()
                   />
                 </div>
                 <LoadingIndicator v-if="store.loading" />
-                <div class="flex">
+                <div class="flex ml-auto">
                   <div class="relative inline-block">
                     <Button
                       class="ml-auto"
