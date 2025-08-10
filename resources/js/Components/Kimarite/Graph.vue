@@ -35,9 +35,7 @@ const options = computed(() => ({
     },
     legend: {
       labels: {
-        filter: function (legendItem, data) {
-          return !legendItem.text.includes('regression')
-        },
+        filter: (legendItem, data) => !legendItem.text.includes('regression'),
       },
     },
   },
@@ -73,43 +71,48 @@ const datasets = computed(() => {
     // Original kimarite dataset
     allDatasets.push({ ...dataset })
 
-    if (!store.regressionPlots) {
+    if (!store.showRegression) {
       return
     }
 
-    const regressionData = calculateLinearRegression(dataset.data)
-
-    if (regressionData.length > 0) {
-      allDatasets.push({
-        label: `${dataset.label} (regression)`,
-        data: regressionData,
-        borderColor:
-          dataset.borderColor || dataset.backgroundColor || 'rgba(0,0,0,0.5)',
-        borderWidth: 2,
-        pointRadius: 0,
-        fill: false,
-        borderDash: [4, 4],
-      })
+    const regressionData = linearRegressionWithR2(dataset.data)
+    if (regressionData.data.length === 0) {
+      return
     }
+
+    if (regressionData.r2 < 0.5 && store.hideWeakCorrelations) {
+      return
+    }
+
+    const r2 = regressionData.r2.toFixed(2)
+
+    allDatasets.push({
+      label: `${dataset.label} (R² = ${r2})`,
+      data: regressionData.data,
+      borderWidth: 2,
+      pointRadius: 0,
+      fill: false,
+      borderDash: [4, 4],
+    })
   })
 
   return allDatasets
 })
 
 /**
- * Calculates the Y values for a simple linear regression (least squares method)
- * to fit a straight line through the given data points.
- *
- * @param originalData - Array of numeric Y values.
- * @returns Array of Y values representing the regression line.
+ * Calculates simple linear regression and R².
+ * @param originalData - Array of numeric Y values
+ * @returns { data: number[], r2: number }
  */
-const calculateLinearRegression = (originalData: number[]): number[] => {
+const linearRegressionWithR2 = (
+  originalData: number[],
+): { data: number[]; r2: number } => {
   const yValues = originalData.map(Number).filter(n => !isNaN(n))
   const xValues = yValues.map((_, i) => i)
 
   const n = yValues.length
   if (n === 0) {
-    return []
+    return { data: [], r2: 0 }
   }
 
   const sumX = xValues.reduce((a, b) => a + b, 0)
@@ -119,13 +122,24 @@ const calculateLinearRegression = (originalData: number[]): number[] => {
 
   const denominator = n * sumXX - sumX * sumX
   if (denominator === 0) {
-    return new Array(n).fill(0)
+    return { data: new Array(n).fill(0), r2: 0 }
   }
 
   const slope = (n * sumXY - sumX * sumY) / denominator
   const intercept = (sumY - slope * sumX) / n
 
-  return xValues.map(x => slope * x + intercept)
+  const regressionData = xValues.map(x => slope * x + intercept)
+
+  // Calculate R²
+  const meanY = sumY / n
+  const ssTot = yValues.reduce((sum, y) => sum + Math.pow(y - meanY, 2), 0)
+  const ssRes = yValues.reduce(
+    (sum, y, i) => sum + Math.pow(y - regressionData[i], 2),
+    0,
+  )
+  const r2 = ssTot === 0 ? 0 : 1 - ssRes / ssTot
+
+  return { data: regressionData, r2 }
 }
 </script>
 

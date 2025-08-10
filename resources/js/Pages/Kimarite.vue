@@ -291,8 +291,21 @@ initialise()
                 <div class="flex items-center gap-2">
                   <label for="displayAsPercent">Regression plots</label>
                   <Checkbox
-                    v-model="store.regressionPlots"
-                    name="regressionPlots"
+                    v-model="store.showRegression"
+                    name="showRegression"
+                    binary
+                  />
+                </div>
+                <div
+                  v-if="store.showRegression"
+                  class="flex items-center gap-2"
+                >
+                  <label for="hideWeakCorrelations"
+                    >Hide weak correlations</label
+                  >
+                  <Checkbox
+                    v-model="store.hideWeakCorrelations"
+                    name="hideWeakCorrelations"
                     binary
                   />
                 </div>
