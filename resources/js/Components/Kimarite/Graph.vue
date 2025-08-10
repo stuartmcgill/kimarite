@@ -67,7 +67,7 @@ const datasets = computed(() => {
   if (mainData.length > 1) {
     baseDatasets.push({
       label: 'Trendline',
-      data: trendData(mainData),
+      data: calculateLinearRegression(mainData),
       borderColor: 'rgba(255, 0, 0, 0.5)',
       borderWidth: 2,
       pointRadius: 0,
@@ -79,23 +79,39 @@ const datasets = computed(() => {
   return baseDatasets
 })
 
-const trendData = (originalData: number[]) => {
-  const y = originalData.map(Number).filter(n => !isNaN(n))
-  const x = y.map((_, i) => i)
+/**
+ * Calculates the Y values for a simple linear regression (least squares method)
+ * to fit a straight line through the given data points.
+ *
+ * @param originalData - Array of numeric Y values.
+ * @returns Array of Y values representing the regression line.
+ */
+const calculateLinearRegression = (originalData: number[]): number[] => {
+  // Clean and prepare data
+  const yValues = originalData.map(Number).filter(n => !isNaN(n))
+  const xValues = yValues.map((_, i) => i) // simple x indices: 0, 1, 2, ...
 
-  const n = y.length
-  const sumX = x.reduce((a, b) => a + b, 0)
-  const sumY = y.reduce((a, b) => a + b, 0)
-  const sumXY = x.reduce((sum, xi, i) => sum + xi * y[i], 0)
-  const sumXX = x.reduce((sum, xi) => sum + xi * xi, 0)
+  const n = yValues.length
+  if (n === 0) return []
 
+  // Summations for least squares formula
+  const sumX = xValues.reduce((a, b) => a + b, 0)
+  const sumY = yValues.reduce((a, b) => a + b, 0)
+  const sumXY = xValues.reduce((sum, xi, i) => sum + xi * yValues[i], 0)
+  const sumXX = xValues.reduce((sum, xi) => sum + xi * xi, 0)
+
+  // Calculate slope (m) and intercept (b)
   const denominator = n * sumXX - sumX * sumX
-  if (denominator === 0) return new Array(y.length).fill(0)
+  if (denominator === 0) {
+    // All x values are the same — regression not possible
+    return new Array(n).fill(0)
+  }
 
   const slope = (n * sumXY - sumX * sumY) / denominator
   const intercept = (sumY - slope * sumX) / n
 
-  return x.map(i => slope * i + intercept)
+  // Return the regression line's Y values
+  return xValues.map(x => slope * x + intercept)
 }
 </script>
 <template>
