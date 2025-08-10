@@ -287,10 +287,10 @@ initialise()
                   />
                 </div>
                 <div class="flex items-center gap-2 w-full">
-                  <label for="displayAsPercent">Regression plot</label>
+                  <label for="displayAsPercent">Regression plots</label>
                   <Checkbox
-                    v-model="store.regressionPlot"
-                    name="regressionPlot"
+                    v-model="store.regressionPlots"
+                    name="regressionPlots"
                     binary
                   />
                 </div>

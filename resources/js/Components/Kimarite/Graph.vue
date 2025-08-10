@@ -73,7 +73,7 @@ const datasets = computed(() => {
     // Original kimarite dataset
     allDatasets.push({ ...dataset })
 
-    if (!store.regressionPlot) {
+    if (!store.regressionPlots) {
       return
     }
 
