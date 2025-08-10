@@ -49,10 +49,8 @@ const syncRegressionColorsPlugin = {
       }
 
       // Copy border color from original dataset to regression dataset
-      dataset.borderColor =
-        originalDataset.borderColor || originalDataset.color || 'black'
-      dataset.backgroundColor =
-        originalDataset.backgroundColor || originalDataset.color || 'black'
+      dataset.borderColor = originalDataset.borderColor || 'black'
+      dataset.backgroundColor = originalDataset.backgroundColor || 'black'
 
       // Also copy point styles if needed (your regression has pointRadius: 0, so might not matter)
       dataset.pointBackgroundColor =
