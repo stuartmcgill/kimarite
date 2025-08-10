@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3'
 import { useKimariteStore } from '@/stores/kimarite'
-import LoadingIndicator from '@/Components/App/LoadingIndicator.vue'
+import AppLoadingIndicator from '@/Components/App/AppLoadingIndicator.vue'
 import Select from 'primevue/select'
 import MultiSelect from 'primevue/multiselect'
 import { capitalize, ref } from 'vue'
@@ -14,6 +14,8 @@ import Menubar from 'primevue/menubar'
 import { computed } from '@vue/reactivity'
 import Graph from '@/Components/Kimarite/Graph.vue'
 import { formatBashoId } from '@/Composables/utils'
+import AppTooltip from '@/Components/App/AppTooltip.vue'
+import { KimariteConstants } from '@/Composables/kimariteConstants'
 
 interface Criteria {
   selectedTypes: string[]
@@ -251,12 +253,8 @@ initialise()
                   />
                   <label for="to-basho">To</label>
                 </IftaLabel>
-                <i
-                  class="pi pi-info-circle"
-                  style="font-size: 1rem"
-                  v-tooltip="
-                    'Before 1991-07 data is only available for the top 2 divisions'
-                  "
+                <AppTooltip
+                  text="Before 1991-07 data is only available for the top 2 divisions"
                 />
               </div>
               <!-- Divisions -->
@@ -277,8 +275,10 @@ initialise()
               <div v-if="!validated" class="text-orange-800 flex w-full">
                 {{ validationMessage }}
               </div>
-              <div class="flex items-center gap-2 w-full">
-                <div class="flex items-center gap-2 w-full">
+              <div
+                class="flex flex-col md:flex-row md:items-center gap-2 md:gap-6 w-full"
+              >
+                <div class="flex items-center gap-2">
                   <label for="displayAsPercent">Display as percentage</label>
                   <Checkbox
                     v-model="store.displayAsPercent"
@@ -286,8 +286,30 @@ initialise()
                     binary
                   />
                 </div>
-                <LoadingIndicator v-if="store.loading" />
-                <div class="flex">
+                <div class="flex items-center gap-2">
+                  <label for="displayAsPercent">Regression plots</label>
+                  <Checkbox
+                    v-model="store.showRegression"
+                    name="showRegression"
+                    binary
+                  />
+                </div>
+                <div
+                  v-if="store.showRegression"
+                  class="flex items-center gap-2"
+                >
+                  <label for="hideWeakCorrelations"
+                    >Hide weak correlations</label
+                  >
+                  <AppTooltip :text="`R² < ${KimariteConstants.r2Threshold}`" />
+                  <Checkbox
+                    v-model="store.hideWeakCorrelations"
+                    name="hideWeakCorrelations"
+                    binary
+                  />
+                </div>
+                <AppLoadingIndicator v-if="store.loading" />
+                <div class="flex ml-auto">
                   <div class="relative inline-block">
                     <Button
                       class="ml-auto"

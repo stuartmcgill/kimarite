@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3'
 import { useRefreshStore } from '@/stores/refresh'
-import LoadingIndicator from '@/Components/App/LoadingIndicator.vue'
+import AppLoadingIndicator from '@/Components/App/AppLoadingIndicator.vue'
 
 const store = useRefreshStore()
 
@@ -29,7 +29,7 @@ const refreshBashoPercentages = () => {
         <strong>destroying any existing data</strong>.
       </div>
       <div class="flex gap-4">
-        <LoadingIndicator v-if="store.loading" />
+        <AppLoadingIndicator v-if="store.loading" />
         <template v-else>
           <button
             class="p-2 flex text-white justify-center bg-red-500 rounded-sm hover:opacity-80"
