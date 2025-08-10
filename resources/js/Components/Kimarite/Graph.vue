@@ -13,6 +13,7 @@ import {
   Tooltip,
   Legend,
   ChartDataset,
+  Chart,
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
 import { KimariteConstants } from '@/Composables/kimariteConstants'
@@ -29,30 +30,35 @@ const data = computed(() => {
 
 const syncRegressionColorsPlugin = {
   id: 'syncRegressionColors',
-  afterLayout(chart) {
+  afterLayout(chart: Chart<'line'>) {
     const datasets = chart.data.datasets
 
     datasets.forEach((dataset, idx) => {
-      // Detect regression datasets by label (they include "R²")
-      if (dataset.label && dataset.label.includes('R²')) {
-        // Assuming the original dataset is the one before the regression dataset
-        const originalDataset = datasets[idx - 1]
-
-        if (originalDataset) {
-          // Copy border color from original dataset to regression dataset
-          dataset.borderColor =
-            originalDataset.borderColor || originalDataset.color || 'black'
-          dataset.backgroundColor =
-            originalDataset.backgroundColor || originalDataset.color || 'black'
-
-          // Also copy point styles if needed (your regression has pointRadius: 0, so might not matter)
-          dataset.pointBackgroundColor =
-            originalDataset.pointBackgroundColor ||
-            originalDataset.backgroundColor
-          dataset.pointBorderColor =
-            originalDataset.pointBorderColor || originalDataset.borderColor
-        }
+      if (!dataset.label) {
+        return
       }
+
+      if (!dataset.label.includes('R²')) {
+        return
+      }
+
+      // Assume the original dataset is the one before the regression dataset
+      const originalDataset = datasets[idx - 1]
+      if (!originalDataset) {
+        return
+      }
+
+      // Copy border color from original dataset to regression dataset
+      dataset.borderColor =
+        originalDataset.borderColor || originalDataset.color || 'black'
+      dataset.backgroundColor =
+        originalDataset.backgroundColor || originalDataset.color || 'black'
+
+      // Also copy point styles if needed (your regression has pointRadius: 0, so might not matter)
+      dataset.pointBackgroundColor =
+        originalDataset.pointBackgroundColor || originalDataset.backgroundColor
+      dataset.pointBorderColor =
+        originalDataset.pointBorderColor || originalDataset.borderColor
     })
   },
 }
@@ -65,11 +71,6 @@ const options = computed(() => ({
   plugins: {
     colors: {
       forceOverride: true,
-    },
-    legend: {
-      labels: {
-        filter: (legendItem, data) => !legendItem.text.includes('regression'),
-      },
     },
     syncRegressionColors: {},
   },
@@ -102,7 +103,7 @@ const datasets = computed(() => {
   const allDatasets: ChartDataset<'line'>[] = []
 
   store.datasets.forEach(dataset => {
-    // Original kimarite dataset
+    // Add the original kimarite dataset
     allDatasets.push({ ...dataset })
 
     if (!store.showRegression) {
