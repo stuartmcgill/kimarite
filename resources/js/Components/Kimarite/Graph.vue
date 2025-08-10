@@ -32,6 +32,13 @@ const options = computed(() => ({
     colors: {
       forceOverride: true,
     },
+    legend: {
+      labels: {
+        filter: function (legendItem, data) {
+          return !legendItem.text.includes('regression')
+        },
+      },
+    },
   },
   scales: {
     y: {
@@ -69,7 +76,7 @@ const datasets = computed(() => {
 
     if (regressionData.length > 0) {
       allDatasets.push({
-        label: `${dataset.label} (Trendline)`,
+        label: `${dataset.label} (regression)`,
         data: regressionData,
         borderColor:
           dataset.borderColor || dataset.backgroundColor || 'rgba(0,0,0,0.5)',
