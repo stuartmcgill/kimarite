@@ -286,6 +286,14 @@ initialise()
                     binary
                   />
                 </div>
+                <div class="flex items-center gap-2 w-full">
+                  <label for="displayAsPercent">Regression plot</label>
+                  <Checkbox
+                    v-model="store.regressionPlot"
+                    name="regressionPlot"
+                    binary
+                  />
+                </div>
                 <LoadingIndicator v-if="store.loading" />
                 <div class="flex">
                   <div class="relative inline-block">

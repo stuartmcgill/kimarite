@@ -12,6 +12,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  ChartDataset,
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
 
@@ -66,11 +67,15 @@ ChartJS.register(
 )
 
 const datasets = computed(() => {
-  const allDatasets = []
+  const allDatasets: ChartDataset<'line'>[] = []
 
   store.datasets.forEach(dataset => {
     // Original kimarite dataset
     allDatasets.push({ ...dataset })
+
+    if (!store.regressionPlot) {
+      return
+    }
 
     const regressionData = calculateLinearRegression(dataset.data)
 

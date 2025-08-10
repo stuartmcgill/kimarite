@@ -19,6 +19,7 @@ export const useKimariteStore = defineStore('kimarite', {
     counts: [] as GroupedKimariteTotal[],
     bashoIds: [] as string[],
     displayAsPercent: true as boolean,
+    regressionPlot: false as boolean,
     loading: false as boolean,
   }),
   getters: {
