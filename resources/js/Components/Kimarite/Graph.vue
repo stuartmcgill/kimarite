@@ -15,6 +15,7 @@ import {
   ChartDataset,
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
+import { KimariteConstants } from '@/Composables/kimariteConstants'
 
 const store = useKimariteStore()
 
@@ -113,7 +114,10 @@ const datasets = computed(() => {
       return
     }
 
-    if (regressionData.r2 < 0.5 && store.hideWeakCorrelations) {
+    if (
+      regressionData.r2 < KimariteConstants.r2Threshold &&
+      store.hideWeakCorrelations
+    ) {
       return
     }
 

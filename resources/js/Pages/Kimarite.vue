@@ -14,6 +14,8 @@ import Menubar from 'primevue/menubar'
 import { computed } from '@vue/reactivity'
 import Graph from '@/Components/Kimarite/Graph.vue'
 import { formatBashoId } from '@/Composables/utils'
+import AppTooltip from '@/Components/App/AppTooltip.vue'
+import { KimariteConstants } from '@/Composables/kimariteConstants'
 
 interface Criteria {
   selectedTypes: string[]
@@ -251,12 +253,8 @@ initialise()
                   />
                   <label for="to-basho">To</label>
                 </IftaLabel>
-                <i
-                  class="pi pi-info-circle"
-                  style="font-size: 1rem"
-                  v-tooltip="
-                    'Before 1991-07 data is only available for the top 2 divisions'
-                  "
+                <AppTooltip
+                  text="Before 1991-07 data is only available for the top 2 divisions"
                 />
               </div>
               <!-- Divisions -->
@@ -303,6 +301,7 @@ initialise()
                   <label for="hideWeakCorrelations"
                     >Hide weak correlations</label
                   >
+                  <AppTooltip :text="`R² < ${KimariteConstants.r2Threshold}`" />
                   <Checkbox
                     v-model="store.hideWeakCorrelations"
                     name="hideWeakCorrelations"
