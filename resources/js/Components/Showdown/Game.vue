@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useShowdownStore } from '@/stores/showdown'
 import { CategoryValue, Game as GameType } from '@/types/showdown'
+import Button from 'primevue/button'
 import Card from '@/Components/Showdown/Card.vue'
 
 const props = defineProps<{ game: GameType }>()
@@ -12,14 +13,22 @@ const handleCategorySelected = (categoryValue: CategoryValue) => {
   store.selection = categoryValue
 }
 
-const endTurn = () => {
+const nextCard = () => {
   store.selection = null
 }
 </script>
 
 <template>
-  <div class="flex gap-4 justify-between">
+  <div class="grid grid-cols-3 gap-4 items-center">
     <Card :card="game.cards[0]" @selected="handleCategorySelected" />
-    <Card :card="game.cards[1]" />
+    <div class="flex justify-center">
+      <Button
+        label="Next"
+        :disabled="!store.selection"
+        class="w-fit"
+        @click="nextCard"
+      />
+    </div>
+    <Card v-if="!!store.selection" :card="game.cards[1]" />
   </div>
 </template>
