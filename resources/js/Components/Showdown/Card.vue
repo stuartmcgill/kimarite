@@ -30,6 +30,7 @@ const imageUrl = computed(
           v-for="(categoryValue, index) in props.card.categories"
           :key="index"
           :category-value="categoryValue"
+          @selected="$emit('selected', $event)"
         />
       </div>
     </div>
