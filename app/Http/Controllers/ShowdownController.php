@@ -35,8 +35,8 @@ class ShowdownController extends Controller
 
         $cards = [
             [
-                'name' => 'Person 1',
-                'photoUrl' => '',
+                'id' => 3622,
+                'name' => 'Kirishima',
                 'categories' => [
                     [
                         'code' => 'cat_1',
@@ -53,8 +53,8 @@ class ShowdownController extends Controller
                 ],
             ],
             [
-                'name' => 'Person 2',
-                'photoUrl' => '',
+                'id' => 3842,
+                'name' => 'Hoshoryu',
                 'categories' => [
                     [
                         'code' => 'cat_1',
@@ -71,8 +71,8 @@ class ShowdownController extends Controller
                 ],
             ],
             [
-                'name' => 'Person 3',
-                'photoUrl' => '',
+                'id' => 4175,
+                'name' => 'Asahakuryu',
                 'categories' => [
                     [
                         'code' => 'cat_1',

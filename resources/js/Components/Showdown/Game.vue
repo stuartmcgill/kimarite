@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useShowdownStore } from '@/stores/showdown'
 import { Game as GameType } from '@/types/showdown'
+import Card from '@/Components/Showdown/Card.vue'
 
 const props = defineProps<{ game: GameType }>()
 
@@ -9,6 +10,8 @@ store.init(props.game)
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 w-full">The game</div>
-  <div>{{ store.game }}</div>
+  <div class="flex gap-4 justify-between">
+    <Card :card="game.cards[0]" />
+    <Card :card="game.cards[1]" />
+  </div>
 </template>

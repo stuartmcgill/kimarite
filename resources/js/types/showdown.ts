@@ -11,6 +11,7 @@ export interface CategoryValue {
 }
 
 export interface Card {
+  id: string
   name: string
   photoUrl: string
   categories: CategoryValue[]
