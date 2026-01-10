@@ -10,4 +10,5 @@ store.init(props.game)
 
 <template>
   <div class="flex flex-col gap-4 w-full">The game</div>
+  <div>{{ store.game }}</div>
 </template>
