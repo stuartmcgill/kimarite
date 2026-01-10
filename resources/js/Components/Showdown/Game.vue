@@ -9,7 +9,11 @@ const store = useShowdownStore()
 store.init(props.game)
 
 const handleCategorySelected = (categoryValue: CategoryValue) => {
-  console.log(categoryValue)
+  store.selection = categoryValue
+}
+
+const endTurn = () => {
+  store.selection = null
 }
 </script>
 
