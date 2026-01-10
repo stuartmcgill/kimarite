@@ -13,7 +13,7 @@ const props = defineProps<{ game: GameType }>()
   <body class="bg-coral-100">
     <Head title="Kimarite trends" />
 
-    <div class="mx-auto flex flex-col w-full min-h-screen sm:max-w-7xl">
+    <div class="mx-auto flex flex-col w-full min-h-screen sm:max-w-3xl">
       <div
         class="px-4 md:p-4 w-full flex flex-col gap-4 justify-center text-center"
       >
