@@ -2,8 +2,13 @@
 import { Card as CardType } from '@/types/showdown'
 import { computed } from 'vue'
 import CategoryValue from '@/Components/Showdown/CategoryValue.vue'
+import Button from 'primevue/button'
 
 const props = defineProps<{ card: CardType }>()
+
+const rikishiUrl = computed(
+  () => `https://www.sumo.or.jp/EnSumoDataRikishi/profile/${props.card.id}`,
+)
 
 const imageUrl = computed(
   () =>
@@ -22,9 +27,12 @@ const imageUrl = computed(
       />
     </div>
     <div class="p-3 flex flex-col rounded">
-      <div>
-        {{ props.card.name }}
-      </div>
+      <Button
+        as="a"
+        :label="props.card.name"
+        :href="rikishiUrl"
+        variant="link"
+      />
       <div class="flex flex-col gap-2">
         <CategoryValue
           v-for="(categoryValue, index) in props.card.categories"
