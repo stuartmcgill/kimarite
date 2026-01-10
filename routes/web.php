@@ -6,6 +6,7 @@ use App\Http\Controllers\Head2HeadController;
 use App\Http\Controllers\KimariteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RefreshController;
+use App\Http\Controllers\ShowdownController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -24,6 +25,8 @@ Route::get('/head2head/{id}', [Head2HeadController::class, 'head2headsForWrestle
 
 Route::get('/', [KimariteController::class, 'show'])->name('kimarite.show');
 Route::get('/kimarite-counts', [KimariteController::class, 'getCounts'])->name('kimarite.counts');
+
+Route::get('/showdown', [ShowdownController::class, 'view'])->name('showdown.view');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -10,12 +10,13 @@ import 'primeicons/primeicons.css'
 import Button from 'primevue/button'
 import IftaLabel from 'primevue/iftalabel'
 import Checkbox from 'primevue/checkbox'
-import Menubar from 'primevue/menubar'
 import { computed } from '@vue/reactivity'
 import Graph from '@/Components/Kimarite/Graph.vue'
 import { formatBashoId } from '@/Composables/utils'
 import AppTooltip from '@/Components/App/AppTooltip.vue'
 import { KimariteConstants } from '@/Composables/kimariteConstants'
+import SumoMenu from '@/Components/SumoMenu.vue'
+import SumoFooter from '@/Components/SumoFooter.vue'
 
 interface Criteria {
   selectedTypes: string[]
@@ -31,20 +32,6 @@ const props = defineProps<{
   defaultCriteria: Criteria
   initialCriteria: Criteria
 }>()
-
-const menuItems: object[] = [
-  {
-    label: 'Kimarite trends',
-    icon: 'pi pi-fw pi-chart-bar',
-    url: '#',
-    class: 'bg-gray-50 border rounded-sm',
-  },
-  {
-    label: 'Head-to-head',
-    icon: 'pi pi-fw pi-users',
-    url: '/head2head',
-  },
-]
 
 const typeOptions = props.types.map(type => capitalize(type))
 
@@ -193,10 +180,7 @@ initialise()
           >
             Kimarite trends
           </h1>
-          <Menubar
-            class="my-4 order-1 md:order-2 w-full md:w-96"
-            :model="menuItems"
-          />
+          <SumoMenu />
         </div>
 
         <div class="p-6 w-full bg-white rounded-sm shadow-sm">
@@ -348,39 +332,7 @@ initialise()
           <Graph />
         </div>
       </div>
-      <footer
-        class="mt-auto p-4 flex flex-col sm:flex-row items-center justify-between gap-2"
-      >
-        <div class="flex text-lg">
-          Data from
-          <a
-            class="ml-1 flex items-center hover:opacity-70"
-            href="https://www.sumo-api.com/"
-            title="Sumo API"
-            target="_blank"
-            >Sumo API</a
-          >
-        </div>
-        <div class="flex items-center">
-          <img src="favicon.ico" class="mx-1 h-4 w-4" />
-          Dohyo icon by
-          <a
-            class="ml-1 flex items-center hover:opacity-70"
-            href="https://www.flaticon.com/authors/vitaly-gorbachev"
-            title="Vitaly Gorbachev"
-            target="_blank"
-            >Vitaly Gorbachev - Flaticon</a
-          >
-        </div>
-        <a
-          class="hover:opacity-70"
-          href="https://github.com/stuartmcgill/kimarite"
-          title="Github repository"
-          target="_blank"
-        >
-          <i class="pi pi-github" style="font-size: 1.5rem" />
-        </a>
-      </footer>
+      <SumoFooter />
     </div>
   </body>
 </template>
