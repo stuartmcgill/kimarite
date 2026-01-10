@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Card as CardType } from '@/types/showdown'
 import { computed } from 'vue'
+import CategoryValue from '@/Components/Showdown/CategoryValue.vue'
 
 const props = defineProps<{ card: CardType }>()
 
@@ -25,13 +26,11 @@ const imageUrl = computed(
         {{ props.card.name }}
       </div>
       <div class="flex flex-col gap-2">
-        <div
-          v-for="(category, index) in props.card.categories"
-          class="grid grid-cols-2 gap-2"
-        >
-          <div>{{ category.code }}</div>
-          <div>{{ category.value }}</div>
-        </div>
+        <CategoryValue
+          v-for="(categoryValue, index) in props.card.categories"
+          :key="index"
+          :category-value="categoryValue"
+        />
       </div>
     </div>
   </div>
