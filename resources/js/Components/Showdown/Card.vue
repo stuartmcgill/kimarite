@@ -24,6 +24,15 @@ const imageUrl = computed(
       <div>
         {{ props.card.name }}
       </div>
+      <div class="flex flex-col gap-2">
+        <div
+          v-for="(category, index) in props.card.categories"
+          class="grid grid-cols-2 gap-2"
+        >
+          <div>{{ category.code }}</div>
+          <div>{{ category.value }}</div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
