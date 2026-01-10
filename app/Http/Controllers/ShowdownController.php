@@ -15,6 +15,12 @@ class ShowdownController extends Controller
         return Inertia::render(
             'Showdown',
             [
+                'game' => [
+                    'name' => 'Sumo showdown!',
+                    'cards' => [
+
+                    ],
+                ],
             ],
         );
     }

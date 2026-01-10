@@ -3,6 +3,10 @@ import { Head } from '@inertiajs/vue3'
 import 'primeicons/primeicons.css'
 import SumoMenu from '@/Components/SumoMenu.vue'
 import SumoFooter from '@/Components/SumoFooter.vue'
+import { Game as GameType } from '@/types/showdown'
+import Game from '@/Components/Showdown/Game.vue'
+
+const props = defineProps<{ game: GameType }>()
 </script>
 
 <template>
@@ -24,7 +28,7 @@ import SumoFooter from '@/Components/SumoFooter.vue'
           <SumoMenu />
         </div>
         <div class="p-6 w-full bg-white rounded-sm shadow-sm">
-          <div class="flex flex-col gap-4 w-full">The game</div>
+          <Game :game="props.game" />
         </div>
       </div>
       <SumoFooter />
