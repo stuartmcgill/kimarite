@@ -1,5 +1,5 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { CategoryValue, Game } from '@/types/showdown'
+import { CategoryValue, Game, Player } from '@/types/showdown'
 
 export const useShowdownStore = defineStore('showdown', {
   state: () => ({
@@ -7,15 +7,35 @@ export const useShowdownStore = defineStore('showdown', {
     game: null as Game | null,
     currentChooser: 0 as number,
     selection: null as CategoryValue | null,
+    players: [] as Player[],
   }),
   actions: {
     init(game: Game) {
       this.game = game
 
-      this.shuffle()
+      this.shuffleCards()
+
+      this.players = [
+        {
+          type: 'human',
+          name: 'You',
+          cards: this.game.cards.slice(0, this.game.cards.length / 2 - 1),
+        },
+        {
+          type: 'computer',
+          name: 'Yokozuna',
+          cards: this.game.cards.slice(
+            this.game.cards.length / 2,
+            this.game.cards.length,
+          ),
+          level: 10,
+        },
+      ]
+
       this.initialised = true
     },
-    shuffle() {
+
+    shuffleCards() {
       let cards = this.game!.cards
 
       for (let i = cards.length - 1; i > 0; i--) {
@@ -29,7 +49,10 @@ export const useShowdownStore = defineStore('showdown', {
       return cards
     },
   },
-  getters: {},
+  getters: {
+    human: state => state.players[0],
+    computer: state => state.players[1],
+  },
 })
 
 if (import.meta.hot) {

@@ -17,16 +17,21 @@ export interface Card {
   categories: CategoryValue[]
 }
 
-export type Player = HumanPlayer | ComputerPlayer
-
-export interface HumanPlayer {
+export interface BasePlayer {
   name: string
+  cards: Card[]
 }
 
-export interface ComputerPlayer {
-  name: string
+export interface HumanPlayer extends BasePlayer {
+  type: 'human'
+}
+
+export interface ComputerPlayer extends BasePlayer {
+  type: 'computer'
   level: number
 }
+
+export type Player = HumanPlayer | ComputerPlayer
 
 export interface Game {
   name: string
