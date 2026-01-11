@@ -9,7 +9,7 @@ const imageUrl = computed(
 
 <template>
   <div
-    class="p-4 w-60 h-[445px] flex items-center justify-center bg-coral-100 rounded"
+    class="p-8 w-60 h-[416px] flex items-center justify-center bg-coral-100 rounded-2xl border-4 border-coral-200"
   >
     <img :src="imageUrl" alt="Dohyo logo" class="object-cover" />
   </div>

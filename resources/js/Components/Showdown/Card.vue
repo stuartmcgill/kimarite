@@ -20,12 +20,14 @@ const imageUrl = computed(
 </script>
 
 <template>
-  <div class="w-60 flex flex-col bg-coral-100 rounded">
-    <div class="w-full h-60 rounded bg-coral-400">
+  <div
+    class="w-60 flex flex-col bg-coral-100 rounded-2xl border-4 border-coral-200"
+  >
+    <div class="w-full rounded-2xl bg-coral-400">
       <img
         :src="imageUrl"
         :alt="props.card.name"
-        class="object-cover object-top w-full h-60"
+        class="object-cover object-top w-full h-52 rounded-t-2xl"
       />
     </div>
     <div class="p-3 flex flex-col rounded">
