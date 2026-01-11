@@ -1,5 +1,5 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { CategoryValue, Game, Player } from '@/types/showdown'
+import { Card, CategoryValue, Game, Player } from '@/types/showdown'
 
 export const useShowdownStore = defineStore('showdown', {
   state: () => ({
@@ -8,6 +8,7 @@ export const useShowdownStore = defineStore('showdown', {
     currentChooser: 0 as number,
     selection: null as CategoryValue | null,
     players: [] as Player[],
+    tiedCards: [] as Card[],
   }),
   actions: {
     init(game: Game) {
@@ -52,6 +53,12 @@ export const useShowdownStore = defineStore('showdown', {
   getters: {
     human: state => state.players[0],
     computer: state => state.players[1],
+    numCards(state) {
+      const humanCards = state.players[0].cards
+      const computerCards = state.players[1].cards
+
+      return humanCards.length + computerCards.length + state.tiedCards.length
+    },
   },
 })
 

@@ -2,8 +2,9 @@
 import { useShowdownStore } from '@/stores/showdown'
 import { CategoryValue, Game as GameType } from '@/types/showdown'
 import Button from 'primevue/button'
-import Card from '@/Components/Showdown/Card.vue'
+import MeterGroup from 'primevue/metergroup'
 import Player from '@/Components/Showdown/Player.vue'
+import { computed, ref } from 'vue'
 
 const props = defineProps<{ game: GameType }>()
 
@@ -17,19 +18,44 @@ const handleCategorySelected = (categoryValue: CategoryValue) => {
 const nextCard = () => {
   store.selection = null
 }
+
+const score = computed(() => {
+  return [
+    {
+      label: store.human.name,
+      value: store.human.cards.length,
+      color: 'white',
+    },
+    {
+      label: 'Ties pile',
+      value: store.tiedCards.length,
+      color: 'var(--p-primary-color)',
+    },
+    {
+      label: store.computer.name,
+      value: store.computer.cards.length,
+      color: 'black',
+    },
+  ]
+})
 </script>
 
 <template>
-  <div v-if="store.initialised" class="grid grid-cols-3 gap-4 items-center">
-    <Player :player="store.human" @selected="handleCategorySelected" />
-    <div class="flex justify-center">
-      <Button
-        label="Next"
-        :disabled="!store.selection"
-        class="w-fit"
-        @click="nextCard"
-      />
+  <div v-if="store.initialised">
+    <div class="grid grid-cols-3 gap-4 items-center">
+      <Player :player="store.human" @selected="handleCategorySelected" />
+      <div class="flex justify-center">
+        <Button
+          label="Next"
+          :disabled="!store.selection"
+          class="w-fit"
+          @click="nextCard"
+        />
+      </div>
+      <Player :player="store.computer" @selected="handleCategorySelected" />
     </div>
-    <Player :player="store.computer" @selected="handleCategorySelected" />
+    <div class="mt-8 p-4 bg-coral-100 rounded">
+      <MeterGroup :value="score" :min="0" :max="store.numCards" />
+    </div>
   </div>
 </template>
