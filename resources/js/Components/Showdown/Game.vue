@@ -42,7 +42,7 @@ const score = computed(() => {
 
 <template>
   <div v-if="store.initialised">
-    <div class="grid grid-cols-3 gap-4 items-center">
+    <div class="flex gap-4 items-center justify-between">
       <Player :player="store.human" @selected="handleCategorySelected" />
       <div class="flex justify-center">
         <Button
