@@ -12,8 +12,10 @@ const rikishiUrl = computed(
 
 const imageUrl = computed(
   () =>
-    new URL(`../../../images/showdown/${props.card.id}.jpg`, import.meta.url)
-      .href,
+    new URL(
+      `../../../images/showdown/cards/${props.card.id}.jpg`,
+      import.meta.url,
+    ).href,
 )
 </script>
 

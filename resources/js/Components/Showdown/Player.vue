@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Card from '@/Components/Showdown/Card.vue'
+import FaceDownCard from '@/Components/Showdown/FaceDownCard.vue'
 import { Player as PlayerType } from '@/types/showdown'
 import { computed } from 'vue'
 import { useShowdownStore } from '@/stores/showdown'
@@ -19,4 +20,5 @@ const isHuman = computed(() => props.player.type === 'human')
     :card="topCard"
     @selected="$emit('selected', $event)"
   />
+  <FaceDownCard v-else />
 </template>
