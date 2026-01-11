@@ -20,7 +20,7 @@ export const useShowdownStore = defineStore('showdown', {
         {
           type: 'human',
           name: 'You',
-          cards: this.game.cards.slice(0, this.game.cards.length / 2 - 1),
+          cards: this.game.cards.slice(0, this.game.cards.length / 2),
         },
         {
           type: 'computer',
