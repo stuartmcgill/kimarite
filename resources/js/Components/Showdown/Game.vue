@@ -19,7 +19,7 @@ const nextCard = () => {
 </script>
 
 <template>
-  <div class="grid grid-cols-3 gap-4 items-center">
+  <div v-if="store.initialised" class="grid grid-cols-3 gap-4 items-center">
     <Card :card="game.cards[0]" @selected="handleCategorySelected" />
     <div class="flex justify-center">
       <Button

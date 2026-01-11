@@ -33,7 +33,23 @@ class ShowdownController extends Controller
             ],
         ];
 
-        $cards = [
+        $cards = $this->fetchCards();
+
+        return Inertia::render(
+            'Showdown',
+            [
+                'game' => [
+                    'name' => 'Sumo showdown!',
+                    'categories' => $categories,
+                    'cards' => $cards,
+                ],
+            ],
+        );
+    }
+
+    private function fetchCards(): array
+    {
+        return [
             [
                 'id' => 3622,
                 'name' => 'Kirishima',
@@ -88,17 +104,24 @@ class ShowdownController extends Controller
                     ],
                 ],
             ],
-        ];
-
-        return Inertia::render(
-            'Showdown',
             [
-                'game' => [
-                    'name' => 'Sumo showdown!',
-                    'categories' => $categories,
-                    'cards' => $cards,
+                'id' => 3616,
+                'name' => 'Ura',
+                'categories' => [
+                    [
+                        'code' => 'cat_1',
+                        'value' => 1,
+                    ],
+                    [
+                        'code' => 'cat_2',
+                        'value' => 10,
+                    ],
+                    [
+                        'code' => 'cat_3',
+                        'value' => 100,
+                    ],
                 ],
             ],
-        );
+        ];
     }
 }
