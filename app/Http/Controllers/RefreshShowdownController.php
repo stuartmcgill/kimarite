@@ -31,7 +31,10 @@ class RefreshShowdownController extends Controller
         } catch (Throwable $e) {
             report($e);
 
-            return response()->json(['message' => $e->getMessage()]);
+            return response()->json(
+                ['message' => 'Failed to refresh data: '.$e->getMessage()],
+                500
+            );
         }
     }
 
