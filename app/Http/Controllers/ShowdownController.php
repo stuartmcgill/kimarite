@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\ShowdownWrestler;
+use App\Models\ShowdownWrestlerCategory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
@@ -67,79 +69,19 @@ class ShowdownController extends Controller
 
     private function fetchCards(): array
     {
-        return [
-            [
-                'id' => 3622,
-                'name' => 'Kirishima',
-                'categories' => [
-                    [
-                        'code' => 'weight',
-                        'value' => 10,
-                    ],
-                    [
-                        'code' => 'yusho',
-                        'value' => 20,
-                    ],
-                    [
-                        'code' => 'prizes',
-                        'value' => 30,
-                    ],
-                ],
-            ],
-            [
-                'id' => 3842,
-                'name' => 'Hoshoryu',
-                'categories' => [
-                    [
-                        'code' => 'weight',
-                        'value' => 20,
-                    ],
-                    [
-                        'code' => 'yusho',
-                        'value' => 20,
-                    ],
-                    [
-                        'code' => 'prizes',
-                        'value' => 20,
-                    ],
-                ],
-            ],
-            [
-                'id' => 4175,
-                'name' => 'Asahakuryu',
-                'categories' => [
-                    [
-                        'code' => 'weight',
-                        'value' => 30,
-                    ],
-                    [
-                        'code' => 'yusho',
-                        'value' => 20,
-                    ],
-                    [
-                        'code' => 'prizes',
-                        'value' => 10,
-                    ],
-                ],
-            ],
-            [
-                'id' => 3616,
-                'name' => 'Ura',
-                'categories' => [
-                    [
-                        'code' => 'weight',
-                        'value' => 1,
-                    ],
-                    [
-                        'code' => 'yusho',
-                        'value' => 10,
-                    ],
-                    [
-                        'code' => 'prizes',
-                        'value' => 100,
-                    ],
-                ],
-            ],
-        ];
+        $showdownWrestlers = ShowdownWrestler::all();
+
+        return $showdownWrestlers->map(
+            function (ShowdownWrestler $wrestler) {
+                return [
+                    'id' => $wrestler->nsk_id,
+                    'name' => $wrestler->shikona_en,
+                    'categories' => $wrestler->categories->map(fn (ShowdownWrestlerCategory $category) => [
+                        'code' => $category->code,
+                        'value' => $category->value,
+                    ]),
+                ];
+            }
+        )->toArray();
     }
 }
