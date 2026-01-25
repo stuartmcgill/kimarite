@@ -47,6 +47,10 @@ const handleSelected = () => {
     <div>
       {{ name }} <span v-if="suffix">({{ suffix }})</span>
     </div>
-    <div>{{ props.categoryValue.value }}</div>
+    {{
+      props.categoryValue.value % 1 === 0
+        ? Math.floor(props.categoryValue.value)
+        : props.categoryValue.value
+    }}
   </Button>
 </template>
