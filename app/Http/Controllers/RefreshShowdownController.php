@@ -61,22 +61,13 @@ class RefreshShowdownController extends Controller
         $categories = [];
 
         $baseUrl = config('custom.sumodb_base_url');
-        $rikishiPage = "$baseUrl/Rikishi.aspx?r=$wrestler->sumodb_id";
-        $kimaritePage = "$baseUrl/Rikishi_kim.aspx?r=$wrestler->sumodb_id";
 
+        $rikishiPage = "$baseUrl/Rikishi.aspx?r=$wrestler->sumodb_id";
         $mainHtml = Http::get($rikishiPage)->body();
         $mainDoc = new DOMDocument;
         @$mainDoc->loadHTML($mainHtml);
         $mainXpath = new DOMXPath($mainDoc);
 
-        // Fetch kimarite page
-        $kimHtml = Http::get($kimaritePage)->body();
-        $kimDoc = new DOMDocument;
-        @$kimDoc->loadHTML($kimHtml);
-        $kimXpath = new DOMXPath($kimDoc);
-
-        // Current weight
-        $currentWeight = null;
         $weightNode = $mainXpath->query("//td[contains(text(), 'Weight')]/following-sibling::td")->item(0);
         if ($weightNode) {
             $weightText = $weightNode->textContent;
@@ -95,10 +86,7 @@ class RefreshShowdownController extends Controller
             ]);
         }
 
-        // No. Makuuchi Yusho and special prizes
-        $makuuchiYusho = 0;
-        $totalSpecialPrizes = 0;
-
+        // Makuuchi Yusho and special prizes
         $inMakuuchiNode = $mainXpath->query("//td[contains(text(), 'In Makuuchi')]/following-sibling::td")->item(0);
         if ($inMakuuchiNode) {
             $makuuchiNodeText = trim($inMakuuchiNode->textContent);
@@ -114,38 +102,35 @@ class RefreshShowdownController extends Controller
             $kantoSho = (int) ($kantoMatch[1] ?? 0);
 
             $totalSpecialPrizes = $ginoSho + $shukunSho + $kantoSho;
-        }
-        $categories[] = ShowdownWrestlerCategory::make([
-            'showdown_wrestler_id' => $wrestler->id,
-            'code' => 'yusho',
-            'value' => $makuuchiYusho,
-        ]);
 
-        $categories[] = ShowdownWrestlerCategory::make([
-            'showdown_wrestler_id' => $wrestler->id,
-            'code' => 'prizes',
-            'value' => $totalSpecialPrizes,
-        ]);
+            $categories[] = ShowdownWrestlerCategory::make([
+                'showdown_wrestler_id' => $wrestler->id,
+                'code' => 'yusho',
+                'value' => $makuuchiYusho,
+            ]);
+
+            $categories[] = ShowdownWrestlerCategory::make([
+                'showdown_wrestler_id' => $wrestler->id,
+                'code' => 'prizes',
+                'value' => $totalSpecialPrizes,
+            ]);
+        }
 
         // Career Record - extract total bouts and kyujo percentage
-        $noBouts = null;
-        $kyujoPercentage = null;
         $careerNode = $mainXpath->query("//td[contains(text(), 'Career Record')]/following-sibling::td")->item(0);
         if ($careerNode) {
             $careerText = trim($careerNode->textContent);
 
-            // preg_match('/(\d+)-(\d+)[-(\d+)]?\/(\d+)/', $makuuchiNodeText, $matches); // Maybe??
-
             // Pattern: wins-losses-absences/total
             if (preg_match('/\d+-\d+(?:-(\d+))?\/(\d+)/', $careerText, $matches)) {
-                $noBouts = (int) $matches[2];
+                $numBouts = (int) $matches[2];
                 $absences = (int) ($matches[1] ?? 0);
-                $kyujoPercentage = $noBouts > 0 ? round(($absences / $noBouts) * 100, 2) : 0;
+                $kyujoPercentage = $numBouts > 0 ? round(($absences / $numBouts) * 100, 2) : 0;
 
                 $categories[] = ShowdownWrestlerCategory::make([
                     'showdown_wrestler_id' => $wrestler->id,
                     'code' => 'bouts',
-                    'value' => $noBouts,
+                    'value' => $numBouts,
                 ]);
 
                 $categories[] = ShowdownWrestlerCategory::make([
@@ -157,7 +142,13 @@ class RefreshShowdownController extends Controller
         }
 
         // Kimarite index (KV50)
-        $kimariteIndex = null;
+        // Fetch kimarite page
+        $kimaritePage = "$baseUrl/Rikishi_kim.aspx?r=$wrestler->sumodb_id";
+        $kimHtml = Http::get($kimaritePage)->body();
+        $kimDoc = new DOMDocument;
+        @$kimDoc->loadHTML($kimHtml);
+        $kimXpath = new DOMXPath($kimDoc);
+
         $kv50Node = $kimXpath->query("//td[contains(@class, 'layoutleft')]//font[contains(., 'KV50')]")->item(0);
         if ($kv50Node) {
             preg_match('/KV50:\s*([\d.]+)/', $kv50Node->textContent, $matches);
