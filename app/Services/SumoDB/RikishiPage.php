@@ -23,7 +23,9 @@ readonly class RikishiPage
 
     public function read(): self
     {
-        $rikishiPage = "$this->baseUrl/Rikishi.aspx?r=$this->wrestler->sumodb_id";
+        $sumoDbId = $this->wrestler->sumodb_id;
+
+        $rikishiPage = "$this->baseUrl/Rikishi.aspx?r=$sumoDbId";
         $mainHtml = Http::get($rikishiPage)->body();
         $mainDoc = new DOMDocument();
         @$mainDoc->loadHTML($mainHtml);
@@ -37,7 +39,7 @@ readonly class RikishiPage
     {
         $weightNode = $this->xPath->query("//td[contains(text(), 'Weight')]/following-sibling::td")->item(0);
         if (!$weightNode) {
-            throw new RuntimeException("Weight node not found for wrestler ID: {$wrestler->sumodb_id}");
+            throw new RuntimeException("Weight node not found for wrestler ID: {$this->sumoDbId()}");
         }
 
         $weightText = $weightNode->textContent;
@@ -50,7 +52,7 @@ readonly class RikishiPage
 
         $currentWeight = $matches[1] ?? null;
         if (is_null($currentWeight)) {
-            throw new RuntimeException("Could not extract weight from regex for wrestler ID: {$wrestler->sumodb_id}");
+            throw new RuntimeException("Could not extract weight from regex for wrestler ID: {$this->sumoDbId()}");
         }
 
         return (int) $currentWeight;
@@ -64,7 +66,7 @@ readonly class RikishiPage
         // Makuuchi Yusho and special prizes
         $inMakuuchiNode = $this->xPath->query("//td[contains(text(), 'In Makuuchi')]/following-sibling::td")->item(0);
         if (!$inMakuuchiNode) {
-            throw new RuntimeException("Makuuchi node not found for wrestler ID: {$wrestler->sumodb_id}");
+            throw new RuntimeException("Makuuchi node not found for wrestler ID: {$this->sumoDbId()}");
         }
 
         $makuuchiNodeText = trim($inMakuuchiNode->textContent);
@@ -94,14 +96,14 @@ readonly class RikishiPage
         // Career Record - extract total bouts and kyujo percentage
         $careerNode = $this->xPath->query("//td[contains(text(), 'Career Record')]/following-sibling::td")->item(0);
         if (!$careerNode) {
-            throw new RuntimeException("Career node not found for wrestler ID: {$wrestler->sumodb_id}");
+            throw new RuntimeException("Career node not found for wrestler ID: {$this->sumoDbId()}");
         }
 
         $careerText = trim($careerNode->textContent);
 
         // Pattern: wins-losses(-absences)/total
         if (!preg_match('/\d+-\d+(?:-(\d+))?\/(\d+)/', $careerText, $matches)) {
-            throw new RuntimeException("Could not extract bouts/kyujo from regex for wrestler ID: {$wrestler->sumodb_id}");
+            throw new RuntimeException("Could not extract bouts/kyujo from regex for wrestler ID: {$this->sumoDbId()}");
         }
 
         $numBouts = (int) $matches[2];
@@ -112,5 +114,10 @@ readonly class RikishiPage
             'bouts' => $numBouts,
             'kyujo' => $kyujoPercentage,
         ];
+    }
+
+    private function sumoDbId(): int
+    {
+        return $this->wrestler->sumodb_id;
     }
 }

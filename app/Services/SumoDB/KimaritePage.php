@@ -23,7 +23,9 @@ readonly class KimaritePage
 
     public function read(): self
     {
-        $kimaritePage = "$this->baseUrl/Rikishi_kim.aspx?r=$this->wrestler->sumodb_id";
+        $sumoDbId = $this->sumoDbId();
+
+        $kimaritePage = "$this->baseUrl/Rikishi_kim.aspx?r=$sumoDbId";
         $kimHtml = Http::get($kimaritePage)->body();
         $kimDoc = new DOMDocument();
         @$kimDoc->loadHTML($kimHtml);
@@ -36,15 +38,20 @@ readonly class KimaritePage
     {
         $kv50Node = $this->xPath->query("//td[contains(@class, 'layoutleft')]//font[contains(., 'KV50')]")->item(0);
         if (!$kv50Node) {
-            throw new RuntimeException("KV50 node not found for wrestler ID: {$wrestler->sumodb_id}");
+            throw new RuntimeException("KV50 node not found for wrestler ID: {$this->sumoDbId()}");
         }
 
         preg_match('/KV50:\s*([\d.]+)/', $kv50Node->textContent, $matches);
         $kimariteIndex = (float) ($matches[1] ?? null);
         if (!$kimariteIndex) {
-            throw new RuntimeException("Could not extract KV50 from regex for wrestler ID: {$wrestler->sumodb_id}");
+            throw new RuntimeException("Could not extract KV50 from regex for wrestler ID: {$this->sumoDbId()}");
         }
 
         return $kimariteIndex;
+    }
+
+    private function sumoDbId(): int
+    {
+        return $this->wrestler->sumodb_id;
     }
 }
