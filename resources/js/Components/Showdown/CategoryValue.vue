@@ -22,6 +22,12 @@ const category = computed(
 const name = computed(() => category.value?.name || props.categoryValue.code)
 const suffix = computed(() => category.value?.suffix)
 
+const value = computed(() => {
+  const value = props.categoryValue.value
+
+  return value % 1 === 0 ? Math.floor(value) : value
+})
+
 const disabled = computed(() => {
   if (!store.selection) {
     return false
@@ -47,10 +53,6 @@ const handleSelected = () => {
     <div>
       {{ name }} <span v-if="suffix">({{ suffix }})</span>
     </div>
-    {{
-      props.categoryValue.value % 1 === 0
-        ? Math.floor(props.categoryValue.value)
-        : props.categoryValue.value
-    }}
+    {{ value }}
   </Button>
 </template>
