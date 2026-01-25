@@ -10,6 +10,7 @@
     "php_unit_method_casing": {
       "case": "camel_case"
     },
-    "not_operator_with_successor_space": false
+    "not_operator_with_successor_space": false,
+    "new_with_parentheses": true
   }
 }
