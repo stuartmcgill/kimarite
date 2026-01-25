@@ -4,7 +4,7 @@ import { CategoryValue, Game as GameType } from '@/types/showdown'
 import Button from 'primevue/button'
 import MeterGroup from 'primevue/metergroup'
 import Player from '@/Components/Showdown/Player.vue'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps<{ game: GameType }>()
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CategoryValue as CategoryValueType } from '@/types/showdown'
+import { Category, CategoryValue as CategoryValueType } from '@/types/showdown'
 import Button from 'primevue/button'
 import { computed, ref } from 'vue'
 import { useShowdownStore } from '@/stores/showdown'
@@ -11,6 +11,16 @@ const emit = defineEmits<{
 const store = useShowdownStore()
 
 const selected = ref(false)
+
+const category = computed(
+  () =>
+    store.game!.categories.find(
+      (category: Category) => category.code === props.categoryValue.code,
+    ) || null,
+)
+
+const name = computed(() => category.value?.name || props.categoryValue.code)
+const suffix = computed(() => category.value?.suffix)
 
 const disabled = computed(() => {
   if (!store.selection) {
@@ -34,7 +44,9 @@ const handleSelected = () => {
     :class="selected ? '!opacity-100' : ''"
     @click="handleSelected"
   >
-    <div>{{ props.categoryValue.code }}</div>
+    <div>
+      {{ name }} <span v-if="suffix">({{ suffix }})</span>
+    </div>
     <div>{{ props.categoryValue.value }}</div>
   </Button>
 </template>

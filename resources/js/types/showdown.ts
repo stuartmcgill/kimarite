@@ -35,6 +35,7 @@ export type Player = HumanPlayer | ComputerPlayer
 
 export interface Game {
   name: string
+  categories: Category[]
   cards: Card[]
   players: Player[]
 }

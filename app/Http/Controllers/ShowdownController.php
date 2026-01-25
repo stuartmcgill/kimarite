@@ -14,21 +14,39 @@ class ShowdownController extends Controller
     {
         $categories = [
             [
-                'code' => 'cat_1',
-                'name' => 'Category 1',
+                'code' => 'weight',
+                'name' => 'Weight',
+                'suffix' => 'kg',
+                'inverse' => false,
+            ],
+            [
+                'code' => 'yusho',
+                'name' => 'Yusho',
                 'suffix' => '',
                 'inverse' => false,
             ],
             [
-                'code' => 'cat_2',
-                'name' => 'Category 2',
+                'code' => 'prizes',
+                'name' => 'Prizes',
                 'suffix' => '',
                 'inverse' => false,
             ],
             [
-                'code' => 'cat_3',
-                'name' => 'Category 3',
+                'code' => 'bouts',
+                'name' => 'Bouts',
                 'suffix' => '',
+                'inverse' => false,
+            ],
+            [
+                'code' => 'kyujo',
+                'name' => 'Kyujo',
+                'suffix' => '%',
+                'inverse' => true,
+            ],
+            [
+                'code' => 'kimarite',
+                'name' => 'Kimarite',
+                'suffix' => 'KV50',
                 'inverse' => false,
             ],
         ];
@@ -55,15 +73,15 @@ class ShowdownController extends Controller
                 'name' => 'Kirishima',
                 'categories' => [
                     [
-                        'code' => 'cat_1',
+                        'code' => 'weight',
                         'value' => 10,
                     ],
                     [
-                        'code' => 'cat_2',
+                        'code' => 'yusho',
                         'value' => 20,
                     ],
                     [
-                        'code' => 'cat_3',
+                        'code' => 'prizes',
                         'value' => 30,
                     ],
                 ],
@@ -73,15 +91,15 @@ class ShowdownController extends Controller
                 'name' => 'Hoshoryu',
                 'categories' => [
                     [
-                        'code' => 'cat_1',
+                        'code' => 'weight',
                         'value' => 20,
                     ],
                     [
-                        'code' => 'cat_2',
+                        'code' => 'yusho',
                         'value' => 20,
                     ],
                     [
-                        'code' => 'cat_3',
+                        'code' => 'prizes',
                         'value' => 20,
                     ],
                 ],
@@ -91,15 +109,15 @@ class ShowdownController extends Controller
                 'name' => 'Asahakuryu',
                 'categories' => [
                     [
-                        'code' => 'cat_1',
+                        'code' => 'weight',
                         'value' => 30,
                     ],
                     [
-                        'code' => 'cat_2',
+                        'code' => 'yusho',
                         'value' => 20,
                     ],
                     [
-                        'code' => 'cat_3',
+                        'code' => 'prizes',
                         'value' => 10,
                     ],
                 ],
@@ -109,15 +127,15 @@ class ShowdownController extends Controller
                 'name' => 'Ura',
                 'categories' => [
                     [
-                        'code' => 'cat_1',
+                        'code' => 'weight',
                         'value' => 1,
                     ],
                     [
-                        'code' => 'cat_2',
+                        'code' => 'yusho',
                         'value' => 10,
                     ],
                     [
-                        'code' => 'cat_3',
+                        'code' => 'prizes',
                         'value' => 100,
                     ],
                 ],
