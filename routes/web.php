@@ -6,6 +6,7 @@ use App\Http\Controllers\Head2HeadController;
 use App\Http\Controllers\KimariteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RefreshController;
+use App\Http\Controllers\RefreshShowdownController;
 use App\Http\Controllers\ShowdownController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -28,12 +29,15 @@ Route::get('/kimarite-counts', [KimariteController::class, 'getCounts'])->name('
 
 Route::get('/showdown', [ShowdownController::class, 'view'])->name('showdown.view');
 
+// @TDO SJM
+Route::get('/refresh', [RefreshController::class, 'refresh'])->name('refresh');
+Route::post('/rebuild-showdown', [RefreshShowdownController::class, 'refresh'])->name('rebuild-showdown');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/refresh', [RefreshController::class, 'refresh'])->name('refresh');
     Route::post('/rebuild', [RefreshController::class, 'rebuild'])->name('rebuild');
     Route::post('/refresh-basho-percentages', [RefreshController::class, 'refreshBashoPercentages'])->name('refresh-basho-percentages');
 });

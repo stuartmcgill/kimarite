@@ -12,7 +12,7 @@ class ShowdownWrestler extends Model
     protected $fillable = [
         'nsk_id',
         'sumodb_id',
-        'sumoapi',
+        'sumoapi_id',
         'shikona_en',
         'shikona_jp',
         'shusshin',

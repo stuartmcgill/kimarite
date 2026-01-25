@@ -5,7 +5,7 @@ export const useRefreshStore = defineStore('refresh', {
   state: () => ({ kimarites: [] as object[], loading: false as boolean }),
   getters: {},
   actions: {
-    async refresh() {
+    async refreshKimarite() {
       this.loading = true
       try {
         await axios.post(route('rebuild'))
@@ -13,6 +13,16 @@ export const useRefreshStore = defineStore('refresh', {
         this.loading = false
       }
     },
+
+    async refreshSumoShowdown() {
+      this.loading = true
+      try {
+        await axios.post(route('rebuild-showdown'))
+      } finally {
+        this.loading = false
+      }
+    },
+
     async refreshBashoPercentages() {
       this.loading = true
       try {

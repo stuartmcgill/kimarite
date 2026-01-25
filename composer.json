@@ -14,7 +14,8 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "stuartmcgill/sumoapi-php": "^0.8.0",
-        "tightenco/ziggy": "^2.6"
+        "tightenco/ziggy": "^2.6",
+      "ext-dom": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.14",

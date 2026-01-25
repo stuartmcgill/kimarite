@@ -1,14 +1,15 @@
 {
-    "preset": "laravel",
-    "rules": {
-        "declare_strict_types": true,
-        "fully_qualified_strict_types": true,
-        "simplified_null_return": true,
-        "concat_space": true,
-        "blank_line_after_opening_tag": true,
-        "blank_line_after_namespace": true,
-        "php_unit_method_casing": {
-            "case": "camel_case"
-        }
-    }
+  "preset": "laravel",
+  "rules": {
+    "declare_strict_types": true,
+    "fully_qualified_strict_types": true,
+    "simplified_null_return": true,
+    "concat_space": true,
+    "blank_line_after_opening_tag": true,
+    "blank_line_after_namespace": true,
+    "php_unit_method_casing": {
+      "case": "camel_case"
+    },
+    "not_operator_with_successor_space": false
+  }
 }

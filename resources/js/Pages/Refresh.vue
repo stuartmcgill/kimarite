@@ -5,9 +5,15 @@ import AppLoadingIndicator from '@/Components/App/AppLoadingIndicator.vue'
 
 const store = useRefreshStore()
 
-const rebuild = () => {
+const rebuildKimarite = () => {
   if (window.confirm('Are you SURE you want to rebuild the Kimarite DB')) {
-    store.refresh()
+    store.refreshKimarite()
+  }
+}
+
+const rebuildSumoShowdown = () => {
+  if (window.confirm('Are you SURE you want to rebuild the Sumo Showdown DB')) {
+    store.refreshSumoShowdown()
   }
 }
 
@@ -33,9 +39,15 @@ const refreshBashoPercentages = () => {
         <template v-else>
           <button
             class="p-2 flex text-white justify-center bg-red-500 rounded-sm hover:opacity-80"
-            @click="rebuild"
+            @click="rebuildKimarite"
           >
-            Rebuild
+            Rebuild kimarite stats
+          </button>
+          <button
+            class="p-2 flex text-white justify-center bg-red-500 rounded-sm hover:opacity-80"
+            @click="rebuildSumoShowdown"
+          >
+            Rebuild showdown
           </button>
           <button
             class="p-2 flex text-white justify-center bg-orange-500 rounded-sm hover:opacity-80"
