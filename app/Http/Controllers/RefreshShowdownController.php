@@ -23,8 +23,8 @@ class RefreshShowdownController extends Controller
         set_time_limit(60 * 45);
         logger()->info('Rebuilding Sumo Showdown data');
 
-        //        ShowdownWrestlerCategory::truncate();
-        //        ShowdownWrestler::truncate();
+        ShowdownWrestlerCategory::truncate();
+        ShowdownWrestler::truncate();
 
         $this->fetchData();
 
@@ -87,44 +87,47 @@ class RefreshShowdownController extends Controller
             ]);
         }
 
-        // No. Makuuchi Yusho
+        // No. Makuuchi Yusho and special prizes
         $makuuchiYusho = 0;
+        $totalSpecialPrizes = 0;
+
         $inMakuuchiNode = $mainXpath->query("//td[contains(text(), 'In Makuuchi')]/following-sibling::td")->item(0);
         if ($inMakuuchiNode) {
             $makuuchiNodeText = trim($inMakuuchiNode->textContent);
 
-            // @TODO SJM carry on from here
-            preg_match('/(\d+)-(\d+)(-\d+)?\/(\d+)/', $makuuchiNodeText, $matches);
+            preg_match('/(\d+)\s+Yusho,/', $makuuchiNodeText, $yushoMatch);
+            preg_match('/(\d+)\s+Gino-Sho/', $makuuchiNodeText, $ginoMatch);
+            preg_match('/(\d+)\s+Shukun-Sho/', $makuuchiNodeText, $shukunMatch);
+            preg_match('/(\d+)\s+Kanto-Sho/', $makuuchiNodeText, $kantoMatch);
 
-            $categories[] = ShowdownWrestlerCategory::make([
-                'showdown_wrestler_id' => $wrestler->id,
-                'code' => 'yusho',
-                'value' => $makuuchiYusho,
-            ]);
+            $makuuchiYusho = (int) ($yushoMatch[1] ?? 0);
+            $ginoSho = (int) ($ginoMatch[1] ?? 0);
+            $shukunSho = (int) ($shukunMatch[1] ?? 0);
+            $kantoSho = (int) ($kantoMatch[1] ?? 0);
 
-            // Total special prizes
-            $totalSpecialPrizes = 0;
-            $specialPrizes = ['Gino-Sho', 'Shukun-Sho', 'Kanto-Sho'];
-            foreach ($specialPrizes as $prize) {
-                $prizeNode = $mainXpath->query("//td[contains(text(), '$prize')]/following-sibling::td")->item(0);
-                if ($prizeNode) {
-                    $totalSpecialPrizes += (int) trim($prizeNode->textContent);
-                }
-            }
-
-            $categories[] = ShowdownWrestlerCategory::make([
-                'showdown_wrestler_id' => $wrestler->id,
-                'code' => 'prizes',
-                'value' => $totalSpecialPrizes,
-            ]);
+            $totalSpecialPrizes = $ginoSho + $shukunSho + $kantoSho;
         }
+        $categories[] = ShowdownWrestlerCategory::make([
+            'showdown_wrestler_id' => $wrestler->id,
+            'code' => 'yusho',
+            'value' => $makuuchiYusho,
+        ]);
 
-        // Career Record - extract total bouts and kyuji percentage
+        $categories[] = ShowdownWrestlerCategory::make([
+            'showdown_wrestler_id' => $wrestler->id,
+            'code' => 'prizes',
+            'value' => $totalSpecialPrizes,
+        ]);
+
+        // Career Record - extract total bouts and kyujo percentage
         $noBouts = null;
         $kyujoPercentage = null;
         $careerNode = $mainXpath->query("//td[contains(text(), 'Career Record')]/following-sibling::td")->item(0);
         if ($careerNode) {
             $careerText = trim($careerNode->textContent);
+
+            // preg_match('/(\d+)-(\d+)[-(\d+)]?\/(\d+)/', $makuuchiNodeText, $matches); // Maybe??
+
             // Pattern: wins-losses-absences/total
             if (preg_match('/\d+-\d+(?:-(\d+))?\/(\d+)/', $careerText, $matches)) {
                 $noBouts = (int) $matches[2];
@@ -147,9 +150,10 @@ class RefreshShowdownController extends Controller
 
         // Kimarite index (KV50)
         $kimariteIndex = null;
-        $kv50Node = $kimXpath->query("//td[contains(text(), 'KV50')]/following-sibling::td")->item(0);
+        $kv50Node = $kimXpath->query("//td[contains(@class, 'layoutleft')]//font[contains(., 'KV50')]")->item(0);
         if ($kv50Node) {
-            $kimariteIndex = (float) trim($kv50Node->textContent);
+            preg_match('/KV50:\s*([\d.]+)/', $kv50Node->textContent, $matches);
+            $kimariteIndex = (float) ($matches[1] ?? null);
 
             $categories[] = ShowdownWrestlerCategory::make([
                 'showdown_wrestler_id' => $wrestler->id,
