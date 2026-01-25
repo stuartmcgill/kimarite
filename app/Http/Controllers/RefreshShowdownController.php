@@ -10,6 +10,7 @@ use DOMDocument;
 use DOMXPath;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use StuartMcGill\SumoApiPhp\Service\RikishiService;
 
@@ -19,12 +20,9 @@ class RefreshShowdownController extends Controller
 {
     public function refresh(Request $request): JsonResponse
     {
-        // Allow 45 mins
-        set_time_limit(60 * 45);
+        // Allow 5 mins
+        set_time_limit(60 * 5);
         logger()->info('Rebuilding Sumo Showdown data');
-
-        ShowdownWrestlerCategory::truncate();
-        ShowdownWrestler::getQuery()->delete();
 
         $this->fetchData();
 
@@ -36,30 +34,39 @@ class RefreshShowdownController extends Controller
     private function fetchData(): void
     {
         $rikishiService = RikishiService::factory();
+        $wrestlers = collect();
 
-        $wrestlers = $rikishiService->fetchDivision('Makuuchi');
-        foreach ($wrestlers as $wrestler) {
-            $wrestler = ShowdownWrestler::create([
-                'nsk_id' => $wrestler->nskId,
-                'sumodb_id' => $wrestler->sumoDbId,
-                'sumoapi_id' => $wrestler->id,
-                'shikona_en' => $wrestler->shikonaEn,
-                'shikona_jp' => $wrestler->shikonaJp,
-                'shusshin' => $wrestler->shusshin,
-                'stable' => $wrestler->heya,
-                'rank' => $wrestler->currentRank,
+        $apiWrestlers = $rikishiService->fetchDivision('Makuuchi');
+        foreach ($apiWrestlers as $apiWrestler) {
+            $wrestler = ShowdownWrestler::make([
+                'nsk_id' => $apiWrestler->nskId,
+                'sumodb_id' => $apiWrestler->sumoDbId,
+                'sumoapi_id' => $apiWrestler->id,
+                'shikona_en' => $apiWrestler->shikonaEn,
+                'shikona_jp' => $apiWrestler->shikonaJp,
+                'shusshin' => $apiWrestler->shusshin,
+                'stable' => $apiWrestler->heya,
+                'rank' => $apiWrestler->currentRank,
             ]);
 
-            $this->fetchCategories($wrestler);
+            $this->buildCategories($wrestler);
+            $wrestlers->push($wrestler);
 
-            usleep(1000 * 500); // 0.5s
+            usleep(1000 * 500); // 0.5s rate limit
         }
+
+        DB::transaction(function () use ($wrestlers) {
+            ShowdownWrestlerCategory::query()->delete();
+            ShowdownWrestler::query()->delete();
+
+            foreach ($wrestlers as $wrestler) {
+                $wrestler->save();
+            }
+        });
     }
 
-    private function fetchCategories(ShowdownWrestler $wrestler): void
+    private function buildCategories(ShowdownWrestler $wrestler): void
     {
-        $categories = [];
-
         $baseUrl = config('custom.sumodb_base_url');
 
         $rikishiPage = "$baseUrl/Rikishi.aspx?r=$wrestler->sumodb_id";
@@ -79,11 +86,10 @@ class RefreshShowdownController extends Controller
 
             $currentWeight = $matches[1] ?? null;
 
-            $categories[] = ShowdownWrestlerCategory::make([
-                'showdown_wrestler_id' => $wrestler->id,
+            $wrestler->categories->push(new ShowdownWrestlerCategory([
                 'code' => 'weight',
                 'value' => $currentWeight,
-            ]);
+            ]));
         }
 
         // Makuuchi Yusho and special prizes
@@ -103,17 +109,15 @@ class RefreshShowdownController extends Controller
 
             $totalSpecialPrizes = $ginoSho + $shukunSho + $kantoSho;
 
-            $categories[] = ShowdownWrestlerCategory::make([
-                'showdown_wrestler_id' => $wrestler->id,
+            $wrestler->categories->push(new ShowdownWrestlerCategory([
                 'code' => 'yusho',
                 'value' => $makuuchiYusho,
-            ]);
+            ]));
 
-            $categories[] = ShowdownWrestlerCategory::make([
-                'showdown_wrestler_id' => $wrestler->id,
+            $wrestler->categories->push(new ShowdownWrestlerCategory([
                 'code' => 'prizes',
                 'value' => $totalSpecialPrizes,
-            ]);
+            ]));
         }
 
         // Career Record - extract total bouts and kyujo percentage
@@ -127,17 +131,15 @@ class RefreshShowdownController extends Controller
                 $absences = (int) ($matches[1] ?? 0);
                 $kyujoPercentage = $numBouts > 0 ? round(($absences / $numBouts) * 100, 2) : 0;
 
-                $categories[] = ShowdownWrestlerCategory::make([
-                    'showdown_wrestler_id' => $wrestler->id,
+                $wrestler->categories->push(new ShowdownWrestlerCategory([
                     'code' => 'bouts',
                     'value' => $numBouts,
-                ]);
+                ]));
 
-                $categories[] = ShowdownWrestlerCategory::make([
-                    'showdown_wrestler_id' => $wrestler->id,
+                $wrestler->categories->push(new ShowdownWrestlerCategory([
                     'code' => 'kyujo',
                     'value' => $kyujoPercentage,
-                ]);
+                ]));
             }
         }
 
@@ -154,15 +156,10 @@ class RefreshShowdownController extends Controller
             preg_match('/KV50:\s*([\d.]+)/', $kv50Node->textContent, $matches);
             $kimariteIndex = (float) ($matches[1] ?? null);
 
-            $categories[] = ShowdownWrestlerCategory::make([
-                'showdown_wrestler_id' => $wrestler->id,
+            $wrestler->categories->push(new ShowdownWrestlerCategory([
                 'code' => 'kimarite',
                 'value' => $kimariteIndex,
-            ]);
-        }
-
-        foreach ($categories as $category) {
-            $category->save();
+            ]));
         }
     }
 }
