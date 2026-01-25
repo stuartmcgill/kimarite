@@ -18,7 +18,7 @@ return new class extends Migration
 
             $table->foreignId('showdown_wrestler_id')->constrained('showdown_wrestlers');
             $table->string('code');
-            $table->decimal('value', 4, 1);
+            $table->decimal('value', 8, 1);
 
             $table->timestamps();
         });

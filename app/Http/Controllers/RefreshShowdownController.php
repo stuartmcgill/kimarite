@@ -24,7 +24,7 @@ class RefreshShowdownController extends Controller
         logger()->info('Rebuilding Sumo Showdown data');
 
         ShowdownWrestlerCategory::truncate();
-        ShowdownWrestler::truncate();
+        ShowdownWrestler::getQuery()->delete();
 
         $this->fetchData();
 
@@ -51,6 +51,8 @@ class RefreshShowdownController extends Controller
             ]);
 
             $this->fetchCategories($wrestler);
+
+            usleep(1000 * 500); // 0.5s
         }
     }
 
@@ -77,7 +79,13 @@ class RefreshShowdownController extends Controller
         $currentWeight = null;
         $weightNode = $mainXpath->query("//td[contains(text(), 'Weight')]/following-sibling::td")->item(0);
         if ($weightNode) {
-            preg_match('/cm (\d+) kg/', $weightNode->textContent, $matches);
+            $weightText = $weightNode->textContent;
+
+            $result = preg_match('/cm (\d+) kg/', $weightText, $matches);
+            if (!$result) {
+                preg_match('/cm (\d+)\./', $weightText, $matches);
+            }
+
             $currentWeight = $matches[1] ?? null;
 
             $categories[] = ShowdownWrestlerCategory::make([
