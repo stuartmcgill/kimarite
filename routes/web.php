@@ -29,7 +29,7 @@ Route::get('/kimarite-counts', [KimariteController::class, 'getCounts'])->name('
 
 Route::get('/showdown', [ShowdownController::class, 'view'])->name('showdown.view');
 
-// @TDO SJM
+// @TODO SJM -put back under auth
 Route::get('/refresh', [RefreshController::class, 'refresh'])->name('refresh');
 Route::post('/rebuild-showdown', [RefreshShowdownController::class, 'refresh'])->name('rebuild-showdown');
 
