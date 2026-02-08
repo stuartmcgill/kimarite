@@ -151,7 +151,7 @@ const nextCard = () => {
 
   if (store.chooser === store.computer) {
     store.thinking = true
-    setTimeout(() => doComputerSelection(), 3000)
+    setTimeout(() => doComputerSelection(), 2000)
   }
 }
 
