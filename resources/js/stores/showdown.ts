@@ -1,17 +1,17 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { Card, CategoryValue, Game, Player } from '@/types/showdown'
+import { Card, Category, CategoryValue, ComputerPlayer, GameType, HumanPlayer, Player } from '@/types/showdown'
 
 export const useShowdownStore = defineStore('showdown', {
   state: () => ({
     initialised: false as boolean,
-    game: null as Game | null,
-    currentChooser: 0 as number,
+    game: null as GameType | null,
+    chooser: null as Player | null,
     selection: null as CategoryValue | null,
     players: [] as Player[],
     tiedCards: [] as Card[],
   }),
   actions: {
-    init(game: Game) {
+    init(game: GameType) {
       this.game = game
 
       this.shuffleCards()
@@ -21,7 +21,8 @@ export const useShowdownStore = defineStore('showdown', {
           type: 'human',
           name: 'You',
           cards: this.game.cards.slice(0, this.game.cards.length / 2),
-        },
+          cardInPlay: null
+        } as HumanPlayer,
         {
           type: 'computer',
           name: 'Yokozuna',
@@ -29,11 +30,20 @@ export const useShowdownStore = defineStore('showdown', {
             this.game.cards.length / 2,
             this.game.cards.length,
           ),
+          cardInPlay: null,
           level: 10,
-        },
+        } as ComputerPlayer,
       ]
 
+      this.drawCards()
+      this.chooser = this.human
+
       this.initialised = true
+    },
+
+    drawCards() {
+      this.human.cardInPlay = this.human.cards[0]
+      this.computer.cardInPlay = this.computer.cards[0]
     },
 
     shuffleCards() {
@@ -59,6 +69,11 @@ export const useShowdownStore = defineStore('showdown', {
 
       return humanCards.length + computerCards.length + state.tiedCards.length
     },
+    selectedCategory(state): Category {
+      const selectedCode = state.selection.code
+
+      return state.game.categories.find((c: Category) => c.code === selectedCode)
+    }
   },
 })
 

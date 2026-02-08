@@ -20,6 +20,7 @@ export interface Card {
 export interface BasePlayer {
   name: string
   cards: Card[]
+  cardInPlay: Card | null
 }
 
 export interface HumanPlayer extends BasePlayer {
@@ -33,9 +34,15 @@ export interface ComputerPlayer extends BasePlayer {
 
 export type Player = HumanPlayer | ComputerPlayer
 
-export interface Game {
+export interface GameType {
   name: string
   categories: Category[]
   cards: Card[]
   players: Player[]
+}
+
+export enum GameResult {
+  Human,
+  Computer,
+  Tie
 }
