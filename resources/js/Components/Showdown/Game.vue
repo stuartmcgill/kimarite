@@ -90,10 +90,10 @@ const nextCard = () => {
   store.drawCards()
   store.selection = null
 
-  if (store.chooser === store.computer)
+  if (store.chooser === store.computer) {
     store.thinking = true
-
-  setTimeout(() => doComputerSelection(), 1000)
+    setTimeout(() => doComputerSelection(), 3000)
+  }
 }
 
 const newGame = () => {
