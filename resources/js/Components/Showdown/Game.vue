@@ -76,11 +76,24 @@ const handleCategorySelected = (categoryValue: CategoryValue) => {
   store.selection = categoryValue
 }
 
+const doComputerSelection = () => {
+  console.log('doComputerSelection')
+  const selectedCategory = store.game.categories[0]
+
+  store.selection = store.computer.cardInPlay.categories.find((c: CategoryValue) => c.code === selectedCategory.code)
+  store.thinking = false
+}
+
 const nextCard = () => {
   processResult()
 
   store.drawCards()
   store.selection = null
+
+  if (store.chooser === store.computer)
+    store.thinking = true
+
+  setTimeout(() => doComputerSelection(), 1000)
 }
 
 const newGame = () => {

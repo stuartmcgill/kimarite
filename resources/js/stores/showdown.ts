@@ -9,6 +9,7 @@ export const useShowdownStore = defineStore('showdown', {
     selection: null as CategoryValue | null,
     players: [] as Player[],
     tiedCards: [] as Card[],
+    thinking: true as boolean
   }),
   actions: {
     init(game: GameType) {

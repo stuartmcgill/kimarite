@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Category, CategoryValue as CategoryValueType } from '@/types/showdown'
 import Button from 'primevue/button'
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useShowdownStore } from '@/stores/showdown'
 
 const props = defineProps<{ categoryValue: CategoryValueType }>()
