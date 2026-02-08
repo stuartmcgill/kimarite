@@ -40,7 +40,7 @@ const imageUrl = computed(
       <div class="flex flex-col gap-2">
         <CategoryValue
           v-for="(categoryValue, index) in props.card.categories"
-          :key="index"
+          :key="`${props.card.id}-${categoryValue.code}`"
           :category-value="categoryValue"
           @selected="$emit('selected', $event)"
         />

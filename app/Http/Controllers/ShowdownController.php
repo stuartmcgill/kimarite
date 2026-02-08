@@ -78,7 +78,7 @@ class ShowdownController extends Controller
                     'name' => $wrestler->shikona_en,
                     'categories' => $wrestler->categories->map(fn (ShowdownWrestlerCategory $category) => [
                         'code' => $category->code,
-                        'value' => $category->value,
+                        'value' => (float) $category->value,
                     ]),
                 ];
             }
