@@ -19,7 +19,7 @@ export const useShowdownStore = defineStore('showdown', {
       this.players = [
         {
           type: 'human',
-          name: 'You',
+          name: 'Player 1',
           cards: this.game.cards.slice(0, this.game.cards.length / 2),
           cardInPlay: null
         } as HumanPlayer,

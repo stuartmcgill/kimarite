@@ -29,6 +29,10 @@ const value = computed(() => {
 })
 
 const disabled = computed(() => {
+  if (store.chooser === store.computer) {
+    return true
+  }
+
   if (!store.selection) {
     return false
   }
