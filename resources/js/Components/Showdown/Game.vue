@@ -64,7 +64,8 @@ const processResult = () => {
 
   // The winner also gets the pile of tied cards
   if (store.tiedCards.length > 0) {
-    winner.cards = winner.cards.concat(store.tiedCards.splice(0))
+    const tiedPile = store.tiedCards.splice(0)
+    winner.cards = winner.cards.concat(tiedPile)
   }
 
   store.chooser = winner
@@ -79,6 +80,10 @@ const nextCard = () => {
 
   store.drawCards()
   store.selection = null
+}
+
+const newGame = () => {
+  store.init(store.game)
 }
 
 const score = computed(() => {
@@ -106,17 +111,27 @@ const score = computed(() => {
   <div v-if="store.initialised">
     <div class="flex gap-4 items-center justify-between">
       <Player :player="store.human" @selected="handleCategorySelected" />
-      <div class="flex justify-center">
-        <Button
-          label="Next"
-          :disabled="!store.selection"
-          class="w-fit"
-          @click="nextCard"
-        />
-        <div class="flex-flex-col">
-          <div> Human {{ store.human.cards.length }}</div>
-          <div> Computer {{ store.computer.cards.length }}</div>
-          <div> Ties {{ store.tiedCards.length }}</div>
+      <div class="flex flex-col">
+        <div class="flex justify-center">
+          <Button v-if="store.winner"
+            label="New game"
+            class="w-fit"
+            @click="newGame"
+          />
+          <Button v-else
+            label="Next"
+            :disabled="!store.selection"
+            class="w-fit"
+            @click="nextCard"
+          />
+        </div>
+<!--        <div class="mt-2 flex-flex-col">-->
+<!--          <div> Human {{ store.human.cards.length }}</div>-->
+<!--          <div> Computer {{ store.computer.cards.length }}</div>-->
+<!--          <div> Ties {{ store.tiedCards.length }}</div>-->
+<!--        </div>-->
+        <div v-if="store.winner" class="mt-12 text-3xl font-bold">
+          {{ store.winner.name }} kachikoshi!
         </div>
       </div>
       <Player :player="store.computer" />

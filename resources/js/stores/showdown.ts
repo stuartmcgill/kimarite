@@ -73,6 +73,23 @@ export const useShowdownStore = defineStore('showdown', {
       const selectedCode = state.selection.code
 
       return state.game.categories.find((c: Category) => c.code === selectedCode)
+    },
+    winner(state): Player | null {
+      const humanCards = state.players[0].cards
+      const computerCards = state.players[1].cards
+
+      if (humanCards.length === 0) {
+        return state.computer
+      }
+
+      if (computerCards.length === 0) {
+        return state.human
+      }
+
+      return null
+    },
+    gameOver(state): boolean {
+      return !!state.winner
     }
   },
 })
