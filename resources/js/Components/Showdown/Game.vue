@@ -77,12 +77,24 @@ const handleCategorySelected = (categoryValue: CategoryValue) => {
   store.selection = categoryValue
 }
 
-const doComputerSelection = () => {
-  // Higher skill levels make the choice based on a knowledge of more cards
-  const numCardsMemorised = Math.round(store.computer.level * store.numCards / 100)
+// Higher skill levels make the choice based on a knowledge of more cards
+const memorisationMap = new Map([
+  [100, 100],
+  [80, 10],
+  [60, 6],
+  [40, 4],
+  [20, 2],
+])
 
+const numCardsMemorised = computed(() => {
+  const percentageKnown = memorisationMap.get(store.computer.level)
+
+  return Math.round(percentageKnown * store.numCards / 100)
+})
+
+const doComputerSelection = () => {
   let selectedCategory = null
-  if (numCardsMemorised === 0) {
+  if (store.computer.level === 0) {
     // Just pick randomly
     const selectedIndex = Math.floor(Math.random() * 6)
     console.log(selectedIndex)
@@ -90,7 +102,7 @@ const doComputerSelection = () => {
   } else {
     // For each category, sort the known cards according to that category and see where the top card comes.
     // Choose the category where the top card comes closest to the top
-    const memorisedCards: Array<Card> = store.game.cards.slice(0, numCardsMemorised)
+    const memorisedCards: Array<Card> = store.game.cards.slice(0, numCardsMemorised.value)
     const computerCard = store.computer.cardInPlay
     memorisedCards.push(computerCard)
 
