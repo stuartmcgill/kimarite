@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useShowdownStore} from '@/stores/showdown'
-import {Card, CategoryValue, GameResult, GameSettings, GameType as GameType} from '@/types/showdown'
+import {Card, Category, CategoryValue, GameResult, GameSettings, GameType as GameType} from '@/types/showdown'
 import Badge from 'primevue/badge'
 import Button from 'primevue/button'
 import MeterGroup from 'primevue/metergroup'
@@ -78,8 +78,54 @@ const handleCategorySelected = (categoryValue: CategoryValue) => {
 }
 
 const doComputerSelection = () => {
-  console.log('doComputerSelection')
-  const selectedCategory = store.game.categories[0]
+  // Higher skill levels make the choice based on a knowledge of more cards
+  const numCardsMemorised = Math.round(store.computer.level * store.numCards / 100)
+
+  let selectedCategory = null
+  if (numCardsMemorised === 0) {
+    // Just pick randomly
+    const selectedIndex = Math.floor(Math.random() * 6)
+    console.log(selectedIndex)
+    selectedCategory = store.game.categories[selectedIndex]
+  } else {
+    // For each category, sort the known cards according to that category and see where the top card comes.
+    // Choose the category where the top card comes closest to the top
+    const memorisedCards: Array<Card> = store.game.cards.slice(0, numCardsMemorised)
+    const computerCard = store.computer.cardInPlay
+    memorisedCards.push(computerCard)
+
+    const rankingMap = new Map()
+
+    store.game.categories.forEach((category: Category) => {
+      const rankedCards = memorisedCards.sort((a: Card, b: Card) => {
+        const aCategory = a.categories.find((c) => c.code === category.code)
+        const bCategory = b.categories.find((c) => c.code === category.code)
+
+        if (!aCategory || !bCategory) {
+          throw Error('Could not find card categories')
+        }
+
+        if (aCategory.value === bCategory.value) {
+          return 0
+        }
+
+        if (category.inverse) {
+          return aCategory.value > bCategory.value ? 1 : -1
+        } else {
+          return bCategory.value > aCategory.value ? 1 : -1
+        }
+      })
+
+      const computerCardIndex = rankedCards.indexOf(computerCard)
+      rankingMap.set(category.code, computerCardIndex)
+    })
+
+    const bestCategoryCode = [...rankingMap.entries()].reduce((best, current) =>
+      current[1] < best[1] ? current : best
+    )[0]
+
+    selectedCategory = store.game.categories.find((c: Category) => c.code === bestCategoryCode)
+  }
 
   store.selection = store.computer.cardInPlay.categories.find((c: CategoryValue) => c.code === selectedCategory.code)
   store.thinking = false
