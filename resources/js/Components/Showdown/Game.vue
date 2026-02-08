@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {useShowdownStore} from '@/stores/showdown'
 import {Card, CategoryValue, GameResult, GameType as GameType} from '@/types/showdown'
+import Badge from 'primevue/badge'
 import Button from 'primevue/button'
 import MeterGroup from 'primevue/metergroup'
 import Player from '@/Components/Showdown/Player.vue'
@@ -92,6 +93,8 @@ const score = computed(() => {
       label: store.human.name,
       value: store.human.cards.length,
       color: 'white',
+      severity: 'secondary',
+      class: '!bg-white !text-grey-800'
     },
     {
       label: 'Ties pile',
@@ -102,6 +105,7 @@ const score = computed(() => {
       label: store.computer.name,
       value: store.computer.cards.length,
       color: 'black',
+      severity: 'contrast'
     },
   ]
 })
@@ -137,7 +141,18 @@ const score = computed(() => {
       <Player :player="store.computer" />
     </div>
     <div class="mt-8 p-4 bg-coral-100 rounded">
-      <MeterGroup :value="score" :min="0" :max="store.numCards" />
+      <MeterGroup :value="score" :min="0" :max="store.numCards">
+        <template #label="{ value }">
+          <div class="flex justify-between w-full">
+            <span v-for="(item, index) in value" :key="index">
+              <div class="flex items-center gap-2">
+                <span>{{ item.label }}</span>
+                 <Badge :class="item.class" :severity="item.severity">{{ item.value }}</Badge>
+              </div>
+            </span>
+          </div>
+        </template>
+      </MeterGroup>
     </div>
   </div>
 </template>
