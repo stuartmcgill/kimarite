@@ -10,7 +10,9 @@ const emit = defineEmits<{
 }>()
 const store = useShowdownStore()
 
-const selected = ref(false)
+const selected = computed(() => {
+  return props.categoryValue.code === store.selection?.code
+})
 
 const category = computed(
   () =>
@@ -41,7 +43,6 @@ const disabled = computed(() => {
 })
 
 const handleSelected = () => {
-  selected.value = true
   emit('selected', props.categoryValue)
 }
 </script>
