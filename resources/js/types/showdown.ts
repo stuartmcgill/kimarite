@@ -46,3 +46,8 @@ export enum GameResult {
   Computer,
   Tie
 }
+
+export interface GameSettings {
+  playerName: string
+  difficultyLevel: number
+}

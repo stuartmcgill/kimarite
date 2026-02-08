@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import {useShowdownStore} from '@/stores/showdown'
-import {Card, CategoryValue, GameResult, GameType as GameType} from '@/types/showdown'
+import {Card, CategoryValue, GameResult, GameSettings, GameType as GameType} from '@/types/showdown'
 import Badge from 'primevue/badge'
 import Button from 'primevue/button'
 import MeterGroup from 'primevue/metergroup'
 import Player from '@/Components/Showdown/Player.vue'
 import {computed} from 'vue'
+import { router } from '@inertiajs/vue3'
 
-const props = defineProps<{ game: GameType }>()
+const props = defineProps<{ game: GameType, settings: GameSettings }>()
 
 const store = useShowdownStore()
-store.init(props.game)
+store.init(props.game, props.settings)
 
 const calcResult = () => {
   const humanCard = store.human.cards[0] as Card
@@ -97,7 +98,7 @@ const nextCard = () => {
 }
 
 const newGame = () => {
-  store.init(store.game)
+  router.visit(route('showdown.view'))
 }
 
 const score = computed(() => {

@@ -1,5 +1,7 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { Card, Category, CategoryValue, ComputerPlayer, GameType, HumanPlayer, Player } from '@/types/showdown'
+import { Card, Category, CategoryValue, ComputerPlayer, GameSettings, GameType, HumanPlayer, Player } from '@/types/showdown'
+import {computed} from "vue";
+import {useSettings} from "@/Composables/showdown/useSettings";
 
 export const useShowdownStore = defineStore('showdown', {
   state: () => ({
@@ -12,7 +14,8 @@ export const useShowdownStore = defineStore('showdown', {
     thinking: true as boolean
   }),
   actions: {
-    init(game: GameType) {
+    init(game: GameType, settings: GameSettings) {
+      const {getDifficultyRank} = useSettings()
       this.game = game
 
       this.shuffleCards()
@@ -20,19 +23,19 @@ export const useShowdownStore = defineStore('showdown', {
       this.players = [
         {
           type: 'human',
-          name: 'Player 1',
+          name: settings.playerName,
           cards: this.game.cards.slice(0, this.game.cards.length / 2),
           cardInPlay: null
         } as HumanPlayer,
         {
           type: 'computer',
-          name: 'Yokozuna',
+          name: getDifficultyRank(settings.difficultyLevel),
           cards: this.game.cards.slice(
             this.game.cards.length / 2,
             this.game.cards.length,
           ),
           cardInPlay: null,
-          level: 10,
+          level: settings.difficultyLevel,
         } as ComputerPlayer,
       ]
 
@@ -59,7 +62,7 @@ export const useShowdownStore = defineStore('showdown', {
       }
 
       return cards
-    },
+    }
   },
   getters: {
     human: state => state.players[0],

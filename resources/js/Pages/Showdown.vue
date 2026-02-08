@@ -5,8 +5,19 @@ import SumoMenu from '@/Components/SumoMenu.vue'
 import SumoFooter from '@/Components/SumoFooter.vue'
 import { GameType as GameType } from '@/types/showdown'
 import Game from '@/Components/Showdown/Game.vue'
+import {Ref, ref} from "vue"
+import GameSettings from "@/Components/Showdown/GameSettings.vue";
 
 const props = defineProps<{ game: GameType }>()
+
+const settings: Ref<GameSettings | null> = ref(null)
+
+const ready = ref(false)
+
+const start = (gameSettings: GameSettings) => {
+  settings.value = gameSettings
+  ready.value = true
+}
 </script>
 
 <template>
@@ -28,7 +39,8 @@ const props = defineProps<{ game: GameType }>()
           <SumoMenu />
         </div>
         <div class="p-6 w-full bg-white rounded-sm shadow-sm">
-          <Game :game="props.game" />
+          <Game v-if="ready" :game="props.game" :settings="settings" />
+          <GameSettings @start="start" v-else />
         </div>
       </div>
       <SumoFooter />
