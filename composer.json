@@ -10,7 +10,7 @@
     "require": {
         "php": "^8.3",
         "inertiajs/inertia-laravel": "^2.0",
-        "laravel/framework": "^11.9",
+        "laravel/framework": "^v12.50.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "stuartmcgill/sumoapi-php": "^0.8.0",
@@ -18,14 +18,14 @@
       "ext-dom": "*"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.14",
         "fakerphp/faker": "^1.23",
+        "fruitcake/laravel-debugbar": "^4.0",
         "laravel/breeze": "^2.1",
         "laravel/pint": "^1.17",
         "laravel/sail": "^1.33",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.0",
-        "phpunit/phpunit": "^11.0.1"
+        "phpunit/phpunit": "^12.5.9"
     },
     "autoload": {
         "psr-4": {
