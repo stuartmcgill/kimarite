@@ -176,7 +176,7 @@ initialise()
           class="w-full flex flex-col md:flex-row items-center justify-between gap-4"
         >
           <h1
-            class="kimarite-header mx-auto order-2 md:order-1 mb-4 font-semibold text-primary-900"
+            class="kimarite-header mx-auto w-full order-2 md:order-1 font-semibold text-primary-900"
           >
             Kimarite trends
           </h1>
