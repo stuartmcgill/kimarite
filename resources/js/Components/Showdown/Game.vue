@@ -189,7 +189,7 @@ const score = computed(() => {
       class: '!bg-white !text-grey-800',
     },
     {
-      label: 'Ties pile',
+      label: 'Ties',
       value: store.tiedCards.length,
       color: 'var(--p-primary-color)',
     },
@@ -205,7 +205,7 @@ const score = computed(() => {
 
 <template>
   <div v-if="store.initialised">
-    <div class="flex gap-4 items-center justify-between">
+    <div class="flex flex-col sm:flex-row gap-4 items-center justify-between">
       <Player :player="store.human" @selected="handleCategorySelected" />
       <div class="flex flex-col">
         <div class="flex justify-center">
