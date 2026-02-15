@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { useShowdownStore } from '@/stores/showdown'
 
-const imageUrl = computed(
-  () =>
-    new URL(`../../../images/showdown/facedown-card.png`, import.meta.url).href,
-)
+const store = useShowdownStore()
 </script>
-
 <template>
   <div
-    class="p-8 w-60 h-[416px] flex items-center justify-center text-xl"
+    class="p-2 sm:p-8 w-full sm:w-60 h-48.5 sm:h-104 flex flex-col justify-center text-xl"
   >
-    No more cards
+    <div>No more cards</div>
+    <div v-if="store.winner" class="mt-4 sm:mt-12 text-3xl font-bold">
+      {{ store.winner.name }} kachikoshi!
+    </div>
   </div>
 </template>

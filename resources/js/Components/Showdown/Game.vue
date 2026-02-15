@@ -206,7 +206,7 @@ const score = computed(() => {
 <template>
   <div v-if="store.initialised">
     <div
-      class="flex flex-col sm:flex-row gap-2 sm:gap-4 items-center justify-between"
+      class="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-between"
     >
       <Player :player="store.human" @selected="handleCategorySelected" />
       <div class="flex flex-col">
@@ -230,9 +230,6 @@ const score = computed(() => {
         <!--          <div> Computer {{ store.computer.cards.length }}</div>-->
         <!--          <div> Ties {{ store.tiedCards.length }}</div>-->
         <!--        </div>-->
-        <div v-if="store.winner" class="mt-12 text-3xl font-bold">
-          {{ store.winner.name }} kachikoshi!
-        </div>
       </div>
       <Player :player="store.computer" />
     </div>
