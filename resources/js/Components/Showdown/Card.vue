@@ -23,20 +23,20 @@ const imageUrl = computed(
   <div
     class="sm:w-60 flex flex-col bg-coral-100 rounded-2xl border-4 border-coral-200"
   >
-    <div class="sm:hidden">
-      <Button
-        as="a"
-        :label="props.card.name"
-        :href="rikishiUrl"
-        variant="link"
-      />
-    </div>
     <div class="flex sm:flex-col w-full">
-      <div class="rounded-bl-xl sm:rounded-xl bg-coral-400 w-full">
+      <div class="rounded-bl-xl sm:rounded-xl w-full">
+        <div class="sm:hidden">
+          <Button
+            as="a"
+            :label="props.card.name"
+            :href="rikishiUrl"
+            variant="link"
+          />
+        </div>
         <img
           :src="imageUrl"
           :alt="props.card.name"
-          class="object-cover object-top w-full h-46.5 sm:h-52 rounded-bl-xl sm:rounded-t-xl"
+          class="object-cover object-top w-full h-36 sm:h-52 rounded-bl-xl sm:rounded-t-xl"
         />
       </div>
       <div class="w-full flex flex-col sm:rounded">
@@ -48,7 +48,7 @@ const imageUrl = computed(
             variant="link"
           />
         </div>
-        <div class="flex flex-col h-46.5 sm:h-auto">
+        <div class="flex flex-col sm:h-auto">
           <CategoryValue
             v-for="(categoryValue, index) in props.card.categories"
             :key="`${props.card.id}-${categoryValue.code}`"

@@ -205,7 +205,9 @@ const score = computed(() => {
 
 <template>
   <div v-if="store.initialised">
-    <div class="flex flex-col sm:flex-row gap-4 items-center justify-between">
+    <div
+      class="flex flex-col sm:flex-row gap-2 sm:gap-4 items-center justify-between"
+    >
       <Player :player="store.human" @selected="handleCategorySelected" />
       <div class="flex flex-col">
         <div class="flex justify-center">
