@@ -52,6 +52,7 @@ const start = (gameSettings: GameSettingsType) => {
           <Game v-if="settings" :game="props.game" :settings="settings" />
           <GameSettings
             v-else
+            :game="props.game"
             :difficulty-labels-map="store.difficultyLabelsMap"
             @start="start"
           />

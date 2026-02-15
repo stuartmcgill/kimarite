@@ -51,5 +51,6 @@ export enum GameResult {
 
 export interface GameSettings {
   playerName: string
+  numCards: number
   difficultyLevel: number
 }

@@ -1,11 +1,14 @@
-import { computed, ref } from 'vue'
+import { computed, Ref, ref } from 'vue'
 
 export function useSettings(difficultyLabelsMap: Map<number, string>) {
-  const name = localStorage.getItem('playerName') || ''
-  const level = parseInt(localStorage.getItem('difficultyLevel') || '40')
+  const playerName: Ref<string> = ref(localStorage.getItem('playerName') || '')
+  const numCards: Ref<number> = ref(
+    parseInt(localStorage.getItem('numCards') || '32'),
+  )
+  const difficultyLevel: Ref<number> = ref(
+    parseInt(localStorage.getItem('difficultyLevel') || '40'),
+  )
 
-  const playerName = ref(name)
-  const difficultyLevel = ref(level)
   const difficultyRank = computed(() =>
     getDifficultyRank(difficultyLevel.value),
   )
@@ -36,6 +39,7 @@ export function useSettings(difficultyLabelsMap: Map<number, string>) {
 
   return {
     playerName,
+    numCards,
     difficultyLevel,
     difficultyRank,
     difficultySeverity,
