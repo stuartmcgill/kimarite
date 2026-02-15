@@ -21,34 +21,46 @@ const imageUrl = computed(
 
 <template>
   <div
-    class="w-60 flex flex-col bg-coral-100 rounded-2xl border-4 border-coral-200"
+    class="sm:w-60 flex flex-col bg-coral-100 rounded-2xl border-4 border-coral-200"
   >
-    <div class="w-full rounded-2xl bg-coral-400">
-      <img
-        :src="imageUrl"
-        :alt="props.card.name"
-        class="object-cover object-top w-full h-52 rounded-t-2xl"
-      />
-    </div>
-    <div class="flex flex-col rounded">
+    <div class="sm:hidden">
       <Button
         as="a"
         :label="props.card.name"
         :href="rikishiUrl"
         variant="link"
       />
-      <div class="flex flex-col">
-        <CategoryValue
-          v-for="(categoryValue, index) in props.card.categories"
-          :key="`${props.card.id}-${categoryValue.code}`"
-          :category-value="categoryValue"
-          :class="
-            index === props.card.categories.length - 1
-              ? 'rounded-t-none! rounded-b-xl!'
-              : 'rounded-none!'
-          "
-          @selected="$emit('selected', $event)"
+    </div>
+    <div class="grid grid-cols-2 sm:flex sm:flex-col">
+      <div class="w-full rounded-bl-xl sm:rounded-xl bg-coral-400">
+        <img
+          :src="imageUrl"
+          :alt="props.card.name"
+          class="object-cover object-top w-full h-64 sm:h-52 rounded-bl-xl sm:rounded-t-xl"
         />
+      </div>
+      <div class="flex flex-col sm:rounded">
+        <div class="hidden sm:block">
+          <Button
+            as="a"
+            :label="props.card.name"
+            :href="rikishiUrl"
+            variant="link"
+          />
+        </div>
+        <div class="flex flex-col">
+          <CategoryValue
+            v-for="(categoryValue, index) in props.card.categories"
+            :key="`${props.card.id}-${categoryValue.code}`"
+            :category-value="categoryValue"
+            :class="
+              index === props.card.categories.length - 1
+                ? 'rounded-t-none! rounded-bl-none! rounded-br-xl! sm:rounded-b-xl!'
+                : 'rounded-none!'
+            "
+            @selected="$emit('selected', $event)"
+          />
+        </div>
       </div>
     </div>
   </div>
