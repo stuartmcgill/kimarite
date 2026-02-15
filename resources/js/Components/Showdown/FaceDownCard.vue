@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import {useShowdownStore} from "@/stores/showdown";
+import { computed, ref } from 'vue'
+import { useShowdownStore } from '@/stores/showdown'
 
 const imageUrl = computed(
   () =>
@@ -17,8 +17,8 @@ const store = useShowdownStore()
     <img
       :src="imageUrl"
       alt="Dohyo logo"
-      class="object-cover transition-transform "
-      :class="{ 'animate-pulse': store.thinking }"
+      class="object-cover transition-transform"
+      :class="{ 'animate-bounce': store.thinking }"
     />
   </div>
 </template>
