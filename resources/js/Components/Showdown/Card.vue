@@ -36,7 +36,7 @@ const imageUrl = computed(
         <img
           :src="imageUrl"
           :alt="props.card.name"
-          class="object-cover object-top w-full h-48 sm:h-52 rounded-bl-xl sm:rounded-t-xl"
+          class="object-cover object-top w-full h-46.5 sm:h-52 rounded-bl-xl sm:rounded-t-xl"
         />
       </div>
       <div class="w-full flex flex-col sm:rounded">
@@ -48,7 +48,7 @@ const imageUrl = computed(
             variant="link"
           />
         </div>
-        <div class="flex flex-col h-48 sm:h-auto">
+        <div class="flex flex-col h-46.5 sm:h-auto">
           <CategoryValue
             v-for="(categoryValue, index) in props.card.categories"
             :key="`${props.card.id}-${categoryValue.code}`"
