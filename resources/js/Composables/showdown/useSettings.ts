@@ -1,21 +1,43 @@
-import {ref} from "vue";
+import { computed, ref } from 'vue'
 
-const ranks = new Map([
-  [0, "Juryo"],
-  [20, "Maegashira"],
-  [40, "Komusubi"],
-  [60, "Sekiwake"],
-  [80, "Ozeki"],
-  [100, "Yokozuna"],
-])
-
-export function useSettings() {
+export function useSettings(difficultyLabelsMap: Map<number, string>) {
   const name = localStorage.getItem('playerName') || ''
   const level = parseInt(localStorage.getItem('difficultyLevel') || '40')
 
+  const playerName = ref(name)
+  const difficultyLevel = ref(level)
+  const difficultyRank = computed(() =>
+    getDifficultyRank(difficultyLevel.value),
+  )
+
   const getDifficultyRank = (difficultyLevel: number) => {
-    return ranks.get(difficultyLevel)
+    return difficultyLabelsMap.get(difficultyLevel)
   }
 
-  return {name, level, getDifficultyRank}
+  const difficultySeverity = computed(() => {
+    if (difficultyLevel.value === 0) {
+      return 'secondary'
+    }
+    if (difficultyLevel.value <= 20) {
+      return 'success'
+    }
+    if (difficultyLevel.value <= 40) {
+      return 'info'
+    }
+    if (difficultyLevel.value <= 60) {
+      return 'warn'
+    }
+    if (difficultyLevel.value <= 80) {
+      return 'danger'
+    }
+
+    return 'contrast'
+  })
+
+  return {
+    playerName,
+    difficultyLevel,
+    difficultyRank,
+    difficultySeverity,
+  }
 }

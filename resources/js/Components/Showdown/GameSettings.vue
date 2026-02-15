@@ -3,7 +3,6 @@ import Badge from 'primevue/badge'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import Slider from 'primevue/slider'
-import { computed, ref } from 'vue'
 import { useSettings } from '@/Composables/showdown/useSettings'
 import { GameSettings as GameSettingsType } from '@/types/showdown'
 
@@ -11,35 +10,21 @@ const emit = defineEmits<{
   (e: 'start', settings: GameSettingsType): void
 }>()
 
-const { name, level, getDifficultyRank } = useSettings()
+const difficultyLabelsMap = new Map<number, string>([
+  [0, 'Juryo'],
+  [20, 'Maegashira'],
+  [40, 'Komusubi'],
+  [60, 'Sekiwake'],
+  [80, 'Ozeki'],
+  [100, 'Yokozuna'],
+])
 
-const playerName = ref(name)
-const difficultyLevel = ref(level)
-const difficultyRank = computed(() => getDifficultyRank(difficultyLevel.value))
-
-const difficultySeverity = computed(() => {
-  if (difficultyLevel.value === 0) {
-    return 'secondary'
-  }
-  if (difficultyLevel.value <= 20) {
-    return 'success'
-  }
-  if (difficultyLevel.value <= 40) {
-    return 'info'
-  }
-  if (difficultyLevel.value <= 60) {
-    return 'warn'
-  }
-  if (difficultyLevel.value <= 80) {
-    return 'danger'
-  }
-
-  return 'contrast'
-})
+const { playerName, difficultyLevel, difficultyRank, difficultySeverity } =
+  useSettings(difficultyLabelsMap)
 
 const start = () => {
   localStorage.setItem('playerName', playerName.value)
-  localStorage.setItem('difficultyLevel', difficultyLevel.value)
+  localStorage.setItem('difficultyLevel', difficultyLevel.value as string)
 
   emit('start', {
     playerName: playerName.value,
