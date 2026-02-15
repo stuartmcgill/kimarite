@@ -11,6 +11,8 @@ use App\Services\SumoDB\RikishiPage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use StuartMcGill\SumoApiPhp\Model\Rank;
+use StuartMcGill\SumoApiPhp\Model\Rikishi;
 use StuartMcGill\SumoApiPhp\Service\RikishiService;
 use Throwable;
 
@@ -43,7 +45,14 @@ class RefreshShowdownController extends Controller
         $rikishiService = RikishiService::factory();
         $wrestlers = collect();
 
-        $apiWrestlers = $rikishiService->fetchDivision('Makuuchi');
+        $apiWrestlers = collect($rikishiService->fetchDivision('Makuuchi'))
+            ->sort(function (Rikishi $a, Rikishi $b): int {
+                $rankA = new Rank($a->currentRank);
+                $rankB = new Rank($b->currentRank);
+
+                return $rankA->isGreaterThan($rankB) ? -1 : 1;
+            });
+
         foreach ($apiWrestlers as $apiWrestler) {
             $wrestler = ShowdownWrestler::make([
                 'nsk_id' => $apiWrestler->nskId,
