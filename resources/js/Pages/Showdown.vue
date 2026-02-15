@@ -42,10 +42,16 @@ const start = (gameSettings: GameSettingsType) => {
         >
           <SumoMenu :force-hamburger="true" />
         </div>
-        <div class="p-6 w-full bg-white rounded-sm shadow-sm">
-          <Game v-if="settings" :game="props.game" :settings="settings" />
+        <div>
+          <Game
+            v-if="settings"
+            class="p-2 sm:p-6 w-full bg-white rounded-sm shadow-sm"
+            :game="props.game"
+            :settings="settings"
+          />
           <GameSettings
             v-else
+            class="p-6 w-full bg-white rounded-sm shadow-sm"
             :game="props.game"
             :difficulty-labels-map="store.difficultyLabelsMap"
             @start="start"

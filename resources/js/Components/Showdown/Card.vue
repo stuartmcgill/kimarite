@@ -31,15 +31,15 @@ const imageUrl = computed(
         variant="link"
       />
     </div>
-    <div class="grid grid-cols-2 sm:flex sm:flex-col">
-      <div class="w-full rounded-bl-xl sm:rounded-xl bg-coral-400">
+    <div class="flex sm:flex-col w-full">
+      <div class="rounded-bl-xl sm:rounded-xl bg-coral-400 w-full">
         <img
           :src="imageUrl"
           :alt="props.card.name"
-          class="object-cover object-top w-full h-64 sm:h-52 rounded-bl-xl sm:rounded-t-xl"
+          class="object-cover object-top w-full h-48 sm:h-52 rounded-bl-xl sm:rounded-t-xl"
         />
       </div>
-      <div class="flex flex-col sm:rounded">
+      <div class="w-full flex flex-col sm:rounded">
         <div class="hidden sm:block">
           <Button
             as="a"
@@ -48,7 +48,7 @@ const imageUrl = computed(
             variant="link"
           />
         </div>
-        <div class="flex flex-col">
+        <div class="flex flex-col h-48 sm:h-auto">
           <CategoryValue
             v-for="(categoryValue, index) in props.card.categories"
             :key="`${props.card.id}-${categoryValue.code}`"
