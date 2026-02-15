@@ -40,11 +40,6 @@ const start = (gameSettings: GameSettingsType) => {
         <div
           class="w-full flex flex-col md:flex-row items-center justify-between gap-4"
         >
-          <h1
-            class="kimarite-header mx-auto order-2 md:order-1 font-semibold text-primary-900"
-          >
-            Sumo showdown
-          </h1>
           <SumoMenu :force-hamburger="true" />
         </div>
         <div class="p-6 w-full bg-white rounded-sm shadow-sm">

@@ -38,9 +38,12 @@ const start = () => {
 </script>
 
 <template>
-  <form @submit.prevent="start">
+  <form class="mx-auto max-w-sm" @submit.prevent="start">
+    <h1 class="mb-8 kimarite-header font-semibold text-primary-900">
+      Sumo Showdown
+    </h1>
     <div
-      class="max-w-md grid grid-cols-[auto_1fr] gap-x-6 gap-y-4 items-center [&>*:nth-child(odd)]:text-left"
+      class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-4 items-center [&>*:nth-child(odd)]:text-left"
     >
       <label for="player-name">Player name</label>
       <InputText id="player-name" v-model="playerName" />
@@ -65,7 +68,7 @@ const start = () => {
       </InputNumber>
 
       <label for="difficulty-level">Difficulty</label>
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-6">
         <Slider
           id="difficulty-level"
           v-model="difficultyLevel"
