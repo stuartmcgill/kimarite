@@ -25,9 +25,10 @@ export const useShowdownStore = defineStore('showdown', {
   }),
   actions: {
     newGame(game: GameType, settings: GameSettings) {
-      const { difficultyRank } = useSettings(this.difficultyLabelsMap)
+      const { numCards, difficultyRank } = useSettings(this.difficultyLabelsMap)
       this.game = game
 
+      this.game.cards.splice(numCards.value)
       this.shuffleCards()
 
       this.players = [
