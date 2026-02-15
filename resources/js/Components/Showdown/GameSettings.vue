@@ -5,22 +5,16 @@ import Button from 'primevue/button'
 import Slider from 'primevue/slider'
 import { useSettings } from '@/Composables/showdown/useSettings'
 import { GameSettings as GameSettingsType } from '@/types/showdown'
+import { useShowdownStore } from '@/stores/showdown'
 
 const emit = defineEmits<{
   (e: 'start', settings: GameSettingsType): void
 }>()
 
-const difficultyLabelsMap = new Map<number, string>([
-  [0, 'Juryo'],
-  [20, 'Maegashira'],
-  [40, 'Komusubi'],
-  [60, 'Sekiwake'],
-  [80, 'Ozeki'],
-  [100, 'Yokozuna'],
-])
+const store = useShowdownStore()
 
 const { playerName, difficultyLevel, difficultyRank, difficultySeverity } =
-  useSettings(difficultyLabelsMap)
+  useSettings(store.difficultyLabelsMap)
 
 const start = () => {
   localStorage.setItem('playerName', playerName.value)

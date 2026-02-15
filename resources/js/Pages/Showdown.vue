@@ -3,18 +3,31 @@ import { Head } from '@inertiajs/vue3'
 import 'primeicons/primeicons.css'
 import SumoMenu from '@/Components/SumoMenu.vue'
 import SumoFooter from '@/Components/SumoFooter.vue'
-import { GameType as GameType } from '@/types/showdown'
+import {
+  DifficultyLabelsMap,
+  GameSettings as GameSettingsType,
+  GameType as GameType,
+} from '@/types/showdown'
 import Game from '@/Components/Showdown/Game.vue'
-import {Ref, ref} from "vue"
-import GameSettings from "@/Components/Showdown/GameSettings.vue";
+import { Ref, ref } from 'vue'
+import GameSettings from '@/Components/Showdown/GameSettings.vue'
+import { useShowdownStore } from '@/stores/showdown'
 
-const props = defineProps<{ game: GameType }>()
+const props = defineProps<{
+  game: GameType
+  difficultyLabelsMap: DifficultyLabelsMap
+}>()
 
-const settings: Ref<GameSettings | null> = ref(null)
+const store = useShowdownStore()
+store.difficultyLabelsMap = new Map(
+  Object.entries(props.difficultyLabelsMap).map(([k, v]) => [Number(k), v]),
+)
+
+const settings: Ref<GameSettingsType | null> = ref(null)
 
 const ready = ref(false)
 
-const start = (gameSettings: GameSettings) => {
+const start = (gameSettings: GameSettingsType) => {
   settings.value = gameSettings
   ready.value = true
 }
@@ -40,7 +53,11 @@ const start = (gameSettings: GameSettings) => {
         </div>
         <div class="p-6 w-full bg-white rounded-sm shadow-sm">
           <Game v-if="ready" :game="props.game" :settings="settings" />
-          <GameSettings @start="start" v-else />
+          <GameSettings
+            v-else
+            :difficulty-labels-map="store.difficultyLabelsMap"
+            @start="start"
+          />
         </div>
       </div>
       <SumoFooter />

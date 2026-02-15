@@ -41,10 +41,12 @@ export interface GameType {
   players: Player[]
 }
 
+export type DifficultyLabelsMap = Record<number, string>
+
 export enum GameResult {
   Human,
   Computer,
-  Tie
+  Tie,
 }
 
 export interface GameSettings {

@@ -1,21 +1,31 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { Card, Category, CategoryValue, ComputerPlayer, GameSettings, GameType, HumanPlayer, Player } from '@/types/showdown'
-import {computed} from "vue";
-import {useSettings} from "@/Composables/showdown/useSettings";
+import {
+  Card,
+  Category,
+  CategoryValue,
+  ComputerPlayer,
+  DifficultyLabelsMap,
+  GameSettings,
+  GameType,
+  HumanPlayer,
+  Player,
+} from '@/types/showdown'
+import { useSettings } from '@/Composables/showdown/useSettings'
 
 export const useShowdownStore = defineStore('showdown', {
   state: () => ({
     initialised: false as boolean,
     game: null as GameType | null,
+    difficultyLabelsMap: new Map<number, string>(),
     chooser: null as Player | null,
     selection: null as CategoryValue | null,
     players: [] as Player[],
     tiedCards: [] as Card[],
-    thinking: true as boolean
+    thinking: true as boolean,
   }),
   actions: {
-    init(game: GameType, settings: GameSettings) {
-      const {getDifficultyRank} = useSettings()
+    newGame(game: GameType, settings: GameSettings) {
+      const { difficultyRank } = useSettings(this.difficultyLabelsMap)
       this.game = game
 
       this.shuffleCards()
@@ -25,11 +35,11 @@ export const useShowdownStore = defineStore('showdown', {
           type: 'human',
           name: settings.playerName,
           cards: this.game.cards.slice(0, this.game.cards.length / 2),
-          cardInPlay: null
+          cardInPlay: null,
         } as HumanPlayer,
         {
           type: 'computer',
-          name: getDifficultyRank(settings.difficultyLevel),
+          name: difficultyRank.value,
           cards: this.game.cards.slice(
             this.game.cards.length / 2,
             this.game.cards.length,
@@ -62,7 +72,7 @@ export const useShowdownStore = defineStore('showdown', {
       }
 
       return cards
-    }
+    },
   },
   getters: {
     human: state => state.players[0],
@@ -76,7 +86,9 @@ export const useShowdownStore = defineStore('showdown', {
     selectedCategory(state): Category {
       const selectedCode = state.selection.code
 
-      return state.game.categories.find((c: Category) => c.code === selectedCode)
+      return state.game.categories.find(
+        (c: Category) => c.code === selectedCode,
+      )
     },
     winner(state): Player | null {
       const humanCards = state.players[0].cards
@@ -94,7 +106,7 @@ export const useShowdownStore = defineStore('showdown', {
     },
     gameOver(state): boolean {
       return !!state.winner
-    }
+    },
   },
 })
 

@@ -55,6 +55,15 @@ class ShowdownController extends Controller
 
         $cards = $this->fetchCards();
 
+        $difficultyLabelsMap = [
+            0 => 'Juryo',
+            20 => 'Maegashira',
+            40 => 'Komusubi',
+            60 => 'Sekiwake',
+            80 => 'Ozeki',
+            100 => 'Yokozuna',
+        ];
+
         return Inertia::render(
             'Showdown',
             [
@@ -63,6 +72,7 @@ class ShowdownController extends Controller
                     'categories' => $categories,
                     'cards' => $cards,
                 ],
+                'difficultyLabelsMap' => $difficultyLabelsMap,
             ],
         );
     }

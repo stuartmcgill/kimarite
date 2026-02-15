@@ -1,24 +1,35 @@
 <script setup lang="ts">
-import {useShowdownStore} from '@/stores/showdown'
-import {Card, Category, CategoryValue, GameResult, GameSettings, GameType as GameType} from '@/types/showdown'
+import { useShowdownStore } from '@/stores/showdown'
+import {
+  Card,
+  Category,
+  CategoryValue,
+  GameResult,
+  GameSettings,
+  GameType as GameType,
+} from '@/types/showdown'
 import Badge from 'primevue/badge'
 import Button from 'primevue/button'
 import MeterGroup from 'primevue/metergroup'
 import Player from '@/Components/Showdown/Player.vue'
-import {computed} from 'vue'
+import { computed } from 'vue'
 import { router } from '@inertiajs/vue3'
 
-const props = defineProps<{ game: GameType, settings: GameSettings }>()
+const props = defineProps<{ game: GameType; settings: GameSettings }>()
 
 const store = useShowdownStore()
-store.init(props.game, props.settings)
+store.newGame(props.game, props.settings)
 
 const calcResult = () => {
   const humanCard = store.human.cards[0] as Card
   const computerCard = store.computer.cards[0] as Card
 
-  const humanValue = humanCard.categories.find((cv: CategoryValue) => cv.code === store.selection.code)?.value
-  const computerValue = computerCard.categories.find((cv: CategoryValue) => cv.code === store.selection.code)?.value
+  const humanValue = humanCard.categories.find(
+    (cv: CategoryValue) => cv.code === store.selection.code,
+  )?.value
+  const computerValue = computerCard.categories.find(
+    (cv: CategoryValue) => cv.code === store.selection.code,
+  )?.value
 
   if (humanValue === computerValue) {
     return GameResult.Tie
@@ -32,7 +43,8 @@ const calcResult = () => {
 }
 
 const switchChooser = () => {
-  const otherPlayer = store.players.find((p: Player) => p.type !== store.chooser!.type) || null
+  const otherPlayer =
+    store.players.find((p: Player) => p.type !== store.chooser!.type) || null
   if (!otherPlayer) {
     console.error('Unable to find other player')
 
@@ -49,14 +61,15 @@ const processResult = () => {
     const computerCard = store.computer.cards.shift()
 
     store.tiedCards.push(humanCard, computerCard)
-    switchChooser();
+    switchChooser()
 
     return
   }
 
-  const {winner, loser} = result === GameResult.Computer
-    ? {winner: store.computer, loser: store.human}
-    : {winner: store.human, loser: store.computer}
+  const { winner, loser } =
+    result === GameResult.Computer
+      ? { winner: store.computer, loser: store.human }
+      : { winner: store.human, loser: store.computer }
 
   // The winner puts their own card and the loser's card to
   // the pack of their back
@@ -89,7 +102,7 @@ const memorisationMap = new Map([
 const numCardsMemorised = computed(() => {
   const percentageKnown = memorisationMap.get(store.computer.level)
 
-  return Math.round(percentageKnown * store.numCards / 100)
+  return Math.round((percentageKnown * store.numCards) / 100)
 })
 
 const doComputerSelection = () => {
@@ -102,7 +115,10 @@ const doComputerSelection = () => {
   } else {
     // For each category, sort the known cards according to that category and see where the top card comes.
     // Choose the category where the top card comes closest to the top
-    const memorisedCards: Array<Card> = store.game.cards.slice(0, numCardsMemorised.value)
+    const memorisedCards: Array<Card> = store.game.cards.slice(
+      0,
+      numCardsMemorised.value,
+    )
     const computerCard = store.computer.cardInPlay
     memorisedCards.push(computerCard)
 
@@ -110,8 +126,8 @@ const doComputerSelection = () => {
 
     store.game.categories.forEach((category: Category) => {
       const rankedCards = memorisedCards.sort((a: Card, b: Card) => {
-        const aCategory = a.categories.find((c) => c.code === category.code)
-        const bCategory = b.categories.find((c) => c.code === category.code)
+        const aCategory = a.categories.find(c => c.code === category.code)
+        const bCategory = b.categories.find(c => c.code === category.code)
 
         if (!aCategory || !bCategory) {
           throw Error('Could not find card categories')
@@ -132,14 +148,18 @@ const doComputerSelection = () => {
       rankingMap.set(category.code, computerCardIndex)
     })
 
-    const bestCategoryCode = [...rankingMap.entries()].reduce((best, current) =>
-      current[1] < best[1] ? current : best
+    const bestCategoryCode = [...rankingMap.entries()].reduce(
+      (best, current) => (current[1] < best[1] ? current : best),
     )[0]
 
-    selectedCategory = store.game.categories.find((c: Category) => c.code === bestCategoryCode)
+    selectedCategory = store.game.categories.find(
+      (c: Category) => c.code === bestCategoryCode,
+    )
   }
 
-  store.selection = store.computer.cardInPlay.categories.find((c: CategoryValue) => c.code === selectedCategory.code)
+  store.selection = store.computer.cardInPlay.categories.find(
+    (c: CategoryValue) => c.code === selectedCategory.code,
+  )
   store.thinking = false
 }
 
@@ -166,7 +186,7 @@ const score = computed(() => {
       value: store.human.cards.length,
       color: 'white',
       severity: 'secondary',
-      class: '!bg-white !text-grey-800'
+      class: '!bg-white !text-grey-800',
     },
     {
       label: 'Ties pile',
@@ -177,7 +197,7 @@ const score = computed(() => {
       label: store.computer.name,
       value: store.computer.cards.length,
       color: 'black',
-      severity: 'contrast'
+      severity: 'contrast',
     },
   ]
 })
@@ -189,23 +209,25 @@ const score = computed(() => {
       <Player :player="store.human" @selected="handleCategorySelected" />
       <div class="flex flex-col">
         <div class="flex justify-center">
-          <Button v-if="store.winner"
+          <Button
+            v-if="store.winner"
             label="New game"
             class="w-fit"
             @click="newGame"
           />
-          <Button v-else
+          <Button
+            v-else
             label="Next"
             :disabled="!store.selection"
             class="w-fit"
             @click="nextCard"
           />
         </div>
-<!--        <div class="mt-2 flex-flex-col">-->
-<!--          <div> Human {{ store.human.cards.length }}</div>-->
-<!--          <div> Computer {{ store.computer.cards.length }}</div>-->
-<!--          <div> Ties {{ store.tiedCards.length }}</div>-->
-<!--        </div>-->
+        <!--        <div class="mt-2 flex-flex-col">-->
+        <!--          <div> Human {{ store.human.cards.length }}</div>-->
+        <!--          <div> Computer {{ store.computer.cards.length }}</div>-->
+        <!--          <div> Ties {{ store.tiedCards.length }}</div>-->
+        <!--        </div>-->
         <div v-if="store.winner" class="mt-12 text-3xl font-bold">
           {{ store.winner.name }} kachikoshi!
         </div>
@@ -219,7 +241,9 @@ const score = computed(() => {
             <span v-for="(item, index) in value" :key="index">
               <div class="flex items-center gap-2">
                 <span>{{ item.label }}</span>
-                 <Badge :class="item.class" :severity="item.severity">{{ item.value }}</Badge>
+                <Badge :class="item.class" :severity="item.severity">{{
+                  item.value
+                }}</Badge>
               </div>
             </span>
           </div>
