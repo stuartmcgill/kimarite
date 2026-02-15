@@ -2,7 +2,6 @@
 import { Head } from '@inertiajs/vue3'
 import 'primeicons/primeicons.css'
 import SumoMenu from '@/Components/SumoMenu.vue'
-import SumoFooter from '@/Components/SumoFooter.vue'
 import {
   DifficultyLabelsMap,
   GameSettings as GameSettingsType,
@@ -32,7 +31,7 @@ const start = (gameSettings: GameSettingsType) => {
 
 <template>
   <body class="bg-coral-100">
-    <Head title="Kimarite trends" />
+    <Head title="Sumo showdown" />
 
     <div class="mx-auto flex flex-col w-full min-h-screen sm:max-w-3xl">
       <div
@@ -42,11 +41,11 @@ const start = (gameSettings: GameSettingsType) => {
           class="w-full flex flex-col md:flex-row items-center justify-between gap-4"
         >
           <h1
-            class="kimarite-header mx-auto order-2 md:order-1 mb-4 font-semibold text-primary-900"
+            class="kimarite-header mx-auto order-2 md:order-1 font-semibold text-primary-900"
           >
             Sumo showdown
           </h1>
-          <SumoMenu />
+          <SumoMenu :force-hamburger="true" />
         </div>
         <div class="p-6 w-full bg-white rounded-sm shadow-sm">
           <Game v-if="settings" :game="props.game" :settings="settings" />
@@ -58,7 +57,6 @@ const start = (gameSettings: GameSettingsType) => {
           />
         </div>
       </div>
-      <SumoFooter />
     </div>
   </body>
 </template>

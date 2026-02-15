@@ -2,6 +2,15 @@
 import { computed } from 'vue'
 import Menubar from 'primevue/menubar'
 
+const props = withDefaults(
+  defineProps<{
+    forceHamburger?: boolean
+  }>(),
+  {
+    forceHamburger: false,
+  },
+)
+
 const menuItems = computed(() => {
   const currentRoute = route().current() || ''
 
@@ -32,5 +41,22 @@ const menuItems = computed(() => {
 </script>
 
 <template>
-  <Menubar class="my-4 order-1 md:order-2 w-full md:w-96" :model="menuItems" />
+  <Menubar
+    class="my-4 order-1 md:order-2 w-full md:w-96"
+    :class="{ 'force-hamburger': props.forceHamburger }"
+    :model="menuItems"
+  />
 </template>
+
+<style>
+/* Apply mobile styles at all screen sizes */
+@media screen and (min-width: 0) {
+  .force-hamburger .p-menubar-root-list {
+    display: none;
+  }
+
+  .force-hamburger .p-menubar-button {
+    display: flex;
+  }
+}
+</style>
