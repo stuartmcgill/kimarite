@@ -18,7 +18,7 @@ const store = useShowdownStore()
       :src="imageUrl"
       alt="Dohyo logo"
       class="sm:w-auto sm:h-auto w-40 h-40 object-cover transition-transform"
-      :class="{ 'animate-bounce': store.thinking }"
+      :class="store.thinking ? 'animate-pulse sm:animate-bounce' : ''"
     />
   </div>
 </template>
