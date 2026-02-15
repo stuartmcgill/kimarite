@@ -30,18 +30,23 @@ const imageUrl = computed(
         class="object-cover object-top w-full h-52 rounded-t-2xl"
       />
     </div>
-    <div class="p-3 flex flex-col rounded">
+    <div class="flex flex-col rounded">
       <Button
         as="a"
         :label="props.card.name"
         :href="rikishiUrl"
         variant="link"
       />
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col">
         <CategoryValue
           v-for="(categoryValue, index) in props.card.categories"
           :key="`${props.card.id}-${categoryValue.code}`"
           :category-value="categoryValue"
+          :class="
+            index === props.card.categories.length - 1
+              ? 'rounded-t-none! rounded-b-xl!'
+              : 'rounded-none!'
+          "
           @selected="$emit('selected', $event)"
         />
       </div>

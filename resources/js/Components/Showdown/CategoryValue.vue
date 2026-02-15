@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Category, CategoryValue as CategoryValueType } from '@/types/showdown'
 import Button from 'primevue/button'
-import { computed, ref } from 'vue'
+import { computed, ref, useAttrs } from 'vue'
 import { useShowdownStore } from '@/stores/showdown'
 
 const props = defineProps<{ categoryValue: CategoryValueType }>()
@@ -50,9 +50,9 @@ const handleSelected = () => {
 <template>
   <Button
     type="button"
-    class="grid grid-cols-2 gap-2 !justify-between"
+    class="grid grid-cols-2 gap-2 justify-between!"
     :disabled="disabled"
-    :class="selected ? '!opacity-100' : ''"
+    :class="selected ? 'opacity-100!' : ''"
     @click="handleSelected"
   >
     <div>
