@@ -39,42 +39,45 @@ const start = () => {
 
 <template>
   <form @submit.prevent="start">
-    <div class="max-w-md flex flex-col gap-4">
-      <div class="flex items-center gap-6">
-        <label for="player-name" class="">Player name</label>
-        <InputText id="player-name" v-model="playerName" />
-      </div>
-      <div class="flex items-center gap-6">
-        <label for="player-name" class="">Number of cards</label>
-        <InputNumber
-          v-model="numCards"
-          inputId="horizontal-buttons"
-          showButtons
-          buttonLayout="horizontal"
-          :step="2"
-          fluid
-          :min="2"
-          :max="props.game.cards.length"
-        >
-          <template #incrementbuttonicon>
-            <span class="pi pi-plus" />
-          </template>
-          <template #decrementbuttonicon>
-            <span class="pi pi-minus" />
-          </template>
-        </InputNumber>
-      </div>
-      <div class="flex items-center gap-6">
-        <label for="difficulty-level" class="w-32">Difficulty</label>
+    <div
+      class="max-w-md grid grid-cols-[auto_1fr] gap-x-6 gap-y-4 items-center [&>*:nth-child(odd)]:text-left"
+    >
+      <label for="player-name">Player name</label>
+      <InputText id="player-name" v-model="playerName" />
+
+      <label for="num-cards">Number of cards</label>
+      <InputNumber
+        v-model="numCards"
+        inputId="num-cards"
+        showButtons
+        buttonLayout="horizontal"
+        :step="2"
+        fluid
+        :min="2"
+        :max="props.game.cards.length"
+      >
+        <template #incrementbuttonicon>
+          <span class="pi pi-plus" />
+        </template>
+        <template #decrementbuttonicon>
+          <span class="pi pi-minus" />
+        </template>
+      </InputNumber>
+
+      <label for="difficulty-level">Difficulty</label>
+      <div class="flex items-center gap-3">
         <Slider
           id="difficulty-level"
           v-model="difficultyLevel"
           :step="20"
-          class="w-56"
+          class="flex-1"
         />
         <Badge :severity="difficultySeverity">{{ difficultyRank }}</Badge>
       </div>
-      <Button type="submit">Start game</Button>
+
+      <div class="col-span-2">
+        <Button type="submit" class="w-full">Start game</Button>
+      </div>
     </div>
   </form>
 </template>
