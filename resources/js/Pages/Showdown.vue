@@ -35,7 +35,7 @@ const start = (gameSettings: GameSettingsType) => {
 
     <div class="mx-auto flex flex-col w-full min-h-screen sm:max-w-3xl">
       <div
-        class="px-4 md:p-4 w-full flex flex-col gap-4 justify-center text-center"
+        class="px-2 sm:px-4 md:p-4 w-full flex flex-col gap-4 justify-center text-center"
       >
         <div
           class="w-full flex flex-col md:flex-row items-center justify-between gap-4"

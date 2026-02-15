@@ -42,7 +42,7 @@ const menuItems = computed(() => {
 
 <template>
   <Menubar
-    class="my-4 order-1 md:order-2 w-full md:w-96"
+    class="my-2 sm:my-4 order-1 md:order-2 w-full md:w-96"
     :class="{ 'force-hamburger': props.forceHamburger }"
     :model="menuItems"
   />
