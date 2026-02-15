@@ -25,11 +25,8 @@ store.difficultyLabelsMap = new Map(
 
 const settings: Ref<GameSettingsType | null> = ref(null)
 
-const ready = ref(false)
-
 const start = (gameSettings: GameSettingsType) => {
   settings.value = gameSettings
-  ready.value = true
 }
 </script>
 
@@ -52,7 +49,7 @@ const start = (gameSettings: GameSettingsType) => {
           <SumoMenu />
         </div>
         <div class="p-6 w-full bg-white rounded-sm shadow-sm">
-          <Game v-if="ready" :game="props.game" :settings="settings" />
+          <Game v-if="settings" :game="props.game" :settings="settings" />
           <GameSettings
             v-else
             :difficulty-labels-map="store.difficultyLabelsMap"
