@@ -50,7 +50,8 @@ const handleSelected = () => {
 <template>
   <Button
     type="button"
-    class="grid grid-cols-2 gap-2 justify-between!"
+    size="small"
+    class="grid grid-cols-2 gap-2 justify-between! py-1!"
     :disabled="disabled"
     :class="selected ? 'opacity-100!' : ''"
     @click="handleSelected"
