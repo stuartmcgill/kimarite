@@ -7,6 +7,7 @@ import {
   GameResult,
   GameSettings,
   GameType as GameType,
+  Player as PlayerType,
 } from '@/types/showdown'
 import Badge from 'primevue/badge'
 import Button from 'primevue/button'
@@ -44,7 +45,8 @@ const calcResult = () => {
 
 const switchChooser = () => {
   const otherPlayer =
-    store.players.find((p: Player) => p.type !== store.chooser!.type) || null
+    store.players.find((p: PlayerType) => p.type !== store.chooser!.type) ||
+    null
   if (!otherPlayer) {
     console.error('Unable to find other player')
 
@@ -168,6 +170,10 @@ const nextCard = () => {
 
   store.drawCards()
   store.selection = null
+
+  if (store.winner) {
+    return
+  }
 
   if (store.chooser === store.computer) {
     store.thinking = true

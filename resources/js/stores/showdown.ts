@@ -26,6 +26,7 @@ export const useShowdownStore = defineStore('showdown', {
   actions: {
     newGame(game: GameType, settings: GameSettings) {
       this.selection = null
+      this.tiedCards = []
 
       const { numCards, difficultyRank } = useSettings(this.difficultyLabelsMap)
       this.game = game
