@@ -35,14 +35,18 @@ const calcResult = () => {
   const humanValue = humanCard.categories.find(
     (cv: CategoryValue) => cv.code === store.selection!.code,
   )?.value
-  if (!humanValue) {
+
+  // Can be 0
+  if (humanValue === undefined) {
     throw new Error('Could not determine human value')
   }
 
   const computerValue = computerCard.categories.find(
     (cv: CategoryValue) => cv.code === store.selection!.code,
   )?.value
-  if (!computerValue) {
+
+  // Can be 0
+  if (computerValue === undefined) {
     throw new Error('Could not determine computer value')
   }
 
@@ -248,11 +252,6 @@ const score = computed(() => {
             @click="nextCard"
           />
         </div>
-        <!--        <div class="mt-2 flex-flex-col">-->
-        <!--          <div> Human {{ store.human.cards.length }}</div>-->
-        <!--          <div> Computer {{ store.computer.cards.length }}</div>-->
-        <!--          <div> Ties {{ store.tiedCards.length }}</div>-->
-        <!--        </div>-->
       </div>
       <Player :player="store.computer" />
     </div>
@@ -260,14 +259,14 @@ const score = computed(() => {
       <MeterGroup :value="score" :min="0" :max="store.numCards">
         <template #label="{ value }">
           <div class="flex justify-between w-full">
-            <span v-for="(item, index) in value" :key="index">
+            <div v-for="(item, index) in value" :key="index">
               <div class="flex items-center gap-2">
                 <span>{{ item.label }}</span>
                 <Badge :class="item.class" :severity="item.severity">{{
                   item.value
                 }}</Badge>
               </div>
-            </span>
+            </div>
           </div>
         </template>
       </MeterGroup>
