@@ -38,49 +38,60 @@ const start = () => {
 </script>
 
 <template>
-  <form class="mx-auto max-w-sm" @submit.prevent="start">
-    <h1 class="mb-8 kimarite-header font-semibold text-primary-900">
-      Sumo Showdown
-    </h1>
-    <div
-      class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-4 items-center [&>*:nth-child(odd)]:text-left"
-    >
-      <label for="player-name">Player name</label>
-      <InputText id="player-name" v-model="playerName" />
-
-      <label for="num-cards">Number of cards</label>
-      <InputNumber
-        v-model="numCards"
-        inputId="num-cards"
-        showButtons
-        buttonLayout="horizontal"
-        :step="2"
-        fluid
-        :min="2"
-        :max="props.game.cards.length"
+  <div class="mx-auto max-w-lg flex flex-col gap-4 justify-center">
+    <img
+      v-if="props.game.startImage"
+      :src="props.game.startImage"
+      :alt="props.game.name || 'Game logo'"
+      class=""
+    />
+    <form class="mx-auto" @submit.prevent="start">
+      <h1
+        v-if="!props.game.startImage"
+        class="mb-8 kimarite-header font-semibold text-primary-900"
       >
-        <template #incrementbuttonicon>
-          <span class="pi pi-plus" />
-        </template>
-        <template #decrementbuttonicon>
-          <span class="pi pi-minus" />
-        </template>
-      </InputNumber>
+        {{ props.game.name }}
+      </h1>
+      <div
+        class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-4 items-center [&>*:nth-child(odd)]:text-left"
+      >
+        <label for="player-name">Player name</label>
+        <InputText id="player-name" v-model="playerName" />
 
-      <label for="difficulty-level">Difficulty</label>
-      <div class="flex items-center gap-6">
-        <Slider
-          id="difficulty-level"
-          v-model="difficultyLevel"
-          :step="20"
-          class="flex-1"
-        />
-        <Badge :severity="difficultySeverity">{{ difficultyRank }}</Badge>
-      </div>
+        <label for="num-cards">Number of cards</label>
+        <InputNumber
+          v-model="numCards"
+          inputId="num-cards"
+          showButtons
+          buttonLayout="horizontal"
+          :step="2"
+          fluid
+          :min="2"
+          :max="props.game.cards.length"
+        >
+          <template #incrementbuttonicon>
+            <span class="pi pi-plus" />
+          </template>
+          <template #decrementbuttonicon>
+            <span class="pi pi-minus" />
+          </template>
+        </InputNumber>
 
-      <div class="col-span-2">
-        <Button type="submit" class="w-full">Start game</Button>
+        <label for="difficulty-level">Difficulty</label>
+        <div class="flex items-center gap-6">
+          <Slider
+            id="difficulty-level"
+            v-model="difficultyLevel"
+            :step="20"
+            class="flex-1"
+          />
+          <Badge :severity="difficultySeverity">{{ difficultyRank }}</Badge>
+        </div>
+
+        <div class="col-span-2">
+          <Button type="submit" class="w-full">Start game</Button>
+        </div>
       </div>
-    </div>
-  </form>
+    </form>
+  </div>
 </template>
