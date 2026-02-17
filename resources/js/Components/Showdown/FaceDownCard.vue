@@ -1,35 +1,21 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
 import { useShowdownStore } from '@/stores/showdown'
-
-const imageUrl = computed(
-  () =>
-    new URL(`../../../images/showdown/facedown-card.png`, import.meta.url).href,
-)
 
 const store = useShowdownStore()
 </script>
 
 <template>
   <div
-    class="relative overflow-hidden p-2 sm:p-8 w-full sm:w-60 h-48.5 sm:h-104 flex items-center justify-center bg-coral-100 rounded-2xl border-4 border-coral-200"
+    class="w-full sm:w-60 h-48.5 sm:h-104 sm:bg-coral-100 rounded-2xl border-4 border-coral-200 sm:[mask-image:none] overflow-hidden"
   >
-    <!-- Background image with reduced opacity -->
-    <div
-      class="absolute inset-0 bg-no-repeat bg-cover"
-      :style="{
-        backgroundImage: `url(${store.game!.startImage})`,
-        opacity: 1,
-      }"
+    <img
+      :src="store.game!.startImage"
+      alt="Game logo"
+      class="w-full h-full object-cover sm:object-contain"
+      :class="[
+        store.thinking ? 'animate-pulse' : '',
+        'sm:mask-[radial-gradient(ellipse_60%_80%_at_50%_50%,black_50%,transparent_85%)]',
+      ]"
     />
-    <!-- The card sits above the background -->
-    <div>
-      <img
-        :src="imageUrl"
-        alt="Dohyo logo"
-        class="sm:w-auto sm:h-auto w-40 h-40 object-cover transition-transform"
-        :class="store.thinking ? 'animate-pulse sm:animate-bounce' : ''"
-      />
-    </div>
   </div>
 </template>
