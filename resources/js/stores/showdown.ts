@@ -4,7 +4,6 @@ import {
   Category,
   CategoryValue,
   ComputerPlayer,
-  DifficultyLabelsMap,
   GameSettings,
   GameType,
   HumanPlayer,
@@ -79,37 +78,38 @@ export const useShowdownStore = defineStore('showdown', {
     },
   },
   getters: {
-    human: state => state.players[0],
-    computer: state => state.players[1],
+    human: state => state.players[0] as HumanPlayer,
+    computer: state => state.players[1] as ComputerPlayer,
     numCards(state) {
       const humanCards = state.players[0].cards
       const computerCards = state.players[1].cards
 
       return humanCards.length + computerCards.length + state.tiedCards.length
     },
-    selectedCategory(state): Category {
-      const selectedCode = state.selection.code
+    selectedCategory(): Category | null {
+      const selectedCode = this.selection?.code
 
-      return state.game.categories.find(
-        (c: Category) => c.code === selectedCode,
+      return (
+        this.game?.categories.find((c: Category) => c.code === selectedCode) ||
+        null
       )
     },
-    winner(state): Player | null {
-      const humanCards = state.players[0].cards
-      const computerCards = state.players[1].cards
+    winner(): Player | null {
+      const humanCards = this.players[0].cards
+      const computerCards = this.players[1].cards
 
       if (humanCards.length === 0) {
-        return state.computer
+        return this.computer
       }
 
       if (computerCards.length === 0) {
-        return state.human
+        return this.human
       }
 
       return null
     },
-    gameOver(state): boolean {
-      return !!state.winner
+    gameOver(): boolean {
+      return !!this.winner
     },
   },
 })
