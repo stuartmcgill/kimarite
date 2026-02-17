@@ -38,8 +38,7 @@ export interface GameType {
   name: string
   categories: Category[]
   cards: Card[]
-  startImage?: string
-  bannerImage?: string
+  image?: string
   players: Player[]
 }
 

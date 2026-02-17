@@ -64,9 +64,6 @@ class ShowdownController extends Controller
             100 => 'Yokozuna',
         ];
 
-        $startImageUrl = asset('images/start.png');
-        $bannerImageUrl = asset('images/banner.png');
-
         return Inertia::render(
             'Showdown',
             [
@@ -74,8 +71,7 @@ class ShowdownController extends Controller
                     'name' => 'Sumo showdown!',
                     'categories' => $categories,
                     'cards' => $cards,
-                    'startImage' => $startImageUrl,
-                    'bannerImage' => $bannerImageUrl,
+                    'image' => asset('images/start.png'),
                 ],
                 'difficultyLabelsMap' => $difficultyLabelsMap,
             ],

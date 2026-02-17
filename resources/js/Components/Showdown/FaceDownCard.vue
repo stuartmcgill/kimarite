@@ -9,7 +9,7 @@ const store = useShowdownStore()
     class="w-full sm:w-60 h-48.5 sm:h-104 sm:bg-coral-100 rounded-2xl border-4 border-coral-200 sm:[mask-image:none] overflow-hidden"
   >
     <img
-      :src="store.game!.startImage"
+      :src="store.game!.image"
       alt="Game logo"
       class="w-full h-full object-cover sm:object-contain"
       :class="[

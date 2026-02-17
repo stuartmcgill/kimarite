@@ -40,14 +40,14 @@ const start = () => {
 <template>
   <div class="mx-auto max-w-lg flex flex-col gap-4 justify-center">
     <img
-      v-if="props.game.startImage"
-      :src="props.game.startImage"
+      v-if="props.game.image"
+      :src="props.game.image"
       :alt="props.game.name || 'Game logo'"
       class=""
     />
     <form class="mx-auto" @submit.prevent="start">
       <h1
-        v-if="!props.game.startImage"
+        v-if="!props.game.image"
         class="mb-8 kimarite-header font-semibold text-primary-900"
       >
         {{ props.game.name }}
