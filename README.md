@@ -26,8 +26,6 @@ Adjust `.env` according to your local database setup (e.g. if not using `sail`).
 sail up -d
 ```
 
-Browse to http://127.0.0.1:8000/ and you should see a page without any data.
-
 ## Admin user creation
 
 At first the database will be empty. To populate the kimarite data you will need to be logged in as a Laravel user.
@@ -58,6 +56,8 @@ In another:
 ```shell
 npm run dev
 ```
+
+Browse to http://127.0.0.1:8000/ and you should see a page without any data.
 
 ## Copying the data from Sumo API
 
