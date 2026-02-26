@@ -10,16 +10,61 @@ The data comes from https://www.sumo-api.com/.
 
 # Local development
 
+## Installation
+
+```shell
+composer install
+npm ci
+npm run build
+cp .env.example .env
+php artisan key:generate
+```
+
+Adjust `.env` according to your local database setup (e.g. if not using `sail`).
+
+```shell
+sail up -d
+```
+
+## Admin user creation
+
+At first the database will be empty. To populate the kimarite data you will need to be logged in as a Laravel user.
+To create a user on the development database you can run:
+
+```shell
+php artisan db:seed --class=UserSeeder
+```
+
+This will create a user called `admin@example.org`, password `admin`.
+
+## Laravel migrations
+
+```shell
+php artisan migrate
+```
+
+## Running the app
+
 In one terminal:
 
-```
-sail up -d
+```shell
 php artisan serve
 ```
 
-In another: `npm run dev`
+In another:
 
-Browse to http://127.0.0.1:8000/
+```shell
+npm run dev
+```
+
+Browse to http://127.0.0.1:8000/ and you should see a page without any data.
+
+## Copying the data from Sumo API
+
+Go to http://127.0.0.1:8000/refresh and login (e.g. as the user you created earlier). Click 'Rebuild'. This will take some time (30 minutes)
+or so to rebuild the database.
+
+After it's finished your local environment should look the same as the live site.
 
 # Production install
 
