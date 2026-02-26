@@ -23,6 +23,7 @@ Route::get('/head2head', [Head2HeadController::class, 'view'])->name('head2head.
 Route::get('/head2head/{id}', [Head2HeadController::class, 'head2headsForWrestler'])->name('head2head.wrestler');
 
 Route::get('/', [KimariteController::class, 'show'])->name('kimarite.show');
+Route::get('/dashboard', [KimariteController::class, 'show'])->name('dashboard');
 Route::get('/kimarite-counts', [KimariteController::class, 'getCounts'])->name('kimarite.counts');
 
 Route::middleware('auth')->group(function () {

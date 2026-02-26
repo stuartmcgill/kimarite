@@ -6,20 +6,28 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use RuntimeException;
 
 class UserSeeder extends Seeder
 {
     public function run(): void
     {
         if (app()->environment() !== 'local') {
-            logger()->warning('Cannot run user seeder in production');
+            throw new RuntimeException('Cannot run user seeder in production');
+        }
+
+        $email = 'admin@example.org';
+
+        if (User::where('email', $email)->exists()) {
+            $this->command->warn('User already exists: ' . $email);
+            // logger()->warning('User already exists');
 
             return;
         }
 
-        User::create([
+        User::Create([
             'name' => 'admin',
-            'email' => 'admin@example.org',
+            'email' => $email,
             'password' => bcrypt('admin'),
         ]);
     }
