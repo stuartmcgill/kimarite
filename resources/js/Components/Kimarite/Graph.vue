@@ -65,6 +65,7 @@ ChartJS.register(syncRegressionColorsPlugin)
 
 const KIMARITE_API_URL = 'https://www.sumo-api.com/api/kimarite/'
 
+const KIMARITE_TOOLTIP_ID = 'kimarite-custom-tooltip'
 let customTooltipEl: HTMLElement | null = null
 
 function debounce<A extends unknown[]>(fn: (...args: A) => void, ms: number): (...args: A) => void {
@@ -119,20 +120,20 @@ function externalKimariteTooltipImpl(context: { tooltip: { opacity: number; x: n
         });
         inner += `<div>${kimariteList}</div>`
 
-        if (tooltip.opacity === 0) {
-          if (customTooltipEl) {
-            customTooltipEl.remove()
-            customTooltipEl = null
-          }
-          return
+        const existingEl = document.getElementById(KIMARITE_TOOLTIP_ID)
+        if (existingEl) {
+          existingEl.remove()
+          customTooltipEl = null
         }
 
         if (!customTooltipEl) {
           customTooltipEl = document.createElement('div')
+          customTooltipEl.id = KIMARITE_TOOLTIP_ID
           customTooltipEl.style.cssText =
             'position:absolute; top:40%; right:20px; opacity:1; background:rgba(0,0,0,0.8); color:#fff; border-radius:6px; padding:8px 12px; font-size:12px; transition:opacity 0.1s; z-index:9999'
           document.body.appendChild(customTooltipEl)
         }
+        
         const closeBtn = '<button type="button" class="kimarite-tooltip-close" style="position:absolute;top:4px;right:4px;background:none;border:none;color:#fff;cursor:pointer;font-size:16px;line-height:1;padding:2px;">×</button>'
         customTooltipEl.innerHTML = `<div style="position:relative"><div style="padding-right:20px">${inner}</div>${closeBtn}</div>`
         customTooltipEl.querySelector('.kimarite-tooltip-close')?.addEventListener('click', () => {
