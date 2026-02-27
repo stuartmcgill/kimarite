@@ -81,9 +81,9 @@ function externalKimariteTooltipImpl(context: { tooltip: { opacity: number; x: n
 
   const title = tooltip.title || []
   const body = tooltip.body || []
+  const titleStr = title.length ? (Array.isArray(title) ? title.join('') : String(title)) : ''
   let inner = ''
   if (title.length) {
-    const titleStr = Array.isArray(title) ? title.join('') : String(title)
     inner += `<div style="font-weight:bold;margin-bottom:4px">${titleStr}</div>`
   }
   body.forEach((b: { lines: string[] }) => {
@@ -99,7 +99,17 @@ function externalKimariteTooltipImpl(context: { tooltip: { opacity: number; x: n
       return
     }
 
-    fetch(KIMARITE_API_URL+`${kimariteType}?limit=10&sortOrder=desc`)
+    const labels = data.value.labels
+    const datasets = data.value.datasets[0].data
+    const idx = labels.indexOf(titleStr)
+    console.log(idx);
+    console.log(labels);
+    console.log(datasets);
+    console.log(datasets.slice(idx + 1));
+    const skip = datasets.slice(idx + 1).reduce((total: number, ds: any) => total += parseInt(ds), 0) 
+    const skipParam = skip > 0 ? `&skip=${skip}` : ''
+
+    fetch(KIMARITE_API_URL+`${kimariteType}?limit=10&sortOrder=desc${skipParam}`)
       .then(r => r.json())
       .then(data => {
         let kimariteList = ''
