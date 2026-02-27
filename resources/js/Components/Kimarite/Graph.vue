@@ -63,6 +63,78 @@ const syncRegressionColorsPlugin = {
 
 ChartJS.register(syncRegressionColorsPlugin)
 
+const KIMARITE_API_URL = 'https://www.sumo-api.com/api/kimarite/'
+
+let customTooltipEl: HTMLElement | null = null
+
+function debounce<A extends unknown[]>(fn: (...args: A) => void, ms: number): (...args: A) => void {
+  let timeoutId: ReturnType<typeof setTimeout>
+  return (...args: A) => {
+    clearTimeout(timeoutId)
+    timeoutId = setTimeout(() => fn(...args), ms)
+  }
+}
+
+function externalKimariteTooltipImpl(context: { tooltip: { opacity: number; x: number; y: number; title: string[]; body: { lines: string[] }[] } }) {
+  const { tooltip } = context
+  if (tooltip.opacity === 0) return
+
+  const title = tooltip.title || []
+  const body = tooltip.body || []
+  let inner = ''
+  if (title.length) {
+    const titleStr = Array.isArray(title) ? title.join('') : String(title)
+    inner += `<div style="font-weight:bold;margin-bottom:4px">${titleStr}</div>`
+  }
+  body.forEach((b: { lines: string[] }) => {
+    inner += `<div>${(b.lines || []).join('<br>')}</div><br>`
+  })
+
+  if(body.length > 0 && body[0].lines.length == 1) {
+    const split = body[0].lines[0].split(':');
+    const kimariteType = split[0].toLowerCase().trim();
+    const count = split[1].trim();
+
+    if(!count || isNaN(0) || parseInt(count) <= 0) {
+      return
+    }
+
+    fetch(KIMARITE_API_URL+`${kimariteType}?limit=10&sortOrder=desc`)
+      .then(r => r.json())
+      .then(data => {
+        let kimariteList = ''
+
+        data.records.map((it: any) => {
+          kimariteList += `${it.bashoId}, day ${it.day}: ${it.kimarite} by ${it.winnerEn} (${it.division})<br>`
+        });
+        inner += `<div>${kimariteList}</div>`
+
+        if (tooltip.opacity === 0) {
+          if (customTooltipEl) {
+            customTooltipEl.remove()
+            customTooltipEl = null
+          }
+          return
+        }
+
+        if (!customTooltipEl) {
+          customTooltipEl = document.createElement('div')
+          customTooltipEl.style.cssText =
+            'position:absolute; top:40%; right:20px; opacity:1; background:rgba(0,0,0,0.8); color:#fff; border-radius:6px; padding:8px 12px; font-size:12px; transition:opacity 0.1s; z-index:9999'
+          document.body.appendChild(customTooltipEl)
+        }
+        const closeBtn = '<button type="button" class="kimarite-tooltip-close" style="position:absolute;top:4px;right:4px;background:none;border:none;color:#fff;cursor:pointer;font-size:16px;line-height:1;padding:2px;">×</button>'
+        customTooltipEl.innerHTML = `<div style="position:relative"><div style="padding-right:20px">${inner}</div>${closeBtn}</div>`
+        customTooltipEl.querySelector('.kimarite-tooltip-close')?.addEventListener('click', () => {
+          customTooltipEl?.remove()
+          customTooltipEl = null
+        })
+      })
+  }
+}
+
+const externalKimariteTooltip = debounce(externalKimariteTooltipImpl, 500)
+
 const options = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
@@ -71,6 +143,9 @@ const options = computed(() => ({
       forceOverride: true,
     },
     syncRegressionColors: {},
+    tooltip: {
+      external: externalKimariteTooltip,
+    },
   },
   scales: {
     y: {
