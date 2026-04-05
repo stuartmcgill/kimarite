@@ -17,16 +17,16 @@ composer install
 npm ci
 npm run build
 cp .env.example .env
+php artisan key:generate
 ```
 
 Adjust `.env` according to your local database setup (e.g. if not using `sail`).
 
 ```shell
 sail up -d
-php artisan migrate
 ```
 
-## User creation
+## Admin user creation
 
 At first the database will be empty. To populate the kimarite data you will need to be logged in as a Laravel user.
 To create a user on the development database you can run:
@@ -36,6 +36,12 @@ php artisan db:seed --class=UserSeeder
 ```
 
 This will create a user called `admin@example.org`, password `admin`.
+
+## Laravel migrations
+
+```shell
+php artisan migrate
+```
 
 ## Running the app
 

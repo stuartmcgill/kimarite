@@ -20,7 +20,6 @@ class UserSeeder extends Seeder
 
         if (User::where('email', $email)->exists()) {
             $this->command->warn('User already exists: ' . $email);
-            // logger()->warning('User already exists');
 
             return;
         }

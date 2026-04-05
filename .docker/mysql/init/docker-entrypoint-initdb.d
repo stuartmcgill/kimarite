@@ -1,0 +1,2 @@
+GRANT ALL PRIVILEGES ON sumo.* TO 'admin'@'%';
+FLUSH PRIVILEGES;

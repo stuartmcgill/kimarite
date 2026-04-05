@@ -10,12 +10,12 @@ Follow the local development steps in the [README](README.md).
 
 1. Fork the repo and create a branch from `main`.
 2. Make your changes — see [guidelines.md](.ai/guidelines.md) for code conventions and architecture notes.
-3. Run the tests and linters before submitting (see below).
+3. Run the linters before submitting (see below).
 4. Open a pull request with a brief description of what you changed and why.
 
 There's no issue template or strict PR format. A sentence or two explaining the change is fine.
 
-## Tests and linting
+## Linting
 
 **PHP code style (Laravel Pint):**
 ```bash
