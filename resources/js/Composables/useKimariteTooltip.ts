@@ -14,9 +14,7 @@ export interface RikishiMatch {
 export interface TooltipContent {
     title: string
     bodyLines: string[]
-    records: RikishiMatch[]
     color: string
-    loading: boolean
     x: number
     y: number
     kimariteType: string
@@ -33,10 +31,6 @@ export function useKimariteTooltip(
         cursorPos.value = { x: e.clientX, y: e.clientY }
     }
 
-    function dismiss() {
-        tooltipContent.value = null
-    }
-
     const handleTooltipImpl = (context: {
         chart: unknown
         tooltip: TooltipModel<'line'>
@@ -44,6 +38,7 @@ export function useKimariteTooltip(
         const { tooltip } = context
 
         if (tooltip.opacity === 0) {
+            tooltipContent.value = null
             return
         }
 
@@ -79,9 +74,7 @@ export function useKimariteTooltip(
         tooltipContent.value = {
             title: titleStr,
             bodyLines,
-            records: [],
             color,
-            loading: false,
             x,
             y,
             kimariteType,
@@ -91,5 +84,5 @@ export function useKimariteTooltip(
 
     const externalKimariteTooltip = handleTooltipImpl
 
-    return { tooltipContent, externalKimariteTooltip, trackCursor, dismiss }
+    return { tooltipContent, externalKimariteTooltip, trackCursor }
 }

@@ -1,21 +1,37 @@
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref } from 'vue'
-import type { TooltipContent } from '@/Composables/useKimariteTooltip'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
+import { useKimariteTooltip } from '@/Composables/useKimariteTooltip'
 import type { RikishiMatch } from '@/Composables/useKimariteTooltip'
 import TooltipRecord from '@/Components/Kimarite/TooltipRecord.vue'
 import { useKimariteStore } from '@/stores/kimarite'
 
-const props = defineProps<{ content: TooltipContent }>()
-const emit = defineEmits<{ (e: 'dismiss'): void }>()
+const props = defineProps<{
+    data: { labels: string[]; datasets: { data: unknown[] }[] }
+}>()
+
+const dataRef = computed(() => props.data)
+const { tooltipContent, externalKimariteTooltip, trackCursor } = useKimariteTooltip(dataRef)
+
+defineExpose({ externalKimariteTooltip, trackCursor })
 
 const store = useKimariteStore()
 const records = ref<RikishiMatch[]>([])
 const loading = ref(false)
 const loaded = ref(false)
 
+watch(tooltipContent, () => {
+    records.value = []
+    loading.value = false
+    loaded.value = false
+})
+
 async function loadInstances() {
+    if (!tooltipContent.value) return
     loading.value = true
-    records.value = await store.fetchMatches(props.content.kimariteType, props.content.skip) as RikishiMatch[]
+    records.value = await store.fetchMatches(
+        tooltipContent.value.kimariteType,
+        tooltipContent.value.skip
+    ) as RikishiMatch[]
     loading.value = false
     loaded.value = true
 }
@@ -23,7 +39,7 @@ async function loadInstances() {
 function onClickOutside(e: MouseEvent) {
     const el = document.getElementById('kimarite-tooltip')
     if (el && !el.contains(e.target as Node)) {
-        emit('dismiss')
+        tooltipContent.value = null
     }
 }
 
@@ -34,32 +50,32 @@ onUnmounted(() => document.removeEventListener('mousedown', onClickOutside))
 <template>
     <Teleport to="body">
         <div
+            v-if="tooltipContent"
             id="kimarite-tooltip"
             class="fixed z-[9999] min-w-64 rounded-md bg-black/80 px-3 py-2 text-xs text-white"
-            :style="{ left: `${content.x + 12}px`, top: `${content.y}px` }"
+            :style="{ left: `${tooltipContent.x + 12}px`, top: `${tooltipContent.y}px` }"
         >
             <div class="relative">
                 <button
                     type="button"
                     class="absolute right-0 top-0 cursor-pointer border-none bg-transparent p-0.5 text-base leading-none text-white"
-                    @click="emit('dismiss')"
+                    @click="tooltipContent = null"
                 >
                     ✕
                 </button>
                 <div class="pr-5 flex flex-col">
-                    <div v-if="content.title" class="mb-1 font-bold">
-                        {{ content.title }}
+                    <div v-if="tooltipContent.title" class="mb-1 font-bold">
+                        {{ tooltipContent.title }}
                     </div>
                     <div class="mb-3">
-                        <div v-for="line in content.bodyLines" :key="line" class="flex items-center gap-1.5">
+                        <div v-for="line in tooltipContent.bodyLines" :key="line" class="flex items-center gap-1.5">
                             <span
                                 class="inline-block h-2.5 w-2.5 flex-shrink-0"
-                                :style="{ backgroundColor: content.color }"
+                                :style="{ backgroundColor: tooltipContent.color }"
                             />
                             {{ line }}
                         </div>
                     </div>
-
                     <template v-if="!loaded">
                         <button
                             type="button"
@@ -74,7 +90,7 @@ onUnmounted(() => document.removeEventListener('mousedown', onClickOutside))
                                 </svg>
                                 Loading...
                             </span>
-                            <span v-else>Show instances...</span>
+                            <span v-else>Show instances</span>
                         </button>
                     </template>
                     <template v-else>
