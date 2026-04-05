@@ -17,14 +17,7 @@ export interface TooltipContent {
     bodyLines: string[]
     records: RikishiMatch[]
     color: string
-}
-
-function debounce<A extends unknown[]>(fn: (...args: A) => void, ms: number): (...args: A) => void {
-    let timeoutId: ReturnType<typeof setTimeout>
-    return (...args: A) => {
-        clearTimeout(timeoutId)
-        timeoutId = setTimeout(() => fn(...args), ms)
-    }
+    loading: boolean
 }
 
 export function useKimariteTooltip(
@@ -36,11 +29,12 @@ export function useKimariteTooltip(
         tooltipContent.value = null
     }
 
-    const handleTooltipImpl = async (context: {
+    const externalKimariteTooltip = async (context: {
         chart: unknown
         tooltip: TooltipModel<'line'>
     }) => {
         const { tooltip } = context
+
         if (tooltip.opacity === 0) {
             return
         }
@@ -61,9 +55,20 @@ export function useKimariteTooltip(
             return
         }
 
+        const color = (tooltip.labelColors?.[0]?.borderColor as string) ?? '#ffffff'
+        const bodyLines = body.flatMap((b) => b.lines)
+
+        // Show tooltip immediately with loading state
+        tooltipContent.value = {
+            title: titleStr,
+            bodyLines,
+            records: [],
+            color,
+            loading: true,
+        }
+
         const labels = data.value.labels
         const idx = labels.indexOf(titleStr)
-
         const matchingDataset = data.value.datasets.find((ds: any) =>
             ds.label?.toLowerCase().trim() === kimariteType
         )
@@ -74,17 +79,17 @@ export function useKimariteTooltip(
         const store = useKimariteStore()
         const instances = await store.fetchRecentInstances(kimariteType, skip) as RikishiMatch[]
 
-        const color = (tooltip.labelColors?.[0]?.borderColor as string) ?? '#ffffff'
-
-        tooltipContent.value = {
-            title: titleStr,
-            bodyLines: body.flatMap((b) => b.lines),
-            records: instances,
-            color
+        // Only update if the tooltip hasn't been dismissed or changed
+        if (tooltipContent.value?.title === titleStr && tooltipContent.value?.bodyLines[0] === bodyLines[0]) {
+            tooltipContent.value = {
+                title: titleStr,
+                bodyLines,
+                records: instances,
+                color,
+                loading: false,
+            }
         }
     }
-
-    const externalKimariteTooltip = debounce(handleTooltipImpl, 500)
 
     return { tooltipContent, externalKimariteTooltip, dismiss }
 }

@@ -76,6 +76,7 @@ const options = computed(() => ({
     },
     syncRegressionColors: {},
     tooltip: {
+      enabled: false,
       external: externalKimariteTooltip,
     },
   },
