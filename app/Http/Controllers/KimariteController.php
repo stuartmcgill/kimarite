@@ -10,12 +10,16 @@ use App\Models\KimariteCount;
 use App\Models\KimariteType;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
+use StuartMcGill\SumoApiPhp\Model\Rikishi;
+use StuartMcGill\SumoApiPhp\Model\RikishiMatch;
 use StuartMcGill\SumoApiPhp\Service\KimariteService;
+use StuartMcGill\SumoApiPhp\Service\RikishiService;
 
 class KimariteController extends Controller
 {
@@ -146,15 +150,35 @@ class KimariteController extends Controller
     }
 
     public function getRecentInstances(
-        Request         $request,
-        string          $type,
-        int             $skip,
+        Request $request,
+        string $type,
+        int $skip,
         KimariteService $kimariteService,
     ): JsonResponse {
-        $instances = $kimariteService->fetchByType(type: $type, sortOrder: 'desc', limit: 5, skip: $skip);
+        $matches = collect($kimariteService->fetchByType(type: $type, sortOrder: 'desc', limit: 5, skip: $skip));
+        abort_if($matches->isEmpty(), 500, 'Unable to retrieve matches');
+
+        $sumoApiIds = $matches->pluck('winnerId')->toArray();
+
+        $rikishiService = RikishiService::factory();
+        $rikishis = collect($rikishiService->fetchSome($sumoApiIds));
+
+        $matches = $matches->map(function ( $match) use ($rikishis) {
+            $rikishi = $rikishis->firstWhere(function ( $rikishi) use ($match) {
+                return $rikishi->id === $match->winnerId;
+            });
+
+            if (!$rikishi) {
+                return $match;
+            }
+
+            $match->winnerSumoDbId = $rikishi->sumoDbId;
+
+            return $match;
+        });
 
         return new JsonResponse([
-            'instances' => $instances,
+            'instances' => $matches,
         ]);
     }
 }

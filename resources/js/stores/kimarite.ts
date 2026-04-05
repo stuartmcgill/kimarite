@@ -99,6 +99,8 @@ export const useKimariteStore = defineStore('kimarite', {
                   }),
               )
               return resp.data.instances
+          } catch (e) {
+              console.error(e)
           } finally {
               this.loading = false
           }

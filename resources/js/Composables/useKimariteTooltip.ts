@@ -5,6 +5,7 @@ export interface KimariteRecord {
     bashoId: string
     day: number
     kimarite: string
+    winnerId: number
     winnerEn: string
     division: string
 }
@@ -42,26 +43,37 @@ export function useKimariteTooltip(
         }
     }) => {
         const { tooltip } = context
-        if (tooltip.opacity === 0) return
+        if (tooltip.opacity === 0) {
+            return
+        }
 
         const title = tooltip.title || []
         const body = tooltip.body || []
         const titleStr = title.length ? title.join('') : ''
 
-        if (body.length === 0 || body[0].lines.length !== 1) return
+        if (body.length === 0 || body[0].lines.length !== 1) {
+            return
+        }
 
         const split = body[0].lines[0].split(':')
         const kimariteType = split[0].toLowerCase().trim()
         const count = split[1]?.trim()
 
-        if (!count || parseInt(count) <= 0) return
+        if (!count || parseInt(count) <= 0) {
+            return
+        }
 
         const labels = data.value.labels
-        const firstDataset = data.value.datasets[0]?.data ?? []
         const idx = labels.indexOf(titleStr)
-        const skip = (firstDataset.slice(idx + 1) as unknown[])
+
+        // Find the dataset that matches the hovered kimarite type
+        const matchingDataset = data.value.datasets.find((ds: any) =>
+            ds.label?.toLowerCase().trim() === kimariteType
+        )
+        const datasetData = matchingDataset?.data ?? []
+
+        const skip = (datasetData.slice(idx + 1) as unknown[])
             .reduce((total: number, ds) => total + parseInt(String(ds), 10), 0)
-        const skipParam = skip > 0 ? `&skip=${skip}` : ''
 
         const store = useKimariteStore()
         const instances = await store.fetchRecentInstances(kimariteType, skip) as KimariteRecord[]

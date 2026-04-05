@@ -9,6 +9,6 @@ const basho = computed(() => props.record.bashoId.slice(0, 4) +'-' + props.recor
 
 <template>
     <div class="mt-1">
-        {{ basho }} day {{ props.record.day }}, {{ props.record.winnerEn }} ({{ props.record.division }})
+        {{ basho }} day {{ props.record.day }}, <a class="underline" :href="`https://sumodb.sumogames.de/Rikishi_basho.aspx?r=${props.record.winnerSumoDbId}&b=${props.record.bashoId}`">{{ props.record.winnerEn }}</a> ({{ props.record.division }})
     </div>
 </template>
