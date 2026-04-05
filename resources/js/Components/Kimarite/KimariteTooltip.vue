@@ -24,8 +24,14 @@ const emit = defineEmits<{ (e: 'dismiss'): void }>()
                     <div v-if="props.content.title" class="mb-1 font-bold">
                         {{ props.content.title }}
                     </div>
-                    <div v-for="line in props.content.bodyLines" :key="line">
-                        {{ line }}
+                    <div class="mb-3">
+                        <div v-for="line in props.content.bodyLines" :key="line" class="flex items-center gap-1.5">
+                            <span
+                                class="inline-block h-2.5 w-2.5 flex-shrink-0"
+                                :style="{ backgroundColor: content.color }"
+                            />
+                            {{ line }}
+                        </div>
                     </div>
                     <TooltipRecord v-for="(record, index) in props.content.records" :key="index" :record="record" class="mt-1" />
                 </div>

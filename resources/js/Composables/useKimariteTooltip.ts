@@ -1,8 +1,6 @@
 import { Ref, ref } from 'vue'
 import { useKimariteStore } from '@/stores/kimarite'
 
-const KIMARITE_API_URL = 'https://www.sumo-api.com/api/kimarite/'
-
 export interface KimariteRecord {
     bashoId: string
     day: number
@@ -15,6 +13,7 @@ export interface TooltipContent {
     title: string
     bodyLines: string[]
     records: KimariteRecord[]
+    color: string
 }
 
 function debounce<A extends unknown[]>(fn: (...args: A) => void, ms: number): (...args: A) => void {
@@ -39,6 +38,7 @@ export function useKimariteTooltip(
             opacity: number
             title: string[]
             body: { lines: string[] }[]
+            labelColors: { backgroundColor: string; borderColor: string }[]
         }
     }) => {
         const { tooltip } = context
@@ -66,10 +66,13 @@ export function useKimariteTooltip(
         const store = useKimariteStore()
         const instances = await store.fetchRecentInstances(kimariteType, skip) as KimariteRecord[]
 
+        const color = tooltip.labelColors?.[0]?.borderColor ?? '#ffffff'
+
         tooltipContent.value = {
             title: titleStr,
             bodyLines: body.flatMap((b) => b.lines),
             records: instances,
+            color
         }
     }
 
