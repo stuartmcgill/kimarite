@@ -9,6 +9,8 @@
         "blank_line_after_namespace": true,
         "php_unit_method_casing": {
             "case": "camel_case"
-        }
+        },
+        "class_attributes_separation": false,
+        "unary_operator_spaces": false
     }
 }
