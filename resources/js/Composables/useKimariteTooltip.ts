@@ -31,7 +31,7 @@ export function useKimariteTooltip(
         cursorPos.value = { x: e.clientX, y: e.clientY }
     }
 
-    const handleTooltipImpl = (context: {
+    const externalKimariteTooltip = (context: {
         chart: unknown
         tooltip: TooltipModel<'line'>
     }) => {
@@ -52,11 +52,6 @@ export function useKimariteTooltip(
 
         const split = body[0].lines[0].split(':')
         const kimariteType = split[0].toLowerCase().trim()
-        const count = split[1]?.trim()
-
-        if (!count || parseInt(count) <= 0) {
-            return
-        }
 
         const color = (tooltip.labelColors?.[0]?.borderColor as string) ?? '#ffffff'
         const bodyLines = body.flatMap((b) => b.lines)
@@ -81,8 +76,6 @@ export function useKimariteTooltip(
             skip,
         }
     }
-
-    const externalKimariteTooltip = handleTooltipImpl
 
     return { tooltipContent, externalKimariteTooltip, trackCursor }
 }
