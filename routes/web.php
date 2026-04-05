@@ -25,6 +25,7 @@ Route::get('/head2head/{id}', [Head2HeadController::class, 'head2headsForWrestle
 Route::get('/', [KimariteController::class, 'show'])->name('kimarite.show');
 Route::get('/dashboard', [KimariteController::class, 'show'])->name('dashboard');
 Route::get('/kimarite-counts', [KimariteController::class, 'getCounts'])->name('kimarite.counts');
+Route::get('/kimarite-recent/{type}/{skip}', [KimariteController::class, 'getRecentInstances'])->name('kimarite.recent');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

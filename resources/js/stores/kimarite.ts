@@ -85,6 +85,25 @@ export const useKimariteStore = defineStore('kimarite', {
         this.loading = false
       }
     },
+
+      async fetchRecentInstances(
+          type: string,
+          skip: number
+      ) {
+          this.loading = true
+          try {
+              const resp = await axios.get(
+                  route('kimarite.recent', {
+                      type: type,
+                      skip: skip,
+                  }),
+              )
+              return resp.data.instances
+          } finally {
+              this.loading = false
+          }
+      },
+
   },
 })
 

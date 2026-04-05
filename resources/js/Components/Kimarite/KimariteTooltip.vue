@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import type { TooltipContent } from '@/Composables/useKimariteTooltip'
+import TooltipRecord from '@/Components/Kimarite/TooltipRecord.vue'
 
-defineProps<{ content: TooltipContent | null }>()
+const props = defineProps<{ content: TooltipContent | null }>()
 const emit = defineEmits<{ (e: 'dismiss'): void }>()
 </script>
 
@@ -19,16 +20,14 @@ const emit = defineEmits<{ (e: 'dismiss'): void }>()
                 >
                     ×
                 </button>
-                <div class="pr-5">
-                    <div v-if="content.title" class="mb-1 font-bold">
-                        {{ content.title }}
+                <div class="pr-5 flex flex-col">
+                    <div v-if="props.content.title" class="mb-1 font-bold">
+                        {{ props.content.title }}
                     </div>
-                    <div v-for="line in content.bodyLines" :key="line">
+                    <div v-for="line in props.content.bodyLines" :key="line">
                         {{ line }}
                     </div>
-                    <div v-for="(record, index) in content.records" :key="index" class="mt-1">
-                        {{ record.bashoId }}, day {{ record.day }}: {{ record.kimarite }} by {{ record.winnerEn }} ({{ record.division }})
-                    </div>
+                    <TooltipRecord v-for="(record, index) in props.content.records" :key="index" :record="record" class="mt-1" />
                 </div>
             </div>
         </div>

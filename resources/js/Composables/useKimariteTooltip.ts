@@ -1,4 +1,5 @@
-import { ref } from 'vue'
+import { Ref, ref } from 'vue'
+import { useKimariteStore } from '@/stores/kimarite'
 
 const KIMARITE_API_URL = 'https://www.sumo-api.com/api/kimarite/'
 
@@ -33,13 +34,13 @@ export function useKimariteTooltip(
         tooltipContent.value = null
     }
 
-    function handleTooltipImpl(context: {
+    const handleTooltipImpl = async (context: {
         tooltip: {
             opacity: number
             title: string[]
             body: { lines: string[] }[]
         }
-    }) {
+    }) => {
         const { tooltip } = context
         if (tooltip.opacity === 0) return
 
@@ -62,15 +63,14 @@ export function useKimariteTooltip(
             .reduce((total: number, ds) => total + parseInt(String(ds), 10), 0)
         const skipParam = skip > 0 ? `&skip=${skip}` : ''
 
-        fetch(`${KIMARITE_API_URL}${kimariteType}?limit=5&sortOrder=desc${skipParam}`)
-            .then((r) => r.json())
-            .then((json) => {
-                tooltipContent.value = {
-                    title: titleStr,
-                    bodyLines: body.flatMap((b) => b.lines),
-                    records: json.records as KimariteRecord[],
-                }
-            })
+        const store = useKimariteStore()
+        const instances = await store.fetchRecentInstances(kimariteType, skip) as KimariteRecord[]
+
+        tooltipContent.value = {
+            title: titleStr,
+            bodyLines: body.flatMap((b) => b.lines),
+            records: instances,
+        }
     }
 
     const externalKimariteTooltip = debounce(handleTooltipImpl, 500)

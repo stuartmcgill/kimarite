@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
+use StuartMcGill\SumoApiPhp\Service\KimariteService;
 
 class KimariteController extends Controller
 {
@@ -141,6 +142,19 @@ class KimariteController extends Controller
         return new JsonResponse([
             'counts' => $counts,
             'bashoIds' => $bashoIds,
+        ]);
+    }
+
+    public function getRecentInstances(
+        Request         $request,
+        string          $type,
+        int             $skip,
+        KimariteService $kimariteService,
+    ): JsonResponse {
+        $instances = $kimariteService->fetchByType(type: $type, sortOrder: 'desc', limit: 5, skip: $skip);
+
+        return new JsonResponse([
+            'instances' => $instances,
         ]);
     }
 }
