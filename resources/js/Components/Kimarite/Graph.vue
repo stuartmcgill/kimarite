@@ -188,5 +188,5 @@ const linearRegressionWithR2 = (
 
 <template>
   <Line v-show="data.datasets.length > 0" :data="data" :options="options" />
-    <KimariteTooltip :content="tooltipContent" @dismiss="dismiss" />
+    <KimariteTooltip v-if="tooltipContent" :content="tooltipContent" @dismiss="dismiss" />
 </template>

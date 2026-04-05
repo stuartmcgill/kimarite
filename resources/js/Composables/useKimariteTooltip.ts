@@ -1,19 +1,21 @@
 import { Ref, ref } from 'vue'
+import type { TooltipModel } from 'chart.js'
 import { useKimariteStore } from '@/stores/kimarite'
 
-export interface KimariteRecord {
+export interface RikishiMatch {
     bashoId: string
     day: number
     kimarite: string
     winnerId: number
     winnerEn: string
     division: string
+    winnerSumoDbId: number
 }
 
 export interface TooltipContent {
     title: string
     bodyLines: string[]
-    records: KimariteRecord[]
+    records: RikishiMatch[]
     color: string
 }
 
@@ -35,12 +37,8 @@ export function useKimariteTooltip(
     }
 
     const handleTooltipImpl = async (context: {
-        tooltip: {
-            opacity: number
-            title: string[]
-            body: { lines: string[] }[]
-            labelColors: { backgroundColor: string; borderColor: string }[]
-        }
+        chart: unknown
+        tooltip: TooltipModel<'line'>
     }) => {
         const { tooltip } = context
         if (tooltip.opacity === 0) {
@@ -66,19 +64,17 @@ export function useKimariteTooltip(
         const labels = data.value.labels
         const idx = labels.indexOf(titleStr)
 
-        // Find the dataset that matches the hovered kimarite type
         const matchingDataset = data.value.datasets.find((ds: any) =>
             ds.label?.toLowerCase().trim() === kimariteType
         )
         const datasetData = matchingDataset?.data ?? []
-
         const skip = (datasetData.slice(idx + 1) as unknown[])
             .reduce((total: number, ds) => total + parseInt(String(ds), 10), 0)
 
         const store = useKimariteStore()
-        const instances = await store.fetchRecentInstances(kimariteType, skip) as KimariteRecord[]
+        const instances = await store.fetchRecentInstances(kimariteType, skip) as RikishiMatch[]
 
-        const color = tooltip.labelColors?.[0]?.borderColor ?? '#ffffff'
+        const color = (tooltip.labelColors?.[0]?.borderColor as string) ?? '#ffffff'
 
         tooltipContent.value = {
             title: titleStr,

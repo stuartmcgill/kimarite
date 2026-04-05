@@ -2,14 +2,13 @@
 import type { TooltipContent } from '@/Composables/useKimariteTooltip'
 import TooltipRecord from '@/Components/Kimarite/TooltipRecord.vue'
 
-const props = defineProps<{ content: TooltipContent | null }>()
+const props = defineProps<{ content: TooltipContent }>()
 const emit = defineEmits<{ (e: 'dismiss'): void }>()
 </script>
 
 <template>
     <Teleport to="body">
         <div
-            v-if="content"
             class="absolute right-5 top-[40%] z-[9999] rounded-md bg-black/80 px-3 py-2 text-xs text-white"
         >
             <div class="relative">

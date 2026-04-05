@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import type { KimariteRecord } from '@/Composables/useKimariteTooltip'
+import type { RikishiMatch } from '@/Composables/useKimariteTooltip'
 import { computed } from 'vue'
 
-const props = defineProps<{ record: KimariteRecord }>()
+const props = defineProps<{ record: RikishiMatch }>()
 
 const basho = computed(() => props.record.bashoId.slice(0, 4) +'-' + props.record.bashoId.slice(4))
 </script>

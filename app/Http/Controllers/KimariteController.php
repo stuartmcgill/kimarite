@@ -10,14 +10,11 @@ use App\Models\KimariteCount;
 use App\Models\KimariteType;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
-use StuartMcGill\SumoApiPhp\Model\Rikishi;
-use StuartMcGill\SumoApiPhp\Model\RikishiMatch;
 use StuartMcGill\SumoApiPhp\Service\KimariteService;
 use StuartMcGill\SumoApiPhp\Service\RikishiService;
 
@@ -163,12 +160,12 @@ class KimariteController extends Controller
         $rikishiService = RikishiService::factory();
         $rikishis = collect($rikishiService->fetchSome($sumoApiIds));
 
-        $matches = $matches->map(function ( $match) use ($rikishis) {
-            $rikishi = $rikishis->firstWhere(function ( $rikishi) use ($match) {
+        $matches = $matches->map(function ($match) use ($rikishis) {
+            $rikishi = $rikishis->firstWhere(function ($rikishi) use ($match) {
                 return $rikishi->id === $match->winnerId;
             });
 
-            if (!$rikishi) {
+            if (! $rikishi) {
                 return $match;
             }
 
