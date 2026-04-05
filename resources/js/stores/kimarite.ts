@@ -59,6 +59,25 @@ export const useKimariteStore = defineStore('kimarite', {
 
       return datasets
     },
+      rawDatasets: state => {
+          if (!state.counts) {
+              return []
+          }
+          return state.counts.map((groupedTotal: GroupedKimariteTotal) => {
+              const data = state.bashoIds.map((bashoId: string) => {
+                  const groupCount = groupedTotal.groupedCounts.find(
+                      (count: KimariteCount) =>
+                          count.type === groupedTotal.type.toLowerCase() &&
+                          formatBashoId(count.basho_id) === bashoId,
+                  )
+                  return groupCount?.total ?? 0
+              })
+              return {
+                  label: groupedTotal.type,
+                  data,
+              }
+          })
+      },
   },
   actions: {
     async fetchCounts(

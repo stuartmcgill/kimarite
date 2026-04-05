@@ -171,7 +171,8 @@ class KimariteController extends Controller
             $match->winnerSumoDbId = $rikishi->sumoDbId;
 
             return $match;
-        });
+        })->reject(fn (RikishiMatch $match) => $match->day > 15) // Ignore playoffd
+        ->values();
 
         return new JsonResponse([
             'instances' => $matches,

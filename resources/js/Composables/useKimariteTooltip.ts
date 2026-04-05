@@ -1,5 +1,6 @@
 import { Ref, ref } from 'vue'
 import type { TooltipModel } from 'chart.js'
+import { useKimariteStore } from '@/stores/kimarite'
 
 export interface RikishiMatch {
     bashoId: string
@@ -55,16 +56,17 @@ export function useKimariteTooltip(
         const bodyLines = body.flatMap((b) => b.lines)
         const { x, y } = cursorPos.value
 
-        const labels = data.value.labels
-        const idx = labels.indexOf(titleStr)
+        const labels = data.value.labels  // ordered oldest → newest, e.g. ['2025-01', '2025-03', '2026-01', '2026-03']
+        const idx = labels.indexOf(titleStr)  // index of the selected basho
 
-        // Match only the raw dataset, not a regression line dataset (which appends "(R² = x)")
-        const matchingDataset = data.value.datasets.find((ds: any) => {
-            const label = ds.label?.toLowerCase().trim()
-            return label === kimariteType && !label.includes('r²')
+        // Use raw store datasets rather than chart data, which may be transformed
+        // (e.g. converted to percentages) and therefore unsuitable for counting skip
+        const store = useKimariteStore()
+        const rawDataset = store.rawDatasets.find((ds: any) => {
+            return ds.label?.toLowerCase().trim() === kimariteType
         })
 
-        const datasetData = matchingDataset?.data ?? []
+        const datasetData = rawDataset?.data ?? []
 
         // The API returns matches newest-first, so to get matches for basho at `idx`,
         // we skip all matches from the bashos that come after it (i.e. more recent ones).
