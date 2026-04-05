@@ -38,7 +38,7 @@ export function useKimariteTooltip(
         const { tooltip } = context
 
         if (tooltip.opacity === 0) {
-            tooltipContent.value = null
+            //tooltipContent.value = null
             return
         }
 
