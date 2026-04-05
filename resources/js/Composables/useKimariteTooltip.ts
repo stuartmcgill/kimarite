@@ -36,9 +36,7 @@ export function useKimariteTooltip(
         tooltip: TooltipModel<'line'>
     }) => {
         const { tooltip } = context
-
         if (tooltip.opacity === 0) {
-            //tooltipContent.value = null
             return
         }
 
@@ -59,10 +57,18 @@ export function useKimariteTooltip(
 
         const labels = data.value.labels
         const idx = labels.indexOf(titleStr)
-        const matchingDataset = data.value.datasets.find((ds: any) =>
-            ds.label?.toLowerCase().trim() === kimariteType
-        )
+
+        // Match only the raw dataset, not a regression line dataset (which appends "(R² = x)")
+        const matchingDataset = data.value.datasets.find((ds: any) => {
+            const label = ds.label?.toLowerCase().trim()
+            return label === kimariteType && !label.includes('r²')
+        })
+
         const datasetData = matchingDataset?.data ?? []
+
+        // The API returns matches newest-first, so to get matches for basho at `idx`,
+        // we skip all matches from the bashos that come after it (i.e. more recent ones).
+        // slice(idx + 1) gives us all basho counts newer than the selected basho.
         const skip = (datasetData.slice(idx + 1) as unknown[])
             .reduce((total: number, ds) => total + parseInt(String(ds), 10), 0)
 
