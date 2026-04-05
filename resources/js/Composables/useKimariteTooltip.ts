@@ -2,10 +2,18 @@ import { ref } from 'vue'
 
 const KIMARITE_API_URL = 'https://www.sumo-api.com/api/kimarite/'
 
+export interface KimariteRecord {
+    bashoId: string
+    day: number
+    kimarite: string
+    winnerEn: string
+    division: string
+}
+
 export interface TooltipContent {
     title: string
-    bodyHtml: string
-    records: string
+    bodyLines: string[]
+    records: KimariteRecord[]
 }
 
 function debounce<A extends unknown[]>(fn: (...args: A) => void, ms: number): (...args: A) => void {
@@ -39,11 +47,6 @@ export function useKimariteTooltip(
         const body = tooltip.body || []
         const titleStr = title.length ? title.join('') : ''
 
-        let bodyHtml = ''
-        body.forEach((b) => {
-            bodyHtml += `<div>${b.lines.join('<br>')}</div><br>`
-        })
-
         if (body.length === 0 || body[0].lines.length !== 1) return
 
         const split = body[0].lines[0].split(':')
@@ -59,14 +62,14 @@ export function useKimariteTooltip(
             .reduce((total: number, ds) => total + parseInt(String(ds), 10), 0)
         const skipParam = skip > 0 ? `&skip=${skip}` : ''
 
-        fetch(`${KIMARITE_API_URL}${kimariteType}?limit=10&sortOrder=desc${skipParam}`)
+        fetch(`${KIMARITE_API_URL}${kimariteType}?limit=5&sortOrder=desc${skipParam}`)
             .then((r) => r.json())
             .then((json) => {
-                const records = (json.records as { bashoId: string; day: number; kimarite: string; winnerEn: string; division: string }[])
-                    .map((it) => `${it.bashoId}, day ${it.day}: ${it.kimarite} by ${it.winnerEn} (${it.division})`)
-                    .join('<br>')
-
-                tooltipContent.value = { title: titleStr, bodyHtml, records }
+                tooltipContent.value = {
+                    title: titleStr,
+                    bodyLines: body.flatMap((b) => b.lines),
+                    records: json.records as KimariteRecord[],
+                }
             })
     }
 

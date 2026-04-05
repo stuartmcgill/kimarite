@@ -23,10 +23,12 @@ const emit = defineEmits<{ (e: 'dismiss'): void }>()
                     <div v-if="content.title" class="mb-1 font-bold">
                         {{ content.title }}
                     </div>
-                    <!-- eslint-disable-next-line vue/no-v-html -->
-                    <div v-html="content.bodyHtml" />
-                    <!-- eslint-disable-next-line vue/no-v-html -->
-                    <div v-html="content.records" />
+                    <div v-for="line in content.bodyLines" :key="line">
+                        {{ line }}
+                    </div>
+                    <div v-for="(record, index) in content.records" :key="index" class="mt-1">
+                        {{ record.bashoId }}, day {{ record.day }}: {{ record.kimarite }} by {{ record.winnerEn }} ({{ record.division }})
+                    </div>
                 </div>
             </div>
         </div>
