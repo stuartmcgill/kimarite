@@ -65,7 +65,7 @@ const syncRegressionColorsPlugin = {
 
 ChartJS.register(syncRegressionColorsPlugin)
 
-const { tooltipContent, externalKimariteTooltip, dismiss } = useKimariteTooltip(data)
+const { tooltipContent, externalKimariteTooltip, trackCursor, dismiss } = useKimariteTooltip(data)
 
 const options = computed(() => ({
   responsive: true,
@@ -188,6 +188,8 @@ const linearRegressionWithR2 = (
 </script>
 
 <template>
+    <div @mousemove="trackCursor">
   <Line v-show="data.datasets.length > 0" :data="data" :options="options" />
     <KimariteTooltip v-if="tooltipContent" :content="tooltipContent" @dismiss="dismiss" />
+    </div>
 </template>

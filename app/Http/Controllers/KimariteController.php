@@ -146,7 +146,7 @@ class KimariteController extends Controller
         ]);
     }
 
-    public function getRecentInstances(
+    public function getMatches(
         Request $request,
         string $type,
         int $skip,

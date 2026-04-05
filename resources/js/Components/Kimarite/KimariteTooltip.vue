@@ -1,14 +1,28 @@
-<script lang="ts" setup>
+vue<script lang="ts" setup>
+import { onMounted, onUnmounted } from 'vue'
 import type { TooltipContent } from '@/Composables/useKimariteTooltip'
 import TooltipRecord from '@/Components/Kimarite/TooltipRecord.vue'
 
 const props = defineProps<{ content: TooltipContent }>()
 const emit = defineEmits<{ (e: 'dismiss'): void }>()
+
+function onClickOutside(e: MouseEvent) {
+    const el = document.getElementById('kimarite-tooltip')
+    if (el && !el.contains(e.target as Node)) {
+        emit('dismiss')
+    }
+}
+
+onMounted(() => document.addEventListener('mousedown', onClickOutside))
+onUnmounted(() => document.removeEventListener('mousedown', onClickOutside))
 </script>
 
 <template>
     <Teleport to="body">
-        <div class="absolute right-5 top-[40%] z-[9999] rounded-md bg-black/80 px-3 py-2 text-xs text-white">
+        <div id="kimarite-tooltip"
+            class="fixed z-[9999] min-w-64 rounded-md bg-black/80 px-3 py-2 text-xs text-white"
+            :style="{ left: `${content.x + 12}px`, top: `${content.y}px` }"
+        >
             <div class="relative">
                 <button
                     type="button"

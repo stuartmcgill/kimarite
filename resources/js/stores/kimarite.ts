@@ -86,14 +86,13 @@ export const useKimariteStore = defineStore('kimarite', {
       }
     },
 
-      async fetchRecentInstances(
+      async fetchMatches(
           type: string,
           skip: number
       ) {
-          this.loading = true
           try {
               const resp = await axios.get(
-                  route('kimarite.recent', {
+                  route('kimarite.matches', {
                       type: type,
                       skip: skip,
                   }),
@@ -101,8 +100,6 @@ export const useKimariteStore = defineStore('kimarite', {
               return resp.data.instances
           } catch (e) {
               console.error(e)
-          } finally {
-              this.loading = false
           }
       },
 

@@ -18,18 +18,33 @@ export interface TooltipContent {
     records: RikishiMatch[]
     color: string
     loading: boolean
+    x: number
+    y: number
+}
+
+function debounce<A extends unknown[]>(fn: (...args: A) => void, ms: number): (...args: A) => void {
+    let timeoutId: ReturnType<typeof setTimeout>
+    return (...args: A) => {
+        clearTimeout(timeoutId)
+        timeoutId = setTimeout(() => fn(...args), ms)
+    }
 }
 
 export function useKimariteTooltip(
     data: Readonly<Ref<{ labels: string[]; datasets: { data: unknown[] }[] }>>
 ) {
     const tooltipContent = ref<TooltipContent | null>(null)
+    const cursorPos = ref({ x: 0, y: 0 })
+
+    function trackCursor(e: MouseEvent) {
+        cursorPos.value = { x: e.clientX, y: e.clientY }
+    }
 
     function dismiss() {
         tooltipContent.value = null
     }
 
-    const externalKimariteTooltip = async (context: {
+    const handleTooltipImpl = async (context: {
         chart: unknown
         tooltip: TooltipModel<'line'>
     }) => {
@@ -57,6 +72,7 @@ export function useKimariteTooltip(
 
         const color = (tooltip.labelColors?.[0]?.borderColor as string) ?? '#ffffff'
         const bodyLines = body.flatMap((b) => b.lines)
+        const { x, y } = cursorPos.value
 
         // Show tooltip immediately with loading state
         tooltipContent.value = {
@@ -65,6 +81,8 @@ export function useKimariteTooltip(
             records: [],
             color,
             loading: true,
+            x,
+            y,
         }
 
         const labels = data.value.labels
@@ -77,9 +95,8 @@ export function useKimariteTooltip(
             .reduce((total: number, ds) => total + parseInt(String(ds), 10), 0)
 
         const store = useKimariteStore()
-        const instances = await store.fetchRecentInstances(kimariteType, skip) as RikishiMatch[]
+        const instances = await store.fetchMatches(kimariteType, skip) as RikishiMatch[]
 
-        // Only update if the tooltip hasn't been dismissed or changed
         if (tooltipContent.value?.title === titleStr && tooltipContent.value?.bodyLines[0] === bodyLines[0]) {
             tooltipContent.value = {
                 title: titleStr,
@@ -87,9 +104,13 @@ export function useKimariteTooltip(
                 records: instances,
                 color,
                 loading: false,
+                x,
+                y,
             }
         }
     }
 
-    return { tooltipContent, externalKimariteTooltip, dismiss }
+    const externalKimariteTooltip = debounce(handleTooltipImpl, 500)
+
+    return { tooltipContent, externalKimariteTooltip, trackCursor, dismiss }
 }
