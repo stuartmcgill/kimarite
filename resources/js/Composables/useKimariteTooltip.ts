@@ -19,7 +19,7 @@ export interface TooltipContent {
     x: number
     y: number
     kimariteType: string
-    count: number
+    count: string
     skip: number
 }
 
