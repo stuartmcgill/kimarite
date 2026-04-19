@@ -1,6 +1,9 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import axios from 'axios'
 import { formatBashoId } from '@/Composables/utils'
+import { useDivisions } from '@/Composables/useDivisions'
+import type { Ref } from 'vue'
+import { ref } from 'vue'
 
 interface KimariteCount {
   type: string
@@ -18,6 +21,7 @@ export const useKimariteStore = defineStore('kimarite', {
   state: () => ({
     counts: [] as GroupedKimariteTotal[],
     bashoIds: [] as string[],
+    selectedDivisions: [] as string[],
     displayAsPercent: true as boolean,
     showRegression: false as boolean,
     hideWeakCorrelations: false as boolean,
@@ -59,11 +63,29 @@ export const useKimariteStore = defineStore('kimarite', {
 
       return datasets
     },
+      rawDatasets: state => {
+          if (!state.counts) {
+              return []
+          }
+          return state.counts.map((groupedTotal: GroupedKimariteTotal) => {
+              const data = state.bashoIds.map((bashoId: string) => {
+                  const groupCount = groupedTotal.groupedCounts.find(
+                      (count: KimariteCount) =>
+                          count.type === groupedTotal.type.toLowerCase() &&
+                          formatBashoId(count.basho_id) === bashoId,
+                  )
+                  return groupCount?.total ?? 0
+              })
+              return {
+                  label: groupedTotal.type,
+                  data,
+              }
+          })
+      },
   },
   actions: {
     async fetchCounts(
       types: string[],
-      divisions: string[],
       from: string,
       to: string,
     ) {
@@ -72,7 +94,7 @@ export const useKimariteStore = defineStore('kimarite', {
         const resp = await axios.get(
           route('kimarite.counts', {
             types: types,
-            divisions: divisions,
+            divisions: this.selectedDivisions,
             from: from,
             to: to,
           }),
@@ -85,6 +107,19 @@ export const useKimariteStore = defineStore('kimarite', {
         this.loading = false
       }
     },
+
+      async fetchMatches(bashoId: string, type: string)
+      {
+          try {
+              const resp = await axios.get(
+                  route('kimarite.matches', { bashoId, type }),
+                  { params: { divisions: this.selectedDivisions, } }
+              )
+              return resp.data.instances
+          } catch (e) {
+              console.error(e)
+          }
+      },
   },
 })
 

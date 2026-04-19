@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Models\BashoTotal;
 use App\Models\KimariteCount;
+use App\Models\RikishiMatchModel;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -35,6 +36,8 @@ class KimariteAggregator
                 'count' => $count,
             ]);
         });
+
+        $this->storeMatches($matches);
     }
 
     // public function refreshBashoPercentages(): void
@@ -71,5 +74,35 @@ class KimariteAggregator
                 ->select('basho_id', 'division', DB::raw('SUM(count) as total'), DB::raw("'$now' as created_at"), DB::raw("'$now' as updated_at"))
                 ->groupBy(['basho_id', 'division'])
         );
+    }
+
+    /**
+     * @param  Collection<RikishiMatch>  $matches
+     */
+    private function storeMatches(Collection $matches): void
+    {
+        $now = Carbon::now();
+
+        $rows = $matches->map(fn (RikishiMatch $match) => [
+            'basho_id' => $match->bashoId,
+            'division' => $match->division,
+            'day' => $match->day,
+            'east_id' => $match->eastId,
+            'east_shikona' => $match->eastShikona,
+            'east_rank' => $match->eastRank,
+            'west_id' => $match->westId,
+            'west_shikona' => $match->westShikona,
+            'west_rank' => $match->westRank,
+            'kimarite' => $match->kimarite,
+            'winner_id' => $match->winnerId,
+            'winner_en' => $match->winnerEn,
+            'winner_jp' => $match->winnerJp,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        foreach ($rows->chunk(500) as $chunk) {
+            RikishiMatchModel::insert($chunk->values()->all());
+        }
     }
 }

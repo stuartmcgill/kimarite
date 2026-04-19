@@ -8,6 +8,7 @@ use App\Http\Requests\ShowKimariteRequest;
 use App\Models\BashoTotal;
 use App\Models\KimariteCount;
 use App\Models\KimariteType;
+use App\Models\RikishiMatchModel;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +16,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
+use StuartMcGill\SumoApiPhp\Model\Rikishi;
+use StuartMcGill\SumoApiPhp\Model\RikishiMatch;
+use StuartMcGill\SumoApiPhp\Service\RikishiService;
 
 class KimariteController extends Controller
 {
@@ -141,6 +145,47 @@ class KimariteController extends Controller
         return new JsonResponse([
             'counts' => $counts,
             'bashoIds' => $bashoIds,
+        ]);
+    }
+
+    public function getMatches(Request $request, string $bashoId, string $type): JsonResponse
+    {
+        $validated = $request->validate([
+            'divisions' => ['required', 'array'],
+            'divisions.*' => ['required', 'string'],
+        ]);
+
+        $divisions = $validated['divisions'];
+        $divisionPlaceholders = implode(', ', array_fill(0, count($divisions), '?'));
+
+        $matches = RikishiMatchModel::where('basho_id', $bashoId)
+            ->where('kimarite', $type)
+            ->whereIn('division', $divisions)
+            ->orderByDesc('day')
+            ->orderByRaw("FIELD(division, $divisionPlaceholders)", $divisions)
+            ->limit(5)
+            ->get()
+            ->values();
+
+        // Now fetch the winning wrestlers and add in the SumoDB ID to the matches we're going to return
+        $sumoApiIds = $matches->pluck('winner_id')->toArray();
+
+        $rikishiService = RikishiService::factory();
+        $rikishis = collect($rikishiService->fetchSome($sumoApiIds));
+
+        $matches = $matches->map(function (RikishiMatchModel $match) use ($rikishis) {
+            $rikishi = $rikishis->firstWhere(fn (Rikishi $rikishi) => $rikishi->id === $match->winner_id);
+            if (! $rikishi) {
+                return $match;
+            }
+
+            $match->winner_sumo_db_id = $rikishi->sumoDbId;
+
+            return $match;
+        });
+
+        return new JsonResponse([
+            'instances' => $matches,
         ]);
     }
 }

@@ -17,8 +17,11 @@ import {
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
 import { KimariteConstants } from '@/Composables/kimariteConstants'
+import KimariteTooltip from '@/Components/Kimarite/KimariteTooltip.vue'
+import { ref } from 'vue'
 
 const store = useKimariteStore()
+const tooltipRef = ref<InstanceType<typeof KimariteTooltip> | null>(null)
 
 const data = computed(() => {
   const labels = store.bashoIds
@@ -64,26 +67,18 @@ const syncRegressionColorsPlugin = {
 ChartJS.register(syncRegressionColorsPlugin)
 
 const options = computed(() => ({
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    colors: {
-      forceOverride: true,
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        colors: { forceOverride: true },
+        syncRegressionColors: {},
+        tooltip: {
+            enabled: false,
+            external: tooltipRef.value?.externalKimariteTooltip,
+        },
     },
-    syncRegressionColors: {},
-  },
-  scales: {
-    y: {
-      ticks: {
-        stepSize: 1,
-      },
-    },
-  },
-  elements: {
-    line: {
-      tension: 0.4,
-    },
-  },
+    scales: { y: { ticks: { stepSize: 1 } } },
+    elements: { line: { tension: 0.4 } },
 }))
 
 ChartJS.register(
@@ -180,5 +175,8 @@ const linearRegressionWithR2 = (
 </script>
 
 <template>
-  <Line v-show="data.datasets.length > 0" :data="data" :options="options" />
+    <div @mousemove="tooltipRef?.trackCursor">
+        <Line v-show="data.datasets.length > 0" :data="data" :options="options" />
+        <KimariteTooltip ref="tooltipRef" :data="data" />
+    </div>
 </template>
