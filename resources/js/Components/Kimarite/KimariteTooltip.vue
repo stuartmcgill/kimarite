@@ -54,6 +54,27 @@ function onClickOutside(e: MouseEvent) {
     }
 }
 
+const tooltipEl = ref<HTMLElement | null>(null)
+
+const EXPANDED_TOOLTIP_ESTIMATE = 300
+
+const tooltipStyle = computed(() => {
+    if (!tooltipContent.value) return {}
+
+    const x = tooltipContent.value.x + 12
+    const y = tooltipContent.value.y
+    const viewportHeight = window.innerHeight
+
+    const clampedY = y + EXPANDED_TOOLTIP_ESTIMATE > viewportHeight
+        ? viewportHeight - EXPANDED_TOOLTIP_ESTIMATE - 8
+        : y
+
+    return {
+        left: `${x}px`,
+        top: `${clampedY}px`,
+    }
+})
+
 onMounted(() => document.addEventListener('mousedown', onClickOutside))
 onUnmounted(() => document.removeEventListener('mousedown', onClickOutside))
 </script>
@@ -63,8 +84,9 @@ onUnmounted(() => document.removeEventListener('mousedown', onClickOutside))
         <div
             v-if="tooltipContent"
             id="kimarite-tooltip"
+            ref="tooltipEl"
             class="fixed z-[9999] min-w-64 rounded-md bg-black/80 px-3 py-2 text-xs text-white"
-            :style="{ left: `${tooltipContent.x + 12}px`, top: `${tooltipContent.y}px` }"
+            :style="tooltipStyle"
         >
             <div class="relative">
                 <button
