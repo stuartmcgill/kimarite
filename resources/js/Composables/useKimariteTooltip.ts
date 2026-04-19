@@ -52,7 +52,7 @@ export function useKimariteTooltip(
 
         const split = body[0].lines[0].split(':')
         const kimariteType = split[0].toLowerCase().trim()
-        const count = parseInt(split[1])
+        const count = split[1].trim() // Could be a percentage
 
         const color = (tooltip.labelColors?.[0]?.borderColor as string) ?? '#ffffff'
         const bodyLines = body.flatMap((b) => b.lines)
