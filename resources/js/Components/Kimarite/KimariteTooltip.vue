@@ -83,7 +83,7 @@ onUnmounted(() => document.removeEventListener('mousedown', onClickOutside))
             v-if="tooltipContent"
             id="kimarite-tooltip"
             ref="tooltipEl"
-            class="fixed z-[9999] min-w-64 rounded-md bg-black/80 px-3 py-2 text-xs text-white"
+            class="invisible sm:visible fixed z-[9999] min-w-64 rounded-md bg-black/80 px-3 py-2 text-xs text-white"
             :style="tooltipStyle"
         >
             <div class="relative">
