@@ -3,13 +3,13 @@ import type { TooltipModel } from 'chart.js'
 import { useKimariteStore } from '@/stores/kimarite'
 
 export interface RikishiMatch {
-    bashoId: string
+    basho_id: string
     day: number
     kimarite: string
-    winnerId: number
-    winnerEn: string
+    winner_id: number
+    winner_en: string
     division: string
-    winnerSumoDbId: number
+    winner_sumo_db_id: number
 }
 
 export interface TooltipContent {
@@ -19,6 +19,7 @@ export interface TooltipContent {
     x: number
     y: number
     kimariteType: string
+    count: number
     skip: number
 }
 
@@ -51,6 +52,7 @@ export function useKimariteTooltip(
 
         const split = body[0].lines[0].split(':')
         const kimariteType = split[0].toLowerCase().trim()
+        const count = parseInt(split[1])
 
         const color = (tooltip.labelColors?.[0]?.borderColor as string) ?? '#ffffff'
         const bodyLines = body.flatMap((b) => b.lines)
@@ -81,6 +83,7 @@ export function useKimariteTooltip(
             x,
             y,
             kimariteType,
+            count,
             skip,
         }
     }

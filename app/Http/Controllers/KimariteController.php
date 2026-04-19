@@ -8,6 +8,7 @@ use App\Http\Requests\ShowKimariteRequest;
 use App\Models\BashoTotal;
 use App\Models\KimariteCount;
 use App\Models\KimariteType;
+use App\Models\RikishiMatchModel;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,6 @@ use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use StuartMcGill\SumoApiPhp\Model\Rikishi;
 use StuartMcGill\SumoApiPhp\Model\RikishiMatch;
-use StuartMcGill\SumoApiPhp\Service\KimariteService;
 use StuartMcGill\SumoApiPhp\Service\RikishiService;
 
 class KimariteController extends Controller
@@ -148,31 +148,41 @@ class KimariteController extends Controller
         ]);
     }
 
-    public function getMatches(
-        Request $request,
-        string $type,
-        int $skip,
-        KimariteService $kimariteService,
-    ): JsonResponse {
-        $matches = collect($kimariteService->fetchByType(type: $type, sortOrder: 'desc', limit: 5, skip: $skip));
-        abort_if($matches->isEmpty(), 500, 'Unable to retrieve matches');
+    public function getMatches(Request $request, string $bashoId, string $type): JsonResponse
+    {
+        $validated = $request->validate([
+            'divisions' => ['required', 'array'],
+            'divisions.*' => ['required', 'string'],
+        ]);
 
-        $sumoApiIds = $matches->pluck('winnerId')->toArray();
+        $divisions = $validated['divisions'];
+        $divisionPlaceholders = implode(', ', array_fill(0, count($divisions), '?'));
+
+        $matches = RikishiMatchModel::where('basho_id', $bashoId)
+            ->where('kimarite', $type)
+            ->whereIn('division', $divisions)
+            ->orderByDesc('day')
+            ->orderByRaw("FIELD(division, $divisionPlaceholders)", $divisions)
+            ->limit(5)
+            ->get()
+            ->values();
+
+        // Now fetch the winning wrestlers and add in the SumoDB ID to the matches we're going to return
+        $sumoApiIds = $matches->pluck('winner_id')->toArray();
 
         $rikishiService = RikishiService::factory();
         $rikishis = collect($rikishiService->fetchSome($sumoApiIds));
 
-        $matches = $matches->map(function (RikishiMatch $match) use ($rikishis) {
-            $rikishi = $rikishis->firstWhere(fn (Rikishi $rikishi) => $rikishi->id === $match->winnerId);
+        $matches = $matches->map(function (RikishiMatchModel $match) use ($rikishis) {
+            $rikishi = $rikishis->firstWhere(fn (Rikishi $rikishi) => $rikishi->id === $match->winner_id);
             if (! $rikishi) {
                 return $match;
             }
 
-            $match->winnerSumoDbId = $rikishi->sumoDbId;
+            $match->winner_sumo_db_id = $rikishi->sumoDbId;
 
             return $match;
-        })->reject(fn (RikishiMatch $match) => $match->day > 15) // Ignore playoffd
-        ->values();
+        });
 
         return new JsonResponse([
             'instances' => $matches,

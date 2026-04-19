@@ -4,6 +4,7 @@ import { useKimariteTooltip } from '@/Composables/useKimariteTooltip'
 import type { RikishiMatch } from '@/Composables/useKimariteTooltip'
 import TooltipRecord from '@/Components/Kimarite/TooltipRecord.vue'
 import { useKimariteStore } from '@/stores/kimarite'
+import { useDivisions } from '@/Composables/useDivisions'
 
 const props = defineProps<{
     data: { labels: string[]; datasets: { data: unknown[] }[] }
@@ -26,14 +27,24 @@ watch(tooltipContent, () => {
 })
 
 async function loadInstances() {
-    if (!tooltipContent.value) return
+    if (!tooltipContent.value) {
+        return
+    }
     loading.value = true
-    records.value = await store.fetchMatches(
-        tooltipContent.value.kimariteType,
-        tooltipContent.value.skip
-    ) as RikishiMatch[]
-    loading.value = false
-    loaded.value = true
+
+    try {
+        const bashoId = tooltipContent.value.title.replace('-', '')
+
+        records.value = await store.fetchMatches(
+            bashoId,
+            tooltipContent.value.kimariteType,
+            useDivisions().divisions
+        ) as RikishiMatch[]
+
+        loaded.value = true
+    } finally {
+        loading.value = false
+    }
 }
 
 function onClickOutside(e: MouseEvent) {
@@ -78,6 +89,7 @@ onUnmounted(() => document.removeEventListener('mousedown', onClickOutside))
                     </div>
                     <template v-if="!loaded">
                         <button
+                            v-if="tooltipContent.count > 0"
                             type="button"
                             class="mt-1 rounded bg-white/20 px-2 py-1 text-xs text-white hover:bg-white/30 disabled:opacity-50"
                             :disabled="loading"

@@ -16,6 +16,7 @@ import Graph from '@/Components/Kimarite/Graph.vue'
 import { formatBashoId } from '@/Composables/utils'
 import AppTooltip from '@/Components/App/AppTooltip.vue'
 import { KimariteConstants } from '@/Composables/kimariteConstants'
+import { useDivisions } from '@/Composables/useDivisions'
 
 interface Criteria {
   selectedTypes: string[]
@@ -52,14 +53,7 @@ const bashoOptions = props.availableBashos.map(bashoId =>
   formatBashoId(bashoId),
 )
 
-const divisionOptions = computed(() => [
-  'Makuuchi',
-  'Juryo',
-  'Makushita',
-  'Sandanme',
-  'Jonidan',
-  'Jonokuchi',
-])
+const divisionOptions = computed(() => useDivisions().divisions)
 
 const store = useKimariteStore()
 

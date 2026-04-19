@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Models\KimariteCount;
 use App\Models\KimariteType;
+use App\Models\RikishiMatchModel;
 use App\Models\Run;
 use App\Services\KimariteAggregator;
 use Illuminate\Http\JsonResponse;
@@ -40,6 +41,7 @@ class RefreshController extends Controller
         $run = Run::create();
 
         KimariteCount::truncate();
+        RikishiMatchModel::truncate();
 
         $types = KimariteType::all();
         foreach ($types as $type) {
@@ -63,6 +65,11 @@ class RefreshController extends Controller
                     }
 
                     if (! preg_match('/^\d{6}$/', $bashoId)) {
+                        continue;
+                    }
+
+                    if ($match->day > 15) {
+                        // Ignore play-offs
                         continue;
                     }
 

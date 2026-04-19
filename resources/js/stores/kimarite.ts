@@ -1,6 +1,7 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import axios from 'axios'
 import { formatBashoId } from '@/Composables/utils'
+import { useDivisions } from '@/Composables/useDivisions'
 
 interface KimariteCount {
   type: string
@@ -106,22 +107,20 @@ export const useKimariteStore = defineStore('kimarite', {
     },
 
       async fetchMatches(
+          bashoId: string,
           type: string,
-          skip: number
+          divisions: string[]
       ) {
           try {
               const resp = await axios.get(
-                  route('kimarite.matches', {
-                      type: type,
-                      skip: skip,
-                  }),
+                  route('kimarite.matches', { bashoId, type }),
+                  { params: { divisions } }
               )
               return resp.data.instances
           } catch (e) {
               console.error(e)
           }
       },
-
   },
 })
 
