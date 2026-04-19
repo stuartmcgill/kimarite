@@ -4,7 +4,6 @@ import { useKimariteTooltip } from '@/Composables/useKimariteTooltip'
 import type { RikishiMatch } from '@/Composables/useKimariteTooltip'
 import TooltipRecord from '@/Components/Kimarite/TooltipRecord.vue'
 import { useKimariteStore } from '@/stores/kimarite'
-import { useDivisions } from '@/Composables/useDivisions'
 
 const props = defineProps<{
     data: { labels: string[]; datasets: { data: unknown[] }[] }
@@ -37,8 +36,7 @@ async function loadInstances() {
 
         records.value = await store.fetchMatches(
             bashoId,
-            tooltipContent.value.kimariteType,
-            useDivisions().divisions
+            tooltipContent.value.kimariteType
         ) as RikishiMatch[]
 
         loaded.value = true
@@ -107,6 +105,7 @@ onUnmounted(() => document.removeEventListener('mousedown', onClickOutside))
                                 :style="{ backgroundColor: tooltipContent.color }"
                             />
                             {{ line }}
+                            <span v-if="store.displayAsPercent">%</span>
                         </div>
                     </div>
                     <template v-if="!loaded">

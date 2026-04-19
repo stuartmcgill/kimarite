@@ -60,14 +60,13 @@ const store = useKimariteStore()
 const selectedTypes: Ref<string[]> = ref([])
 const from: Ref<string | null> = ref(null)
 const to: Ref<string | null> = ref(null)
-const selectedDivisions: Ref<string[]> = ref([])
 
 const initialise = () => {
   selectedTypes.value = props.initialCriteria.selectedTypes
-  selectedDivisions.value =
-    props.initialCriteria.selectedDivisions || divisionOptions.value
   from.value = props.initialCriteria.from
   to.value = props.initialCriteria.to
+
+  store.selectedDivisions = props.initialCriteria.selectedDivisions || divisionOptions.value
   store.displayAsPercent = props.initialCriteria.displayAsPercent
 
   refreshGraph()
@@ -82,7 +81,7 @@ const share = () => {
   if (from.value) params.append('from', from.value)
   if (to.value) params.append('to', to.value)
 
-  selectedDivisions.value.forEach((division, i) =>
+  store.selectedDivisions.forEach((division, i) =>
     params.append(`selected_divisions[${i}]`, division),
   )
 
@@ -98,9 +97,9 @@ const share = () => {
 
 const resetCriteria = () => {
   selectedTypes.value = props.defaultCriteria.selectedTypes
-  selectedDivisions.value = divisionOptions.value
   from.value = props.defaultCriteria.from
   to.value = props.defaultCriteria.to
+  store.selectedDivisions = divisionOptions.value
   store.displayAsPercent = props.defaultCriteria.displayAsPercent
 
   refreshGraph()
@@ -115,7 +114,7 @@ const validationMessage = computed(() => {
     errorFields.push('Kimarite')
   }
 
-  if (selectedDivisions.value.length === 0) {
+  if (store.selectedDivisions.length === 0) {
     errorFields.push('Divisions')
   }
 
@@ -152,7 +151,6 @@ const refreshGraph = async () => {
   try {
     await store.fetchCounts(
       selectedTypes.value,
-      selectedDivisions.value,
       from.value!,
       to.value!,
     )
@@ -255,7 +253,7 @@ initialise()
               <IftaLabel class="sm:ml-4 md:ml-auto">
                 <MultiSelect
                   inputId="divisions"
-                  v-model="selectedDivisions"
+                  v-model="store.selectedDivisions"
                   :options="divisionOptions"
                   class="min-w-40 max-w-40 md:max-w-72 lg:max-w-none"
                   @change="refreshGraph"
