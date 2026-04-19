@@ -54,22 +54,22 @@ function onClickOutside(e: MouseEvent) {
 
 const tooltipEl = ref<HTMLElement | null>(null)
 
-const EXPANDED_TOOLTIP_ESTIMATE = 300
+const EXPANDED_TOOLTIP_ESTIMATE = 100
 
 const tooltipStyle = computed(() => {
     if (!tooltipContent.value) return {}
 
-    const x = tooltipContent.value.x + 12
+    const x = tooltipContent.value.x
     const y = tooltipContent.value.y
     const viewportHeight = window.innerHeight
 
-    const clampedY = y + EXPANDED_TOOLTIP_ESTIMATE > viewportHeight
-        ? viewportHeight - EXPANDED_TOOLTIP_ESTIMATE - 8
-        : y
+    const estimatedHeight = loaded.value ? EXPANDED_TOOLTIP_ESTIMATE : (tooltipEl.value?.offsetHeight ?? 80)
+    const bottom = Math.max(viewportHeight - y, estimatedHeight + 8)
 
     return {
         left: `${x}px`,
-        top: `${clampedY}px`,
+        bottom: `${bottom}px`,
+        transition: 'bottom 0.2s ease',
     }
 })
 
