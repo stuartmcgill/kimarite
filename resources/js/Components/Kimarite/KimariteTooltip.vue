@@ -110,7 +110,7 @@ onUnmounted(() => document.removeEventListener('mousedown', onClickOutside))
                     </div>
                     <template v-if="!loaded">
                         <button
-                            v-if="tooltipContent.count > 0"
+                            v-if="parseFloat(tooltipContent.count) > 0"
                             type="button"
                             class="mt-1 rounded bg-white/20 px-2 py-1 text-xs text-white hover:bg-white/30 disabled:opacity-50"
                             :disabled="loading"

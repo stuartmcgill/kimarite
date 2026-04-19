@@ -4,11 +4,7 @@ import { computed } from 'vue'
 
 const props = defineProps<{ record: RikishiMatch }>()
 
-const basho = computed(() => {
-    const basho = props.record.basho_id.slice(0, 4) +'-' + props.record.basho_id.slice(4)
-
-    return basho
-})
+const basho = computed(() => props.record.basho_id.slice(0, 4) +'-' + props.record.basho_id.slice(4))
 </script>
 
 <template>

@@ -17,7 +17,6 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use StuartMcGill\SumoApiPhp\Model\Rikishi;
-use StuartMcGill\SumoApiPhp\Model\RikishiMatch;
 use StuartMcGill\SumoApiPhp\Service\RikishiService;
 
 class KimariteController extends Controller
